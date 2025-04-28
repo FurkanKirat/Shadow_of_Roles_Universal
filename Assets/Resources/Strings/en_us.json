@@ -1,0 +1,374 @@
+{
+  "main_menu": {
+    "app_name": "Shadow of Roles",
+    "offline": "Offline Mode",
+    "online": "Online Mode",
+    "game_guide": "Game Guide",
+    "contact": "Contact",
+    "credits": "Credits",
+    "quit": "Quit"
+  },
+
+  "general": {
+    "select": "Select",
+    "unselect": "Unselect",
+    "clear": "Clear",
+    "ai": "AI",
+    "no": "No",
+    "yes": "Yes",
+    "player_number": "Number: {0}",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "quit_message": "Do you want to exit?",
+    "pass_turn": "Pass Turn",
+    "any": "Any"
+  },
+  
+  "time": {
+    "day": "Day: {0}",
+    "night": "Night: {0}",
+    "voting": "Voting: {0}"
+  },
+
+  "alerts": {
+    "chill_guy_alert_text": "Oh no! Ending Screen Was Captured by a Chill Guy! Did they revealed their role in the game?",
+    "go_back_to_main_menu": "Go Back to Main Menu",
+    "main_menu_alert_message": "Do you want to go to main menu?",
+    "pass_turn_message": "It's {0}'s turn",
+    "error": "Error",
+    "main_menu_alert": "Do you want to go to the main menu?",
+    "game_will_disbanded": "Game will be disbanded",
+    "leaving_from_lobby": "Leaving from lobby",
+    "kicked_from_lobby": "You have kicked from lobby",
+    "game_is_disbanded": "Game is disbanded"
+  },
+
+  "settings": {
+    "settings": "Settings",
+    "select_language": "Select",
+    "language": "Language",
+    "username": "Name"
+  },
+
+  "credits": {
+    "credits_text": "🎮 Game Development Team\n\n👑 Furkan Kırat — Lead Developer, Game Design, Coding, Graphic Design\n🎨 Efekan Kul — Game Design, Coding, Graphic Design\n🎭 Halil Efe Çelik — Graphic Design\n🛠️ Testing & QA — Furkan Kırat, Efekan Kul, Halil Efe Çelik, Enis Taşkın, Ege Eren Ceylan, Fatih Kınacı\n\n🌟 Special Thanks\nSpecial thanks to:\n💡 Halil Efe Çelik, Enis Taşkın, Ege Eren Ceylan, Fatih Kınacı\nfor your invaluable support and contributions!\n\n🔧 Development Tools & Resources\n🧩 Unity — Game Engine & Development Platform\n🗂️ GitHub — Version Control\n🛠️ Rider & Visual Studio — Coding IDEs\n\n❤️ A Special Thanks to Our Players\nWe are deeply grateful to all players who contributed feedback and helped shape the game experience. Your support means the world to us!\n\n📜 License Information\nThis game is released under the Apache License, Version 2.0.\nYou are free to use, copy, modify, and distribute this game, even for commercial purposes, under the terms of the license.\n\n📄 A copy of the license is available at:\n🔗 https://www.apache.org/licenses/LICENSE-2.0\n\n© 2025 KankanGames. All rights reserved."
+  },
+  
+  "detective": {
+    "name": "Detective",
+    "abilities": "You choose one and see two roles, including that person's role",
+    "attributes": "N/A",
+    "ability_message": "Your target's role is {roleName1} or {roleName2}"
+  },
+
+  "observer": {
+    "name": "Observer",
+    "abilities": "At night you can see which team a person belongs to",
+    "attributes": "N/A",
+    "ability_message": "Your target's team is: {teamName}"
+  },
+
+  "soul_binder": {
+    "name": "Soulbinder",
+    "abilities": "You choose someone at night and if they get attacked, you prevent them from dying",
+    "attributes": "N/A"
+  },
+
+  "stalker": {
+    "name": "Stalker",
+    "abilities": "You choose a person and see who that person goes to at night",
+    "attributes": "N/A",
+    "ability_message": "Your target has visited {playerName} this night!",
+    "ability_message_nobody": "Your target did not visit anybody this night!"
+  },
+
+  "psycho": {
+    "name": "Psycho",
+    "abilities": "Kill one person each night",
+    "attributes": "N/A",
+    "kill_message": "You have slain your target successfully",
+    "kill_announcement": "{playerName} ({roleName}) has been slain by a Psycho"
+  },
+
+  "dark_revealer": {
+    "name": "Dark Revealer",
+    "abilities": "At night you see someone's role",
+    "attributes": "N/A",
+    "ability_message": "Your target's role is: {roleName}"
+  },
+
+  "interrupter": {
+    "name": "Interrupter",
+    "abilities": "You can role block someone in the night",
+    "attributes": "N/A"
+  },
+
+  "seal_master": {
+    "name": "Seal Master",
+    "abilities": "You can role block someone in the night",
+    "attributes": "N/A"
+  },
+
+  "role_block": {
+    "role_blocked_message": "You have been role blocked this night",
+    "immune_message": "Your target is immune",
+    "rb_immune_message": "Someone tried to role block you but you are immune",
+    "role_block_message": "You have role blocked your target"
+  },
+
+  "assassin": {
+    "name": "Assassin",
+    "abilities": "Kill one person each night",
+    "attributes": "You have basic defence and attack, you are immune to role blocking",
+    "kill_message": "You have slain your target successfully",
+    "kill_announcement": "{playerName} ({roleName}) has been slain by an Assassin"
+  },
+
+  "chill_guy": {
+    "name": "Chill Guy",
+    "abilities": "Just simple person. You do nothing",
+    "attributes": "If you reveal your role you will lose the game"
+  },
+
+  "last_joke": {
+    "name": "Last Joke",
+    "abilities": "When you die you will comeback to life and you must kill one player",
+    "attributes": "N/A",
+    "kill_message": "You have successfully made your last joke to {playerName}",
+    "kill_announcement": "Someone made their Last Joke to {playerName} ({roleName})"
+  },
+  
+  "clown": {
+    "name": "Clown",
+    "abilities": "N/A",
+    "attributes": "N/A"
+  },
+  "disguiser": {
+    "name": "Disguiser",
+    "abilities": "Disguise to random role every night but you can't know until you use it",
+    "attributes": "N/A",
+    "kill_message": "You have successfully killed your target",
+    "kill_announcement": "{playerName} ({roleName}) were killed by someone hiding in the shadows"
+  },
+  "dark_seer": {
+    "name": "Dark Seer",
+    "abilities": "You see the role of two living people, but you cannot see the role owner",
+    "attributes": "N/A",
+    "ability_message": "The roles of the two currently living player in the play are: {roleName1} and {roleName2}",
+    "ability_message_one_left": "The role of the currently living person in the play is: {roleName}",
+    "ability_message_no_left": "There are not any players to see their role"
+  },
+  "blinder": {
+    "name": "Blinder",
+    "abilities": "When you blind someone that player perform their ability randomly",
+    "attributes": "N/A",
+    "ability_message": "You have successfully blinded your target",
+    "got_blinded_message": "You are blinded this night"
+  },
+  "folk_hero": {
+    "name": "Folk Hero",
+    "abilities": "You make people immune others cannot visit your target",
+    "attributes": "You can use your ability twice in a game",
+    "ability_message": "You have successfully immunized your target",
+    "remaining_ability_count": "Remaining Ability Count: {0}",
+    "expected_ability_count": "Expected Ability Count: {0}"
+  },
+  "entrepreneur": {
+    "name": "Entrepreneur",
+    "attributes": "You get 2 coins every day",
+    "abilities": "You have some money, you can get other people to do work with this money.",
+    "current_money": "Current Money: {0}",
+    "expected_money": "\nExpected Money: {0}",
+    "money_insufficient": "\nMoney insufficient",
+    "selected": "Selected Ability: {0}",
+    "attack": "Attack",
+    "heal": "Heal",
+    "info": "Info",
+    "none": "Pass",
+    "cost": "Cost: {0}",
+    "kill_message": "You have slain your target successfully",
+    "kill_announcement": "{playerName} ({roleName}) has been slain by an Entrepreneur"
+  },
+  "lore_keeper": {
+    "name": "Lore Keeper",
+    "attributes": "If the number of players in the game is 7 or less, you need to correctly guess the role of 2 players, if more, you need to guess the role of 3 players",
+    "abilities": "You choose a player and then you choose what role that player has, if you find it correctly player's role will be revealed.",
+    "ability_message": "The following player has revealed: {playerName} ({roleName})",
+    "guess": "Your true guess count is: {guessCount}",
+    "guessed_role": "Selected role: {0}",
+    "guessed_role_none": "No role selected!",
+    "winning_true_guess_count": "You have to guess {0} roles correctly to win!",
+    "current_true_guess_count": "You have guessed {0} roles currently!"
+    
+  },
+  "abilities": {
+    "no_use_left": "Your ability could not be used because you have reached your ability's maximum usage queue",
+    "defence": "You could not slay your target because your attack was not powerful enough",
+    "no_role_selected": "Your role could not be used because you did not select any role",
+    "no_ability_exists": "Your ability could not be used because your role does not have the ability",
+    "heal": "You have successfully protected your target",
+    "used_on": "You tried to use your ability on: {playerName}",
+    "did_not_used": "You did not used your ability on anybody"
+  },
+  "cause_of_death": {
+    "assassin": "Assassin",
+    "psycho": "Psycho",
+    "hanging": "Hanged",
+    "last_joke": "Last Joke",
+    "entrepreneur": "Entrepreneur"
+  },
+
+
+  "goals": {
+    "folk": "Find and execute all corrupters and neutrals",
+    "corrupter": "Kill the folk and neutrals",
+    "lore_keeper": "You try to guess the players' roles",
+    "clown": "You have to die at night by someone to win the game",
+    "assassin": "Kill every folk and corrupter member",
+    "chill_guy": "Have Fun"
+  },
+  "voting": {
+    "voted_for": "You have voted for : {playerName}",
+    "voted_for_none": "You did not voted for anybody",
+    "vote_execute": "{playerName} ({roleName}) was hanged by majority vote"
+  },
+  "teams": {
+    "corrupter": "Corrupter",
+    "folk": "Folk",
+    "neutral": "Neutral"
+  },
+  "role_categories": {
+    "role_book_role": "Roles",
+    "role_book_folk_role": "Folk Roles",
+    "role_book_corrupter_role": "Corrupter Roles",
+    "role_book_neutral_role": "Neutral Roles",
+    
+    "folk_analyst": "Folk Analyst",
+    "folk_protector": "Folk Protector",
+    "folk_killing": "Folk Killing",
+    "folk_support": "Folk Support",
+    "folk_unique": "Folk Unique",
+    "folk_villager": "Folk Villager",
+
+    "corrupter_analyst": "Corrupter Analyst",
+    "corrupter_killing": "Corrupter Killing",
+    "corrupter_support": "Corrupter Support",
+
+    "neutral_evil": "Neutral Evil",
+    "neutral_killing": "Neutral Killing",
+    "neutral_chaos": "Neutral Chaos",
+    "neutral_good": "Neutral Good"
+  },
+  "messages": {
+    "messages": "Messages",
+    "public_message": "Public Message",
+    "private_message": "Private Message",
+    "announcements": "Announcements"
+  },
+  "role_book": {
+    "role_book": "Role Book",
+    "role_info": "Role Info",
+    "role_guide": "Role Guide",
+    "game_rules": "Game Rules",
+    "main_goal": "Main Goal",
+    "chosen_player_text_night": "You are using your ability on: {playerName}",
+    "chosen_player_text_night_nobody": "You did not selected anybody!",
+    "chosen_player_text_night_no_ability": "Your role does not have any active night ability",
+    "chosen_player_text_voting": "You are voting for: {playerName}",
+    "chosen_player_text_voting_nobody": "You did not voted for anybody",
+    "main_goal_text": "Have Fun",
+    "rules_text": "Game Rules and Flow\n\n1. Night Phase:\nThe game begins at night, and each player, in turn, takes the device to check their role.\nEach player performs their assigned task according to their role and then passes the device to the next player.\nThe night phase ends once all players have used their abilities.\n\n2. Day Phase:\nIn the day, each player takes the device in turn to see the results of the task performed by their role during the night.\n\nAfter all players have reviewed their results, the device is returned to the first player, and the voting phase begins.\n\n3. Voting Phase:\nBefore voting, players discuss and exchange ideas based on the information they gathered during the night. \nThe voting is open, and each player cast their vote and pass the device to next player.\nThe player who receives more than half of the votes is eliminated.\nAfter voting is complete, the game transitions back to the night phase, and this cycle continues.\n\nTeams and Objectives\n\nFolk:\nTheir goal is to ensure that, by the end of the game, all surviving players belong only to the Folk team.\n\nCorrupted:\nTheir goal is to ensure that, by the end of the game, all surviving players belong only to the Corrupted team.\n\nNeutral:\nNeutral players have unique win conditions or tasks specific to their roles. Their goal is to achieve their individual objectives. For more information check the role guide.",
+    "role_book_abilities": "Abilities",
+    "role_book_attributes": "Attributes",
+    "role_book_goal": "Goal",
+    "role_book_attack": "Attack",
+    "role_book_defence": "Defence"
+  },
+  
+  "current_role": {
+    "attributes": "Attributes:",
+    "abilities": "Abilities:",
+    "goal": "Goal:",
+    "team": "Team:",
+    "current_role": "Current Role:"
+  },
+  "game_end": {
+    "corrupter": "Corrupter",
+    "folk": "Folk",
+    "assassin": "Assassin",
+    "chill_guy": "Chill Guy",
+    "clown": "Clown",
+    "lore_keeper": "Lore Keeper",
+    "winner_team_text": "{team} has won!",
+    "draw": "Game is Draw!",
+    "won": "Won",
+    "lost": "Lost",
+    "tied": "Tied",
+    "alive": "Alive",
+    "dead": "Dead",
+    "number_column": "Number",
+    "name_column": "Name",
+    "role_column": "Role",
+    "win_loss_column": "Win/Loss",
+    "alive_dead_column": "Alive/Dead",
+    "causes_of_death_column": "Cause(s) Of Death"
+  },
+
+  "player_names": {
+    "player": "Player {0}",
+    "player_names": "Player Names",
+    "random_player_name": "Player {0}",
+    "all_players_ai_alert": "All Players Cannot be AI Player!"
+  },
+  "graveyard": {
+    "graveyard": "Graveyard",
+    "graveyard_death_time": "Death Time: {0}",
+    "causes_of_death": "Causes of death: {0}"
+  },
+  "multi_device": {
+    "multi_device": "Multi Device",
+    "host_game": "Host Game",
+    "join_game": "Join Game",
+    "remaining_seconds": "{0} seconds remaining",
+    "tap_to_join_the_game": "Tap to join the game!",
+    "join": "Join",
+    "shadow_of_roles_lobby": "Shadow of Roles Lobby",
+    "select_a_game_to_join": "Select a game to join!",
+    "players_count": "Players: {0}"
+  },
+  "hints": {
+    "player_name_hint": "Player Name:",
+    "tooltip_username": "Enter your username. It will be used to identify you in the game.",
+    "tooltip_language": "Select your preferred language for the game interface.",
+    "tooltip_host_game": "Create a game lobby and wait for players to join. All players must be on the same local network.",
+    "tooltip_join_game": "Join an existing game lobby. Make sure you are connected to the same local network as the host.",
+    "tooltip_add_player": "Add a new player to the game.",
+    "tooltip_remove_player": "Removes the selected player from the game.",
+    "tooltip_start_game": "Start the game when all players are ready. The game requires at least 5 and at most 10 players."
+  },
+  "lobby_player_status": {
+    "waiting": "WAITING",
+    "bot": "BOT",
+    "host": "HOST"
+  },
+  "contact": {
+    "github": "GitHub",
+    "google_play": "Google Play",
+    "mail": "Mail",
+    "contact_text": "✨ We’d love to hear your thoughts!\n\n⭐ Share your feedback and suggestions.\n\n📱 Support us by rating on Google Play!",
+    "contact_text1": "For any questions or concerns, feel free to reach out using the buttons below. We’re here to help!"
+  },
+  
+  "role_pack": {
+    "complex" : "Complex",
+    "basic" : "Basic",
+    "classic" : "Classic",
+    "dark_chaos" : "Dark Chaos"
+  },
+  
+  "role_pack_texts": {
+    "current_role_pack" : "Role Pack: {0}"
+  }
+
+  
+}
