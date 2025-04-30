@@ -12,8 +12,8 @@ namespace game.models.roles.Templates.NeutralRoles
 {
     public class LoreKeeper : RoleTemplate, IRoleAIBehavior
     {
-        public HashSet<Player> AlreadyChosenPlayers { get; } = new HashSet<Player>();
-        private RoleTemplate GuessedRole {get; set;} = null;
+        public HashSet<Player> AlreadyChosenPlayers { get; } = new ();
+        public RoleTemplate GuessedRole {get; set;} = null;
         public int TrueGuessCount { get; private set; } = 0;
         public LoreKeeper() : base(RoleId.LoreKeeper, RoleCategory.NeutralGood, 
             RolePriority.LoreKeeper, AbilityType.ActiveOthers, WinningTeam.LoreKeeper)

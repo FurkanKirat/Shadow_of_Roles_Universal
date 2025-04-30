@@ -11,6 +11,7 @@ using Managers.enums;
 using SceneControllers.GameScene.Graveyard;
 using SceneControllers.GameScene.Messages;
 using SceneControllers.GameScene.RoleBook;
+using SceneControllers.GameScene.SpecialRoles;
 using TMPro;
 using UI;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace SceneControllers.GameScene
         [SerializeField] private GraveyardLayout graveyardLayout;
         [SerializeField] private MessagesLayout messagesLayout;
         [SerializeField] private RoleBookPanel roleBookPanel;
+        [SerializeField] private SpecialRolesContainer specialRolesContainer;
         private PanelController _panelController;
         private AlphaThresholdManager _alphaThresholdManager;
         
@@ -36,6 +38,7 @@ namespace SceneControllers.GameScene
         
         private IDataProvider _gameInformation;
         private GameSettings _gameSettings;
+        private SceneChanger _sceneChanger;
         private readonly Dictionary<int, TimePeriod> _messagesLastCheck = new ();
 
         private void Start()
@@ -49,6 +52,16 @@ namespace SceneControllers.GameScene
             SetOnClickListeners();
         }
 
+        private void Update()
+        {
+            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            bool isActivePanel = _panelController.HideActivePanel();
+            
+            if(!isActivePanel) _sceneChanger.GoBack();
+            
+            
+        }
+
         private void InitMessagesLastCheck()
         {
             var timePeriod = TimePeriod.Start();
@@ -60,11 +73,13 @@ namespace SceneControllers.GameScene
 
         private void InitScripts()
         {
+            _sceneChanger = ServiceLocator.Get<SceneChanger>();
             _gameInformation = ServiceLocator.Get<StartGameManager>().GameService;
             _gameSettings = _gameInformation.GetGameSettings();
             _panelController = GetComponent<PanelController>();
             roleBookPanel.Initialize(_gameInformation.GetGameSettings().RolePack);
             _alphaThresholdManager = ServiceLocator.Get<AlphaThresholdManager>();
+            specialRolesContainer.InitializePanel(_gameInformation);
         }
         
         private void InitTexts()
@@ -93,6 +108,7 @@ namespace SceneControllers.GameScene
             
             alivePlayersLayout.RefreshAllBoxes(currentPlayer);
             ManageNotification();
+            specialRolesContainer.ShowPanel(currentPlayer.Role.Template);
         }
 
         private void SetOnClickListeners()
@@ -170,8 +186,7 @@ namespace SceneControllers.GameScene
         {
             if (_gameInformation.GetGameStatus() == GameStatus.Ended)
             {
-                var sceneChanger = ServiceLocator.Get<SceneChanger>();
-                sceneChanger.LoadScene(SceneType.GameEnd);
+                _sceneChanger.LoadScene(SceneType.GameEnd);
                 return;
             }
             

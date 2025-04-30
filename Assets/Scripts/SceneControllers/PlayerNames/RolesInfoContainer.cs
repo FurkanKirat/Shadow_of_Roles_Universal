@@ -24,7 +24,10 @@ namespace SceneControllers.PlayerNames
                 var newObject = Instantiate(prefab, parent);
                 var boxText = newObject.GetComponentInChildren<TextMeshProUGUI>();
                 boxText.text = hint.Describe();
+                
             }
+            
+            
         }
     }
 }

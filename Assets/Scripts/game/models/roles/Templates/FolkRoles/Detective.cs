@@ -1,10 +1,7 @@
-
-
 using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
-using game.Services;
 using game.Services.GameServices;
 
 namespace game.models.roles.Templates.FolkRoles

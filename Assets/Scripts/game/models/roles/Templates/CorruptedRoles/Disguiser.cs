@@ -20,12 +20,13 @@ namespace game.models.roles.Templates.CorruptedRoles
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)
-                .AddAttribute(RoleAttribute.HasDisguiseAbility);
+                .AddAttribute(RoleAttribute.HasDisguiseAbility)
+                .SetAttack(1);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
-            roleOwner.Role.Attack = _currentRole.RoleProperties.Attack;
+            roleOwner.Role.Template.RoleProperties.Attack.Current = _currentRole.RoleProperties.Attack.Default;
             return _currentRole.ExecuteAbility(roleOwner, choosenPlayer, gameService);
         }
 

@@ -2,7 +2,6 @@
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
-using game.Services;
 using game.Services.GameServices;
 using Managers;
 
@@ -15,7 +14,7 @@ namespace game.models.roles.Templates.FolkRoles
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.HasImmuneAbility)
-                .SetAbilityUsesLeft(2);
+                .SetCooldown(3); // Actually 2 cooldown
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -25,14 +24,12 @@ namespace game.models.roles.Templates.FolkRoles
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
-            if(RoleProperties.AbilityUsesLeft > 0){
-                SendAbilityMessage(TextManager.GetEnumCategoryTranslation(RoleID, "ability_message"),
-                    roleOwner, gameService.MessageService);
-                choosenPlayer.Role.IsImmune = true;
-                RoleProperties.DecrementAbilityUsesLeft();
-                return AbilityResult.Success;
-            }
-            return AbilityResult.AbilityNotReady;
+            RoleProperties.Cooldown.Reset();
+            SendAbilityMessage(TextManager.GetEnumCategoryTranslation(RoleID, "ability_message"),
+                roleOwner, gameService.MessageService);
+            choosenPlayer.Role.IsImmune = true;
+            return AbilityResult.Success;
+                
         }
 
         public override ChanceProperty GetChanceProperty()

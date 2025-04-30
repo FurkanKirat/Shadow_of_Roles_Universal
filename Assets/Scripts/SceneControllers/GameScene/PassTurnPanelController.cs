@@ -3,7 +3,6 @@ using game.models.player;
 using game.Utils;
 using Managers;
 using TMPro;
-using Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 using Time = game.models.gamestate.Time;

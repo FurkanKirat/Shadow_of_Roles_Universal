@@ -21,10 +21,8 @@ namespace game.Services
         public bool IsGameFinished {get; private set;}
         public FinishGameService(BaseGameService gameService){
             _gameService = gameService;
-
         }
-
-
+        
         /**
          * Checks the game if it is finished and finishes the game
          * @return game is finished or not
@@ -46,7 +44,7 @@ namespace game.Services
                 return new GameEndResult(true, GameEndReason.SinglePlayerRemains, WinStatus.Won);
             }
 
-            if (playerCount < 2 && (currentTeams.Contains(WinningTeam.Folk) || 
+            if (currentTeams.Count < 2 && (currentTeams.Contains(WinningTeam.Folk) || 
                                     currentTeams.Contains(WinningTeam.Corrupter))) {
                 return new GameEndResult(true, GameEndReason.AllSameTeam, WinStatus.Won);
             }
@@ -65,9 +63,9 @@ namespace game.Services
 
 
                 // Finishes the game if the last two players cannot kill each other
-                bool playersCanKill = (player2.Role.Attack > player1.Role.Defence
+                bool playersCanKill = (player2.Role.Template.RoleProperties.Attack.Current > player1.Role.Template.RoleProperties.Defence.Current
                                        &&player2.Role.Template.RoleProperties.HasAttribute(RoleAttribute.CanKill1V1))
-                                      ||(player1.Role.Attack > player2.Role.Defence
+                                      ||(player1.Role.Template.RoleProperties.Attack.Current > player2.Role.Template.RoleProperties.Defence.Current
                                          &&player1.Role.Template.RoleProperties.HasAttribute(RoleAttribute.CanKill1V1));
 
                 // Finishes the game if one of the last two players can role block and the other is not immune to role block
@@ -190,8 +188,8 @@ namespace game.Services
                 switch (player.Role.Template.WinningTeam) {
 
                     case WinningTeam.Clown:
-                        if (!player.DeathProperties.IsAlive && !player.DeathProperties
-                                .CausesOfDeath.Contains(CauseOfDeath.Hanging)) {
+                        if (!player.DeathProperties.IsAlive 
+                            && !player.DeathProperties.HasCause(CauseOfDeath.Hanging)) {
                             player.SetWinStatus(WinStatus.Won);
                             AddWinningTeam(WinningTeam.Clown);
                         }
@@ -266,7 +264,6 @@ namespace game.Services
             return _winningTeams.FirstOrDefault();
         }
         
-
         private void AddWinningTeam(WinningTeam winningTeam){
             _winningTeams.Add(winningTeam);
         }

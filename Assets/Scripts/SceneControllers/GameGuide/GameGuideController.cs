@@ -1,4 +1,5 @@
 ﻿using System;
+using Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,14 @@ namespace SceneControllers.GameGuide
             
             rolesButton.onClick.AddListener(RolesClicked);
             rulesButton.onClick.AddListener(GameRulesClicked);
+        }
+        
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         private void RolesClicked()

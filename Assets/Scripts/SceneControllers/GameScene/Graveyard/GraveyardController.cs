@@ -1,7 +1,4 @@
-﻿
-using Scripts;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace SceneControllers.GameScene.Graveyard
 {

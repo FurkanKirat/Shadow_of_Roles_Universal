@@ -13,7 +13,7 @@ namespace game.models.roles.interfaces.abilities
         {
             gameService.MessageService.SendAbilityMessage(TextCategory.Abilities.GetTranslation("heal"), roleOwner);
             
-            target.Role.Defence = Math.Max(1, target.Role.Defence);
+            target.Role.Template.RoleProperties.Defence.Current = Math.Max(1, target.Role.Template.RoleProperties.Defence.Current);
 
             return AbilityResult.Success;
         }

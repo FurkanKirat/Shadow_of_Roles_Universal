@@ -23,21 +23,7 @@ namespace Game.Models.Roles.Enums
             { WinningTeam.Corrupter, new HashSet<WinningTeam> { WinningTeam.Assassin, WinningTeam.Folk } },
             { WinningTeam.Folk, new HashSet<WinningTeam> { WinningTeam.Corrupter, WinningTeam.Assassin } }
         };
-
-        // Get the priority of the WinningTeam
-        public static int GetPriority(this WinningTeam team)
-        {
-            return team switch
-            {
-                WinningTeam.Folk => -2,
-                WinningTeam.Corrupter => -1,
-                WinningTeam.Assassin => 1,
-                WinningTeam.LoreKeeper => 2,
-                WinningTeam.Clown => 3,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-
+        
         // Get the Team associated with the WinningTeam
         public static Team GetTeam(this WinningTeam team)
         {

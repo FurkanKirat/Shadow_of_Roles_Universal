@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using game.Constants;
 using game.models.gamestate;
@@ -11,13 +10,18 @@ namespace game.models.player.properties
     public class DeathProperties
     {
 
-        public List<CauseOfDeath> CausesOfDeath { get; } = new List<CauseOfDeath>();
+        public CauseOfDeath CausesOfDeath { get; private set; }
         public TimePeriod DeathTimePeriod { get; set; } = TimePeriod.Default();
         public bool IsAlive { get; set; } = true;
 
         public void AddCauseOfDeath(CauseOfDeath causeOfDeath)
         {
-            CausesOfDeath.Add(causeOfDeath);
+            CausesOfDeath |= causeOfDeath;
+        }
+        
+        public bool HasCause(CauseOfDeath cause)
+        {
+            return (CausesOfDeath & cause) != 0;
         }
 
         public string GetDeathTimeAndDayCount()
@@ -28,7 +32,12 @@ namespace game.models.player.properties
 
         public string GetCausesOfDeathAsString()
         {
-            return string.Join(", ", CausesOfDeath.Select(death => TextCategory.CauseOfDeath.GetTranslation(death.FormatEnum())));
+            if (CausesOfDeath == CauseOfDeath.None) return "";
+            var causeList = Enum.GetValues(typeof(CauseOfDeath))
+                .Cast<CauseOfDeath>()
+                .Where(x => x != CauseOfDeath.None && HasCause(x))
+                .Select(cause => TextCategory.CauseOfDeath.GetTranslation(cause.FormatEnum()));
+            return string.Join(", ", causeList);
         }
         
 

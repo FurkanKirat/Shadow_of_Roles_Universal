@@ -6,13 +6,14 @@ namespace game.models.roles.properties
     public class RoleProperties
     {
         // Base stats
-        public double Attack { get; set; } = 0;
-        public double Defence { get; set; } = 0;
-        public int VoteCount { get; set; } = 1;
-        public int Money { get; set; } = -1;
-        public int AbilityUsesLeft { get; set; } = -1;
-        public int Cooldown { get; set; } = 0;
-        public bool CanUseAbility => AbilityUsesLeft !=0 && Cooldown == 0;
+        public Stat Attack { get; private set; } = new (0);
+        public Stat Defence { get; private set; } = new (0);
+        public Stat Cooldown { get; private set; } = new (0);
+        public Stat VoteCount { get; private set; } = new (1);
+        public Stat Money { get; private set; } = new (0);
+        public Stat AbilityUsesLeft { get; private set; } = new (-1);
+        
+        public bool CanUseAbility => AbilityUsesLeft.Current !=0 && Cooldown.Current == 0;
 
         private HashSet<RoleAttribute> RoleAttributes { get; } = new ();
 
@@ -34,57 +35,43 @@ namespace game.models.roles.properties
         {
             return RoleAttributes.Contains(attribute);
         }
-
-        public void IncrementMoney(int money)
+        
+        public RoleProperties SetAbilityUsesLeft(int value)
         {
-            Money += money;
-        }
-
-        public void DecrementMoney(int money)
-        {
-            Money -= money;
-        }
-
-        public void DecrementAbilityUsesLeft()
-        {
-            AbilityUsesLeft--;
-        }
-
-        public RoleProperties SetAttack(double attack)
-        {
-            Attack = attack;
+            AbilityUsesLeft = new Stat(value);
             return this;
         }
 
-        public RoleProperties SetDefence(double defence)
+        public RoleProperties SetAttack(int attack)
         {
-            Defence = defence;
+            Attack = new Stat(attack);
+            return this;
+        }
+
+        public RoleProperties SetDefence(int defence)
+        {
+            Defence = new Stat(defence);
             return this;
         }
 
         public RoleProperties SetVoteCount(int voteCount)
         {
-            VoteCount = voteCount;
+            VoteCount = new Stat(voteCount);
             return this;
         }
 
         public RoleProperties SetCooldown(int cooldown)
         {
-            Cooldown = cooldown;
+            Cooldown = new Stat(cooldown);
             return this;
         }
 
         public RoleProperties SetMoney(int money)
         {
-            Money = money;
+            Money = new Stat(money);
             return this;
         }
-
-        public RoleProperties SetAbilityUsesLeft(int abilityUsesLeft)
-        {
-            AbilityUsesLeft = abilityUsesLeft;
-            return this;
-        }
+        
         
     }
 }

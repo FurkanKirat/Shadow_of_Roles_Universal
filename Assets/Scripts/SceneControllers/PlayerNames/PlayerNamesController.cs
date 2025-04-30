@@ -15,14 +15,24 @@ namespace SceneControllers.PlayerNames
         [SerializeField] private PlayerNamesContainer playerNamesContainer;
         [SerializeField] private Button startGameButton, increasePCountButton, decreasePCountButton;
         [SerializeField] private RolePackPanel rolePackPanel;
+        private SceneChanger _sceneChanger;
         public List<Player> Players { get; } = new ();
         private void Start()
         {
+            _sceneChanger = ServiceLocator.Get<SceneChanger>();
             playerNamesText.text = TextCategory.PlayerNames.GetTranslation("player_names");
             startGameButton.onClick.AddListener(StartGameClicked);
             increasePCountButton.onClick.AddListener(AddPlayer);
             decreasePCountButton.onClick.AddListener(RemovePlayer);
             UpdatePlayerCount();
+            
+        }
+        private void Update()
+        {
+            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            
+            if(rolePackPanel.gameObject.activeSelf) rolePackPanel.gameObject.SetActive(false);
+            else _sceneChanger.GoBack();
             
         }
 

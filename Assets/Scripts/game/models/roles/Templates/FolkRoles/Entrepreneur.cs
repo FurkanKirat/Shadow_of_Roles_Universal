@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using game.models.gamestate;
 using game.models.player;
 using game.models.player.properties;
@@ -7,7 +8,6 @@ using Game.Models.Roles.Enums;
 using game.models.roles.interfaces;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
-using game.Services;
 using game.Services.GameServices;
 using game.Utils;
 using Managers;
@@ -44,7 +44,7 @@ namespace game.models.roles.Templates.FolkRoles
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             if(gameService.TimeService.TimePeriod.DayCount > 1){
-                RoleProperties.IncrementMoney(2); //Passive income
+                RoleProperties.Money.IncrementCurrent(2); //Passive income
             }
 
             return base.PerformAbility(roleOwner, choosenPlayer, gameService);
@@ -52,7 +52,7 @@ namespace game.models.roles.Templates.FolkRoles
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
-            if(TargetAbility.Price > RoleProperties.Money){
+            if(TargetAbility.Price > RoleProperties.Money.Current){
                 return InsufficientMoney(roleOwner, gameService);
             }
             
@@ -76,7 +76,7 @@ namespace game.models.roles.Templates.FolkRoles
             }
 
 
-            RoleProperties.DecrementMoney(TargetAbility.Price);
+            RoleProperties.Money.DecrementCurrent(TargetAbility.Price);
 
             TargetAbility = ChosenAbility.None;
             return result;
@@ -125,10 +125,10 @@ namespace game.models.roles.Templates.FolkRoles
         
         public class ChosenAbility
         {
-            public static readonly ChosenAbility Attack = new ChosenAbility("attack", RolePriority.None, 4);
-            public static readonly ChosenAbility Heal = new ChosenAbility("heal", RolePriority.Heal, 3);
-            public static readonly ChosenAbility Info = new ChosenAbility("info", RolePriority.None, 2);
-            public static readonly ChosenAbility None = new ChosenAbility("none", RolePriority.None, 0);
+            public static readonly ChosenAbility Attack = new ("attack", RolePriority.None, 4);
+            public static readonly ChosenAbility Heal = new ("heal", RolePriority.Heal, 3);
+            public static readonly ChosenAbility Info = new ("info", RolePriority.None, 2);
+            public static readonly ChosenAbility None = new ("none", RolePriority.None, 0);
 
             public string Name { get; }
             public RolePriority RolePriority { get; }
@@ -144,6 +144,11 @@ namespace game.models.roles.Templates.FolkRoles
             public override string ToString() => Name;
 
             public static IEnumerable<ChosenAbility> Values => new[] { None, Attack, Heal, Info };
+
+            public static int GetIndex(ChosenAbility chosenAbility)
+            {
+                return Values.ToList().IndexOf(chosenAbility);
+            }
             public override bool Equals(object obj) => obj is ChosenAbility other && Name == other.Name;
             public override int GetHashCode() => Name.GetHashCode();
 

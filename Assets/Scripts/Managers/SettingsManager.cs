@@ -11,11 +11,14 @@ namespace Managers
     {
         private readonly FilePathManager _filePathManager = ServiceLocator.Get<FilePathManager>();
         private readonly LanguageManager _languageManager = ServiceLocator.Get<LanguageManager>();
-        public UserSettings UserSettings { get; set; }
+        public UserSettings UserSettings { get; private set; } = UserSettings.DefaultSettings;
 
         public SettingsManager()
         {
-            LoadSettings();
+            if (!LoadSettings())
+            {
+                SaveSettings();
+            }
         }
         
         private bool LoadSettingsFile()
@@ -38,6 +41,7 @@ namespace Managers
             catch (Exception ex)
             {
                 Debug.Log($"Ayarlar dosyası yüklenirken bir hata oluştu: {ex.Message}");
+                UserSettings = UserSettings.DefaultSettings;
                 return false;
             }
         }
@@ -45,8 +49,12 @@ namespace Managers
         public bool LoadSettings()
         {
             bool success = LoadSettingsFile();
-            
-            if(!success) UserSettings = UserSettings.DefaultSettings;
+
+            if (!success)
+            {
+                UserSettings = UserSettings.DefaultSettings;
+                _languageManager.LoadLanguageFile(UserSettings.Language);
+            }
             
             return success;
         }

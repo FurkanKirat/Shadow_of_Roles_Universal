@@ -15,7 +15,7 @@ namespace game.models.roles.interfaces.abilities
         AbilityResult Attack(Player roleOwner, Player target, BaseGameService gameService, CauseOfDeath causeOfDeath){
             
             var messageService = gameService.MessageService;
-            if (roleOwner.Role.Attack <= target.Role.Defence)
+            if (roleOwner.Role.Template.RoleProperties.Attack.Current <= target.Role.Template.RoleProperties.Defence.Current)
             {
                 messageService.SendAbilityMessage(TextCategory.Abilities.GetTranslation("defence"), roleOwner);
                 return AbilityResult.AttackInsufficient;

@@ -73,7 +73,7 @@ namespace SceneControllers.GameScene.Helper
             else if (Self.Role.Template.RoleID == RoleId.LastJoke) {
                 RoleTemplate lastJoke = Self.Role.Template;
                 if(Self.DeathProperties.IsAlive) visible = false;
-                else if(lastJoke.RoleProperties.AbilityUsesLeft > 0 )
+                else if(lastJoke.RoleProperties.AbilityUsesLeft.Current > 0 )
                     visible = lastJoke.AbilityType.CanUseAbility(Self, Target);
             }
             

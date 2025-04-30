@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Scripts
+namespace SceneControllers
 {
     public class PanelAnimator : MonoBehaviour
     {
@@ -23,6 +23,9 @@ namespace Scripts
 
         public void Hide()
         {
+            if (!gameObject.activeInHierarchy)
+                return;
+            
             _animator.SetTrigger("Hide");
             StartCoroutine(DisableAfterAnimation());
         }

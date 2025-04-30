@@ -24,7 +24,7 @@ namespace game.models.roles.Templates
         public WinningTeam WinningTeam { get; set; }
         public RoleProperties RoleProperties { get; }
 
-        public RoleTemplate(RoleId roleID, RoleCategory roleCategory, RolePriority rolePriority, AbilityType abilityType, WinningTeam winningTeam)
+        protected RoleTemplate(RoleId roleID, RoleCategory roleCategory, RolePriority rolePriority, AbilityType abilityType, WinningTeam winningTeam)
         {
             RoleID = roleID;
             RoleCategory = roleCategory;

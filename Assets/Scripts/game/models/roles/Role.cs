@@ -7,13 +7,8 @@ namespace game.models.roles
     public class Role
     {
         public RoleTemplate Template {get; set;}
-        
         public Player ChosenPlayer { get; set; }
         public bool CanPerform { get; set; }
-        public AbilityResult AbilityResult { get; set; }
-
-        public double Attack { get; set; }
-        public double Defence {get;set;}
         public bool IsImmune { get; set; }
         public bool IsRevealed { get; set; }
 
@@ -26,8 +21,15 @@ namespace game.models.roles
         
         public void ResetStates(){
             ChosenPlayer = null;
-            Defence = Template.RoleProperties.Defence;
-            Attack = Template.RoleProperties.Attack;
+            Template.RoleProperties.Defence.Reset();
+            Template.RoleProperties.Attack.Reset();
+            
+            var cooldown = Template.RoleProperties.Cooldown;
+            if (cooldown.Default > 0)
+            {
+                Template.RoleProperties.Cooldown.DecrementCurrent();
+            }
+            
             CanPerform = true;
             IsImmune = false;
         }
@@ -38,9 +40,6 @@ namespace game.models.roles
                    $"template={Template}, " +
                    $"choosenPlayer={ChosenPlayer}, " +
                    $"canPerform={CanPerform}, " +
-                   $"abilityResult={AbilityResult}, " +
-                   $"attack={Attack}, " +
-                   $"defence={Defence}, " +
                    $"isImmune={IsImmune}, " +
                    $"isRevealed={IsRevealed}," +
                    $"}}";

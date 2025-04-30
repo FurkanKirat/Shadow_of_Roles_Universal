@@ -51,7 +51,7 @@ namespace game.Services
             var voteCounts = new Dictionary<Player, int>();
 
             foreach(var entry in _votes){
-                int voteCount = entry.Key.Role.Template.RoleProperties.VoteCount;
+                int voteCount = entry.Key.Role.Template.RoleProperties.VoteCount.Current;
                 Player votedPlayer = entry.Value;
                 if (votedPlayer != null)
                 {

@@ -180,7 +180,7 @@
     "current_money": "Current Money: {0}",
     "expected_money": "\nExpected Money: {0}",
     "money_insufficient": "\nMoney insufficient",
-    "selected": "Selected Ability: {0}",
+    "selected": "Selected Ability:",
     "attack": "Attack",
     "heal": "Heal",
     "info": "Info",
@@ -195,7 +195,7 @@
     "abilities": "You choose a player and then you choose what role that player has, if you find it correctly player's role will be revealed.",
     "ability_message": "The following player has revealed: {playerName} ({roleName})",
     "guess": "Your true guess count is: {guessCount}",
-    "guessed_role": "Selected role: {0}",
+    "guessed_role": "Selected role:",
     "guessed_role_none": "No role selected!",
     "winning_true_guess_count": "You have to guess {0} roles correctly to win!",
     "current_true_guess_count": "You have guessed {0} roles currently!"
@@ -208,7 +208,8 @@
     "no_ability_exists": "Your ability could not be used because your role does not have the ability",
     "heal": "You have successfully protected your target",
     "used_on": "You tried to use your ability on: {playerName}",
-    "did_not_used": "You did not used your ability on anybody"
+    "did_not_used": "You did not used your ability on anybody",
+    "cooldown": "Your ability has {0} cooldown!"
   },
   "cause_of_death": {
     "assassin": "Assassin",

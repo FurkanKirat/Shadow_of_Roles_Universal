@@ -208,7 +208,8 @@
     "no_ability_exists": "Your ability could not be used because your role does not have the ability",
     "heal": "You have successfully protected your target",
     "used_on": "You tried to use your ability on: {playerName}",
-    "did_not_used": "You did not used your ability on anybody"
+    "did_not_used": "You did not used your ability on anybody",
+    "cooldown": "Your ability has {0} cooldown!"
   },
   "cause_of_death": {
     "assassin": "Assassin",

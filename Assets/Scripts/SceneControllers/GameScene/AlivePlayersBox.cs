@@ -13,7 +13,7 @@ namespace SceneControllers.GameScene
     public class AlivePlayersBox : MonoBehaviour
     {
         [SerializeField] private Button button;
-        [SerializeField] private TextMeshProUGUI playerNameText, numberText;
+        [SerializeField] private TextMeshProUGUI playerNameText, numberText, roleText;
         [SerializeField] private Image circleImage;
         private TextMeshProUGUI _buttonText;
         private Player _currentPlayer, _targetPlayer;
@@ -58,19 +58,47 @@ namespace SceneControllers.GameScene
         public void UpdatePlayer(Player currentPlayer)
         {
             _currentPlayer = currentPlayer;
-            circleImage.color = currentPlayer.IsSamePlayer(_targetPlayer) 
-                ? UIConstants.CircleColorCurrent : UIConstants.CircleColorDefault;
-            var playerBtnVis = new PlayerButtonVisibility(_currentPlayer, _targetPlayer, _time);
-            bool shouldShowButton = playerBtnVis.ShouldShowButton();
             
-            var cg = button.GetComponent<CanvasGroup>();
-            
-            cg.alpha = shouldShowButton ? 1 : 0;
-            cg.interactable = shouldShowButton;
-            cg.blocksRaycasts = shouldShowButton;
+            UpdateCircleColor();
+            UpdateButtonVisibility();
+            UpdateRoleVisibilityAndText();
             
             IsSelected = false;
             
+        }
+        
+        private void UpdateCircleColor()
+        {
+            circleImage.color = _currentPlayer.IsSamePlayer(_targetPlayer) 
+                ? UIConstants.CircleColorCurrent 
+                : UIConstants.CircleColorDefault;
+        }
+        
+        private void UpdateButtonVisibility()
+        {
+            var playerBtnVis = new PlayerButtonVisibility(_currentPlayer, _targetPlayer, _time);
+            bool shouldShowButton = playerBtnVis.ShouldShowButton();
+            SetCanvasGroupVisibility(button.GetComponent<CanvasGroup>(), shouldShowButton);
+        }
+
+        private void UpdateRoleVisibilityAndText()
+        {
+            var roleVisibility = new PlayerRoleVisibility(_currentPlayer, _targetPlayer);
+            bool shouldShowRole = roleVisibility.ShouldShowRole();
+    
+            SetCanvasGroupVisibility(roleText.GetComponent<CanvasGroup>(), shouldShowRole);
+    
+            roleText.text = _targetPlayer.Role.Template.GetName();
+
+            var roleTextColor = new RoleTextColor(_targetPlayer.Role.Template.WinningTeam);
+            roleText.color = roleTextColor.GetColor();
+        }
+
+        private void SetCanvasGroupVisibility(CanvasGroup group, bool visible)
+        {
+            group.alpha = visible ? 1 : 0;
+            group.interactable = visible;
+            group.blocksRaycasts = visible;
         }
         
         public void UpdateTime(Player currentPlayer, Time time)

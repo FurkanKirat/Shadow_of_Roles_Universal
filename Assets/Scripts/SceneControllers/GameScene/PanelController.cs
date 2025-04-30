@@ -2,7 +2,6 @@
 using SceneControllers.GameScene.Graveyard;
 using SceneControllers.GameScene.Messages;
 using SceneControllers.GameScene.RoleBook;
-using Scripts;
 using UnityEngine;
 
 namespace SceneControllers.GameScene
@@ -15,7 +14,8 @@ namespace SceneControllers.GameScene
         [SerializeField] private RoleBookController roleBookController;
         
         private readonly Dictionary<string, PanelAnimator> _panelAnimators = new();
-
+        private string ActivePanel { get; set; }
+        
         private void Awake()
         {
             _panelAnimators["PassTurnPanel"] = GetPanelAnimator(passTurnPanelController);
@@ -25,13 +25,19 @@ namespace SceneControllers.GameScene
             _panelAnimators["RoleBookPanel"] = GetPanelAnimator(roleBookController);
         }
         
-        public void HidePanel(string panelName)
+        public bool HideActivePanel()
         {
-            _panelAnimators[panelName].Hide();
+            if (ActivePanel == null) return false;
+            
+            _panelAnimators[ActivePanel].Hide();
+            ActivePanel = null;
+            return true;
         }
 
         public void ShowPanel(string panelName)
         {
+            HideActivePanel();
+            ActivePanel = panelName;
             _panelAnimators[panelName].Show();
         }
 
@@ -39,10 +45,10 @@ namespace SceneControllers.GameScene
         {
             return _panelAnimators[panelName].GetComponent<T>();
         }
-
+        
         private PanelAnimator GetPanelAnimator<T>(T component) where T : Component
         {
-            return component.gameObject.GetComponentInChildren<PanelAnimator>();
+            return component.gameObject.GetComponentInChildren<PanelAnimator>(true);
         }
         
     }

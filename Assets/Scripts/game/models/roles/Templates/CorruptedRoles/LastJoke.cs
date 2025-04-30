@@ -30,7 +30,7 @@ namespace game.models.roles.Templates.CorruptedRoles
         {
             if(CanUseAbility() && !roleOwner.DeathProperties.IsAlive){
 
-                RoleProperties.AbilityUsesLeft = 0;
+                RoleProperties.AbilityUsesLeft.DecrementCurrent();
 
                 if(choosenPlayer==null){
                     return AbilityResult.NoOneSelected;
@@ -42,7 +42,7 @@ namespace game.models.roles.Templates.CorruptedRoles
         }
         
         public bool CanUseAbility() {
-            return RoleProperties.AbilityUsesLeft > 0;
+            return RoleProperties.AbilityUsesLeft.Current > 0;
         }
 
         public override ChanceProperty GetChanceProperty()
