@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using game.Constants;
 using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
 using game.Services;
 using game.Services.GameServices;
+using game.Utils;
 using Managers;
 
 namespace game.models.roles.Templates
@@ -23,7 +23,6 @@ namespace game.models.roles.Templates
 
         public WinningTeam WinningTeam { get; set; }
         public RoleProperties RoleProperties { get; }
-
         protected RoleTemplate(RoleId roleID, RoleCategory roleCategory, RolePriority rolePriority, AbilityType abilityType, WinningTeam winningTeam)
         {
             RoleID = roleID;
@@ -85,28 +84,28 @@ namespace game.models.roles.Templates
         public abstract ChanceProperty GetChanceProperty();
         
         public string GetTeamText(){
-            return TextCategory.Teams.GetEnumTranslation(WinningTeam.GetTeam());
+            return TextManager.Translate($"teams.{WinningTeam.GetTeam().FormatEnum()}");
         }
         
         public string GetName() {
-            return TextManager.GetEnumCategoryTranslation(RoleID,"name");
+            return TextManager.TranslateEnum(RoleID,"name");
         }
 
         public string GetAttributes() {
-            return TextManager.GetEnumCategoryTranslation(RoleID,"attributes");
+            return TextManager.TranslateEnum(RoleID,"attributes");
         }
 
         public string GetAbilities() {
-            return TextManager.GetEnumCategoryTranslation(RoleID,"abilities");
+            return TextManager.TranslateEnum(RoleID,"abilities");
         }
         
         public string GetCategoryText()
         {
-            return TextCategory.RoleCategories.GetEnumTranslation(RoleCategory);
+            return TextManager.Translate($"role_categories.{RoleCategory.FormatEnum()}");
         }
 
         public string GetGoal(){
-            return TextCategory.Goals.GetEnumTranslation(WinningTeam);
+            return TextManager.Translate($"goals.{WinningTeam.FormatEnum()}");
         }
         
     }

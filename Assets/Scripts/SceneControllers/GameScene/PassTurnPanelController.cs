@@ -2,6 +2,7 @@
 using game.models.player;
 using game.Utils;
 using Managers;
+using Networking.DataTransferObjects;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,13 +16,13 @@ namespace SceneControllers.GameScene
         [SerializeField] private TextMeshProUGUI turnText;
         private PanelAnimator _panelAnimator;
         private string _textTemplate;
-        private Player _player;
+        private PlayerDto _player;
         private Time _time;
         private void Awake()
         {
-            _textTemplate = TextCategory.Alerts.GetTranslation("pass_turn_message");
+            _textTemplate = TextManager.Translate("alerts.pass_turn_message");
             
-            string turnBtnText = TextCategory.General.GetTranslation("pass_turn");
+            string turnBtnText = TextManager.Translate("general.pass_turn");
             passButton.GetComponentInChildren<TextMeshProUGUI>().text = turnBtnText;
             
             _panelAnimator = gameObject.GetComponent<PanelAnimator>();
@@ -34,7 +35,7 @@ namespace SceneControllers.GameScene
             
         }
 
-        public void UpdatePanel(Player player, Time time)
+        public void UpdatePanel(PlayerDto player, Time time)
         {
             if (player == _player && _time == time) return;
             _player = player;

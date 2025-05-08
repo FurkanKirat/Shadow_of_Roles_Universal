@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace game.Utils
 {
     
     public static class RandomUtils
     {
-        private static readonly Random Rand = new Random();
+        private static readonly Random Rand = new ();
         
         public static bool GetRandomBoolean()
         {
@@ -19,12 +20,19 @@ namespace game.Utils
             return Rand.Next(min, max + 1);
         }
         
-        public static T GetRandomElement<T>(this IList<T> list)
+        public static T GetRandomElement<T>(this IEnumerable<T> source)
         {
             
-            return list[GetRandomNumber(0, list.Count-1)];
-        }
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
 
+            var list = source as IList<T> ?? source.ToList();
+            if (list.Count == 0)
+                throw new InvalidOperationException("Collection is empty.");
+
+            return list[Rand.Next(0, list.Count)];
+        }
+        
         public static void Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;

@@ -11,7 +11,7 @@ namespace game.models.roles.Templates.CorruptedRoles
     public class Psycho : RoleTemplate, IAttackAbility
     {
         public Psycho() : base(RoleId.Psycho, RoleCategory.CorrupterKilling, 
-            RolePriority.None, AbilityType.OtherThanCorrupted, WinningTeam.Corrupter)
+            RolePriority.None, AbilityType.OtherThanTeamMembers, WinningTeam.Corrupter)
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)

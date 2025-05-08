@@ -32,7 +32,7 @@ namespace SceneControllers.PlayerNames
         private void BoxSelected()
         {
             var builder = StrategyChooser.GetStrategy(_rolePackInfo.RolePack);
-            _rolesInfoContainer.ChangeInfo(builder.Build(new GameSettings(GameMode.Offline, _rolePackInfo.RolePack, 10)));
+            _rolesInfoContainer.ChangeInfo(builder.Build(new GameSettings(GameMode.Local, _rolePackInfo.RolePack, 10)));
             
             _rolePackPanel.ChangeRolePackInfo(_rolePackInfo, _index);
             _rolesScrollRect.ScrollToTop();

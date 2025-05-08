@@ -22,7 +22,7 @@ namespace Managers
                     return false;
                 }
 
-                var translations = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(jsonFile.text);
+                var translations = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonFile.text);
                 return TextManager.LoadTranslations(translations);
             }
             catch (Exception ex)

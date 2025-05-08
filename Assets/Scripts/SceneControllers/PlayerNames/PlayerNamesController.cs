@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using game.Constants;
 using game.models.player;
 using game.models.player.properties;
 using Managers;
@@ -20,7 +19,8 @@ namespace SceneControllers.PlayerNames
         private void Start()
         {
             _sceneChanger = ServiceLocator.Get<SceneChanger>();
-            playerNamesText.text = TextCategory.PlayerNames.GetTranslation("player_names");
+            playerNamesText.text = TextManager.Translate("player_names.player_names");
+            startGameButton.GetComponentInChildren<TextMeshProUGUI>().text = TextManager.Translate("player_names.start_game");
             startGameButton.onClick.AddListener(StartGameClicked);
             increasePCountButton.onClick.AddListener(AddPlayer);
             decreasePCountButton.onClick.AddListener(RemovePlayer);
@@ -56,7 +56,7 @@ namespace SceneControllers.PlayerNames
         private void StartGameClicked()
         {
             var playerNames = playerNamesContainer.PlayerNames;
-            
+            Players.Clear();
             bool humanPlayerExist = false;
             for (int i = 0; i < playerNames.Count; i++)
             {

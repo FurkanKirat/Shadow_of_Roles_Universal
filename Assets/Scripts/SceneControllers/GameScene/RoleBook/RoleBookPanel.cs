@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using game.models;
 using game.models.gamestate;
+using Game.Models.Roles.Enums;
 using game.models.roles.Templates;
 using game.Services;
-using Managers;
 using SceneControllers.GameScene.Helper;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,11 +28,11 @@ namespace SceneControllers.GameScene.RoleBook
             
         }
 
-        public void SelectRole(RoleTemplate roleTemplate, int index)
+        public void SelectRole(RoleId roleId, int index)
         {
-            if (_currentRoleTemplate != null && roleTemplate.RoleID == _currentRoleTemplate.RoleID) return;
+            if (_currentRoleTemplate != null && roleId == _currentRoleTemplate.RoleID) return;
             
-           _currentRoleTemplate = roleTemplate;
+           _currentRoleTemplate = RoleCatalog.GetRole(roleId);
            _selectedRolePackIndex = index;
 
            for (int i = 0; i < RolePackBoxes.Count; ++i)
@@ -43,13 +42,13 @@ namespace SceneControllers.GameScene.RoleBook
                    = i == _selectedRolePackIndex ? Color.cyan : Color.white;
                
            }
-           roleBookRolePanel.ChangeInfo(roleTemplate);
+           roleBookRolePanel.ChangeInfo(_currentRoleTemplate);
         }
         
-        public void SelectRole(RoleTemplate roleTemplate)
+        public void SelectRole(RoleId roleId)
         {
-            int index = _roles.IndexOf(roleTemplate);
-            SelectRole(roleTemplate, index);
+            int index = _roles.IndexOf(RoleCatalog.GetRole(roleId));
+            SelectRole(roleId, index);
             scrollRect.ScrollToIndex(index, _roles.Count);
         }
         

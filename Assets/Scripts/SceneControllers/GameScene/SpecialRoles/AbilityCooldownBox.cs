@@ -1,5 +1,4 @@
-﻿using game.Constants;
-using Managers;
+﻿using Managers;
 using TMPro;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace SceneControllers.GameScene.SpecialRoles
         public void UpdateBox(int cooldown)
         {
             abilityCooldownText.text = string.Format(
-                TextCategory.Abilities.GetTranslation("cooldown"), cooldown);
+                TextManager.Translate("abilities.cooldown"), cooldown);
         }
     }
 }

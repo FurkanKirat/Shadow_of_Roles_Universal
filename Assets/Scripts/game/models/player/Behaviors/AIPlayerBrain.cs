@@ -2,7 +2,6 @@
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces;
 using game.models.roles.properties;
-using game.models.roles.Templates;
 using game.Utils;
 
 namespace game.models.player.Behaviors
@@ -20,7 +19,7 @@ namespace game.models.player.Behaviors
                 return;
             }
 
-            self.Role.ChosenPlayer = choosablePlayers.GetRandomElement();
+            self.Role.ChosenPlayer = choosablePlayers.GetRandomElement().Number;
         }
 
         public void ChooseVotingPlayer(Player self, List<Player> players)
@@ -46,7 +45,7 @@ namespace game.models.player.Behaviors
                     var playerTeam = player.Role.Template.WinningTeam;
                     
                     if (!playerTeam.CanWinWith(team)) {
-                        self.Role.ChosenPlayer = player;
+                        self.Role.ChosenPlayer = player.Number;
                         return;
                     } 
                     
@@ -59,7 +58,7 @@ namespace game.models.player.Behaviors
             if(choosablePlayers.Count == 0){
                 return;
             }
-            self.Role.ChosenPlayer = choosablePlayers.GetRandomElement();
+            self.Role.ChosenPlayer = choosablePlayers.GetRandomElement().Number;
         }
         
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using game.Constants;
 using game.models;
 using game.models.gamestate;
 using game.models.player;
@@ -8,8 +7,6 @@ using Game.Models.Roles.Enums;
 using game.models.roles.properties;
 using game.Services.GameServices;
 using Managers;
-using UnityEngine;
-using Time = game.models.gamestate.Time;
 
 namespace game.Services
 {
@@ -42,35 +39,40 @@ namespace game.Services
 
         public void SendSpecificRoleMessages(Player alivePlayer)
         {
-            const TextCategory category = TextCategory.RoleBlock;
             if (alivePlayer.Role.Template.RoleProperties.HasAttribute(RoleAttribute.RoleBlockImmune)
                 && !alivePlayer.Role.CanPerform
                 && !alivePlayer.Role.IsImmune)
             {
-                SendMessage(category.GetTranslation("rb_immune_message"), alivePlayer, false);
+                SendMessage(TextManager.Translate("role_block.rb_immune_message"), alivePlayer, false);
             }
 
-            if (alivePlayer.Role.ChosenPlayer == null)
+            Player chosenPlayer = _gameService.GetPlayer(alivePlayer.Role.ChosenPlayer);
+            if (chosenPlayer == null)
             {
                 return;
             }
-
-            if (alivePlayer.Role.ChosenPlayer.Role.IsImmune &&
+            
+            if (chosenPlayer.Role.IsImmune &&
                 alivePlayer.Role.Template.RolePriority <= RolePriority.RoleBlock
                 && !alivePlayer.Role.Template.RoleProperties.HasAttribute(RoleAttribute.HasImmuneAbility))
             {
-                SendMessage(category.GetTranslation("immune_message"), alivePlayer, false);
+                SendMessage(TextManager.Translate("role_block.immune_message"), alivePlayer, false);
             }
         }
 
         public Dictionary<TimePeriod, List<Message>> GetPlayerMessages(Player player)
+        {
+            return GetPlayerMessages(player.Number);
+        }
+        
+        public Dictionary<TimePeriod, List<Message>> GetPlayerMessages(int number)
         {
             var sendMap = new Dictionary<TimePeriod, List<Message>>();
 
             foreach (var entry in _messages)
             {
                 var filteredMessages = entry.Value
-                    .Where(message => message.IsPublic || message.Receiver.Number == player.Number)
+                    .Where(message => message.IsPublic || message.Receiver.Number == number)
                     .ToList();
 
                 sendMap[entry.Key] = filteredMessages;

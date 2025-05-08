@@ -1,4 +1,4 @@
-﻿using game.Constants;
+﻿using game.Utils;
 using Managers;
 
 namespace game.models.gamestate
@@ -16,7 +16,7 @@ namespace game.models.gamestate
         
         public string GetName()
         {
-            return TextCategory.RolePack.GetEnumTranslation(RolePack);
+            return TextManager.Translate($"role_pack.{RolePack.FormatEnum()}");
         }
         
     }

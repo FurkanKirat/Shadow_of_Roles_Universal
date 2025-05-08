@@ -7,13 +7,13 @@ namespace Game.Services
     public class TurnTimerService
     {
         private Timer _timer;
-        private readonly MultiDeviceGameService _multiDeviceGameService;
+        private readonly OnlineGameService _onlineDeviceGameService;
         private bool _isRunning = true;
         private readonly IOnTimeChangeListener _onTimeChangeListener;
 
-        public TurnTimerService(MultiDeviceGameService multiDeviceGameService, IOnTimeChangeListener onTimeChangeListener)
+        public TurnTimerService(OnlineGameService onlineDeviceGameService, IOnTimeChangeListener onTimeChangeListener)
         {
-            _multiDeviceGameService = multiDeviceGameService;
+            _onlineDeviceGameService = onlineDeviceGameService;
             _onTimeChangeListener = onTimeChangeListener;
             SchedulePhase();
         }
@@ -33,7 +33,7 @@ namespace Game.Services
         {
             if (!_isRunning) return;
 
-            _multiDeviceGameService.ToggleDayNightCycle();
+            _onlineDeviceGameService.ToggleDayNightCycle();
 
             _onTimeChangeListener?.OnTimeChange();
 
@@ -43,7 +43,7 @@ namespace Game.Services
         private int GetCurrentPhaseDuration()
         {
             const int delay = 500;
-            return _multiDeviceGameService.TimeService.TimePeriod.Time switch
+            return _onlineDeviceGameService.TimeService.TimePeriod.Time switch
             {
                 Time.Day => TimeManager.DayTime + delay,
                 Time.Voting => TimeManager.VotingTime + delay,

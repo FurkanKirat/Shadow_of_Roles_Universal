@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
-using game.Constants;
 using game.models.gamestate;
 using Game.Models.Roles.Enums;
 using game.models.roles.Templates;
@@ -58,7 +56,7 @@ namespace game.Services.RoleDistributor.Hints
         public RoleTemplate SelectRole(Dictionary<RoleTemplate, int> currentRoles, RolePack rolePack)
             => DistributionHelper.GetRoleByTeamWithProbability(currentRoles,_team,rolePack);
         
-        public string Describe() => TextCategory.Teams.GetEnumTranslation(_team);
+        public string Describe() => TextManager.Translate($"teams.{_team.FormatEnum()}");
     }
     
     public class MultipleTeamHint : IRoleHint
@@ -73,7 +71,7 @@ namespace game.Services.RoleDistributor.Hints
         public RoleTemplate SelectRole(Dictionary<RoleTemplate, int> currentRoles, RolePack rolePack)
             => DistributionHelper.GetRoleByTeamWithProbability(currentRoles,_teams,rolePack);
         
-        public string Describe() => _teams.Join(" & ", team => TextCategory.Teams.GetEnumTranslation(team));
+        public string Describe() => _teams.Join(" & ", team => TextManager.Translate($"teams.{team.FormatEnum()}"));
     }
 
     public class CategoryHint : IRoleHint
@@ -90,7 +88,7 @@ namespace game.Services.RoleDistributor.Hints
             return DistributionHelper.GetRoleByCategoryWithProbability(currentRoles,_category,rolePack);
         }
         
-        public string Describe() => TextCategory.RoleCategories.GetEnumTranslation(_category);
+        public string Describe() => TextManager.Translate($"role_categories.{_category.FormatEnum()}");
     }
     
     public class MultipleCategoryHint : IRoleHint
@@ -105,7 +103,7 @@ namespace game.Services.RoleDistributor.Hints
         public RoleTemplate SelectRole(Dictionary<RoleTemplate, int> currentRoles, RolePack rolePack)
             => DistributionHelper.GetRoleByCategoryWithProbability(currentRoles,_categories,rolePack);
         
-        public string Describe() => _categories.Join(" & ", category => TextCategory.RoleCategories.GetEnumTranslation(category));
+        public string Describe() => _categories.Join(" & ", category => TextManager.Translate($"role_categories.{category.FormatEnum()}"));
     }
 
     public class NoHint : IRoleHint
@@ -113,12 +111,12 @@ namespace game.Services.RoleDistributor.Hints
         public RoleTemplate SelectRole(Dictionary<RoleTemplate, int> currentRoles, RolePack rolePack)
             => DistributionHelper.GetRoleWithProbability(currentRoles,rolePack);
         
-        public string Describe() => TextCategory.General.GetTranslation("any");
+        public string Describe() => TextManager.Translate("general.any");
     }
 
     public class SameChanceHint : IRoleHint
     {
-        private List<IRoleHint> _hints;
+        private readonly List<IRoleHint> _hints;
 
         public SameChanceHint(List<IRoleHint> hints)
         {

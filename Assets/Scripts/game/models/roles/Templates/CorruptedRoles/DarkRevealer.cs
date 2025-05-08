@@ -9,7 +9,7 @@ namespace game.models.roles.Templates.CorruptedRoles
     public class DarkRevealer : RoleTemplate, IInvestigativeAbility
     {
         public DarkRevealer() : base(RoleId.DarkRevealer, RoleCategory.CorrupterAnalyst, RolePriority.None, 
-            AbilityType.OtherThanCorrupted, WinningTeam.Corrupter)
+            AbilityType.OtherThanTeamMembers, WinningTeam.Corrupter)
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers);

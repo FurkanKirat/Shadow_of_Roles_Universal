@@ -29,7 +29,7 @@ namespace game.Services
          */
         private GameEndResult CheckGameFinished(){
 
-            List<Player> alivePlayers = _gameService.AlivePlayers;
+            List<Player> alivePlayers = _gameService.GetAlivePlayersAsPlayerList();
 
             SortedSet<WinningTeam> currentTeams = new SortedSet<WinningTeam>(
                 alivePlayers.Select(player => player.Role.Template.WinningTeam));
@@ -53,8 +53,8 @@ namespace game.Services
             // If only 2 players are alive checks the game if it is finished
             if(playerCount == 2){
 
-                Player player1 = _gameService.AlivePlayers[0];
-                Player player2 = _gameService.AlivePlayers[1];
+                Player player1 = _gameService.GetPlayer(_gameService.AlivePlayers[0]);
+                Player player2 = _gameService.GetPlayer(_gameService.AlivePlayers[1]);
 
 
                 // If one of the players' role can win with other teams finishes the game
@@ -113,8 +113,8 @@ namespace game.Services
 
             IsGameFinished = true;
 
-            List<Player> allPlayers = _gameService.AllPlayers;
-            List<Player> alivePlayers = _gameService.AlivePlayers;
+            List<Player> allPlayers = _gameService.AllPlayers.Values.ToList();
+            List<Player> alivePlayers = _gameService.GetAlivePlayersAsPlayerList();
 
             Player player1, player2;
             RoleTemplate role;
@@ -197,7 +197,7 @@ namespace game.Services
 
                     case WinningTeam.LoreKeeper:
                         LoreKeeper lorekeeper = (LoreKeeper) player.Role.Template;
-                        int winCount  = _gameService.AbilityService.LoreKeLoreKeeperWinningCount;
+                        int winCount  = _gameService.AbilityService.GetLoreKeeperWinningCount();
 
                         if (lorekeeper.TrueGuessCount >= winCount) {
                             player.SetWinStatus(WinStatus.Won);
@@ -229,18 +229,19 @@ namespace game.Services
         private void ResetGame(){
             _gameService.MessageService.ResetMessages();
 
-            var multiDeviceGameService = _gameService as MultiDeviceGameService;
+            var multiDeviceGameService = _gameService as OnlineGameService;
             multiDeviceGameService?.TurnTimerService.StopTimer();
         }
 
         private List<Player> FindLastLivingPlayers(){
             if(_gameService.AlivePlayers.Count != 0){
-                return _gameService.AlivePlayers;
+                return _gameService.GetAlivePlayersAsPlayerList();
             }
             TimePeriod timePeriod = FindLastKilledTime();
             List<Player> players = new List<Player>();
 
-            foreach(var player in _gameService.AllPlayers){
+            foreach(var pair in _gameService.AllPlayers){
+                Player player = pair.Value;
                 if(player.DeathProperties.DeathTimePeriod.Equals(timePeriod)){
                     players.Add(player);
                 }
@@ -251,7 +252,8 @@ namespace game.Services
         private TimePeriod FindLastKilledTime(){
             TimePeriod timePeriod = TimePeriod.Default();
 
-            foreach(var player in _gameService.AllPlayers){
+            foreach(var pair in _gameService.AllPlayers){
+                Player player = pair.Value;
                 if(player.DeathProperties.DeathTimePeriod.IsAfter(timePeriod)){
                     timePeriod = player.DeathProperties.DeathTimePeriod;
                 }

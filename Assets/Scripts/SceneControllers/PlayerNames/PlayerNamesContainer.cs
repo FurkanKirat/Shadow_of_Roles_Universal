@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using game.Constants;
 using Managers;
+using SceneControllers.GameScene.Helper;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SceneControllers.PlayerNames
 {
@@ -9,6 +11,7 @@ namespace SceneControllers.PlayerNames
     {
         
         [SerializeField] private GameObject objectPrefab;
+        [SerializeField] private ScrollRect scrollRect;
         public List<PlayerNamesBoxScript> PlayerNames { get; } = new ();
         private void Start()
         {
@@ -19,7 +22,7 @@ namespace SceneControllers.PlayerNames
         {
             int playerCount = PlayerNames.Count;
             if (playerCount >= GameConstants.MaxPlayerCount) return false;
-            string playerNameTemp = TextCategory.PlayerNames.GetTranslation("player");
+            string playerNameTemp = TextManager.Translate("player_names.player");
             string playerName = string.Format(playerNameTemp, playerCount + 1);
                 
             var newObject = Instantiate(objectPrefab,gameObject.transform);
@@ -28,7 +31,7 @@ namespace SceneControllers.PlayerNames
             boxScript.SetIsAI(false);
             boxScript.SetPlayerName(playerName);
             PlayerNames.Add(boxScript);
-
+            scrollRect.ScrollToBottom();
             return true;
         }
 
@@ -40,6 +43,7 @@ namespace SceneControllers.PlayerNames
             
             PlayerNames.Remove(lastObject);
             Destroy(lastObject.gameObject);
+            scrollRect.ScrollToBottom();
             return true;
         }
         

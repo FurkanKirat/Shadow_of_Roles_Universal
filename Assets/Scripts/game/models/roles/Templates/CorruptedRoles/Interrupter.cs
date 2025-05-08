@@ -9,7 +9,7 @@ namespace game.models.roles.Templates.CorruptedRoles
     public class Interrupter : RoleTemplate, IRoleBlockAbility
     {
         public Interrupter() : base(RoleId.Interrupter, RoleCategory.CorrupterSupport, 
-            RolePriority.RoleBlock, AbilityType.OtherThanCorrupted, WinningTeam.Corrupter)
+            RolePriority.RoleBlock, AbilityType.OtherThanTeamMembers, WinningTeam.Corrupter)
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)

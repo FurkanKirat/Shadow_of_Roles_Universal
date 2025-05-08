@@ -3,11 +3,10 @@ using game.models.gamestate;
 using game.models.player.Behaviors;
 using game.models.player.properties;
 using game.models.roles;
-using UnityEngine;
 
 namespace game.models.player
 {
-    public class Player : IEquatable<Player>
+    public class Player : IEquatable<Player>, IPlayer
     {
         public int Number { get; }
         public string Name { get; }
@@ -51,10 +50,6 @@ namespace game.models.player
             DeathProperties.AddCauseOfDeath(causeOfDeath);
         }
         
-        public string GetNameAndNumber()
-        {
-            return $"({Number}) {Name}";
-        }
 
         public bool Equals(Player other)
         {
@@ -83,23 +78,12 @@ namespace game.models.player
 
         public string GetNameAndRole()
         {
-            return $"{GetNameAndNumber()} ({Role.Template.GetName()})";
+            return $"{this.GetNameAndNumber()} ({Role.Template.GetName()})";
         }
 
         public void SetWinStatus(WinStatus winStatus)
         {
             WinStatus = winStatus;
-        }
-        
-
-        public bool IsSamePlayer(Player player)
-        {
-            return player.Number == Number;
-        }
-
-        public bool IsSamePlayer(int number)
-        {
-            return Number == number;
         }
 
         public override string ToString()

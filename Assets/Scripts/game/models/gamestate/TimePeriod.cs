@@ -1,5 +1,4 @@
 ﻿using System;
-using game.Constants;
 using Managers;
 
 namespace game.models.gamestate
@@ -47,9 +46,8 @@ namespace game.models.gamestate
 
         public string GetAsFormattedString()
         {
-            const TextCategory category = TextCategory.Time;
             string timeStr = Time != Time.Night ?
-                category.GetTranslation("day") : category.GetTranslation("night");
+                TextManager.Translate("time.day") : TextManager.Translate("time.night");
             return string.Format(timeStr, DayCount);
         }
         

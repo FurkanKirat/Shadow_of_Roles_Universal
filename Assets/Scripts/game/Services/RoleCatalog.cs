@@ -107,6 +107,7 @@ namespace game.Services
 
         public static RoleTemplate GetRole(RoleId roleId)
         {
+            if (roleId == RoleId.None) return null;
             return RolesDictionary[roleId];
         }
         

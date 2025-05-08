@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using game.models.gamestate;
 using Game.Models.Roles.Enums;
 
@@ -10,7 +11,12 @@ namespace game.Services.RoleDistributor
         private static readonly Dictionary<RolePack, HashSet<RoleId>> AllowedRoles = new()
         {
             {
-                RolePack.All, new HashSet<RoleId>((RoleId[])Enum.GetValues(typeof(RoleId)))
+                RolePack.All,
+                new HashSet<RoleId>(
+                    Enum.GetValues(typeof(RoleId))
+                        .Cast<RoleId>()
+                        .Where(role => role != RoleId.None)
+                    )
             },
             
             {

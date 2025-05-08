@@ -1,5 +1,4 @@
 ﻿using System;
-using game.Constants;
 using game.models.player;
 using Game.Models.Roles.Enums;
 using game.Services.GameServices;
@@ -11,7 +10,7 @@ namespace game.models.roles.interfaces.abilities
     {
         AbilityResult Heal(Player roleOwner, Player target, BaseGameService gameService)
         {
-            gameService.MessageService.SendAbilityMessage(TextCategory.Abilities.GetTranslation("heal"), roleOwner);
+            gameService.MessageService.SendAbilityMessage(TextManager.Translate("abilities.heal"), roleOwner);
             
             target.Role.Template.RoleProperties.Defence.Current = Math.Max(1, target.Role.Template.RoleProperties.Defence.Current);
 

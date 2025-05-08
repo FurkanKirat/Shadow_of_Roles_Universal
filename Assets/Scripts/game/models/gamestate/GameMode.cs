@@ -4,7 +4,7 @@ namespace game.models.gamestate
 {
     public enum GameMode 
     {
-        Offline,
+        Local,
         Online,
     }
 

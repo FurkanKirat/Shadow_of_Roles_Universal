@@ -10,7 +10,7 @@ namespace Managers
 {
     public class SceneChanger : MonoBehaviour
     {
-        private readonly Stack<string> _sceneStack = new Stack<string>();
+        private readonly Stack<string> _sceneStack = new ();
         
         public void LoadScene(SceneType type)
         {

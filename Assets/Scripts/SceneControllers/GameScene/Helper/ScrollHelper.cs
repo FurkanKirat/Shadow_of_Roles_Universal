@@ -24,7 +24,7 @@ namespace SceneControllers.GameScene.Helper
                 return;
             }
             float normalizedPosition = 1f - (float)index / (size - 1);
-            scrollRect.StartCoroutine(ScrollCoroutine(scrollRect, normalizedPosition));
+            scrollRect.ScrollToNormalizedPosition(normalizedPosition);
         }
         
         private static void ScrollToNormalizedPosition(this ScrollRect scrollRect, float position)

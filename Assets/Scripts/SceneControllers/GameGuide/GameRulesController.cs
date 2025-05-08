@@ -1,5 +1,4 @@
-﻿using game.Constants;
-using Managers;
+﻿using Managers;
 using TMPro;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace SceneControllers.GameGuide
 
         public void Start()
         {
-            gameRulesText.text = TextCategory.RoleBook.GetTranslation("rules_text");
+            gameRulesText.text = TextManager.Translate("role_book.rules_text");
         }
     }
 }

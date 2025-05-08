@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using game.Constants;
 using game.models.player;
 using game.models.player.properties;
 using game.Services.GameServices;
@@ -72,20 +70,21 @@ namespace game.Services
          * After the day voting, executes the max voted player if they get more than half of the votes
          */
         public void ExecuteMaxVoted(){
-            var alivePlayers = _gameService.AlivePlayers;
+            
+            var alivePlayers = _gameService.GetAlivePlayersAsPlayerList();
 
             foreach(var player in alivePlayers) {
                 if(player.PlayerType == PlayerType.AI){
                     player.Brain.ChooseVotingPlayer(player, alivePlayers);
 
                 }
-                Vote(player,player.Role.ChosenPlayer);
+                Vote(player,_gameService.GetPlayer(player.Role.ChosenPlayer));
             }
 
             UpdateMaxVoted();
             if(_maxVote > alivePlayers.Count/2){
                 foreach(var alivePlayer in alivePlayers){
-                    if(alivePlayer.IsSamePlayer(_maxVoted)){
+                    if(_maxVoted.IsSamePlayer(alivePlayer)){
 
                         alivePlayer
                             .KillPlayer(
@@ -97,7 +96,7 @@ namespace game.Services
                 }
                 
                 if(_maxVoted!=null){
-                    _gameService.MessageService.SendMessage(TextCategory.Voting.GetTranslation("vote_execute")
+                    _gameService.MessageService.SendMessage(TextManager.Translate("voting.vote_execute")
                                     .Replace("{playerName}", _maxVoted.Name)
                                     .Replace("{roleName}", _maxVoted.Role.Template.GetName()),
                             null, true);
@@ -107,27 +106,26 @@ namespace game.Services
             _gameService.UpdateAlivePlayers();
 
             foreach(var player in alivePlayers){
-
+                
                 if(player.PlayerType == PlayerType.Human){
                     SendVoteMessage(player);
                 }
 
-                player.Role.ChosenPlayer = null;
+                player.Role.ChosenPlayer = -1;
             }
             ClearVotes();
         }
 
         private void SendVoteMessage(Player player)
         {
-            const TextCategory category = TextCategory.Voting;
-            Player chosenPlayer = player.Role.ChosenPlayer;
+            Player chosenPlayer = _gameService.GetPlayer(player.Role.ChosenPlayer);
             
             if(chosenPlayer!=null){
-                _gameService.MessageService.SendMessage(category.GetTranslation("voted_for")
+                _gameService.MessageService.SendMessage(TextManager.Translate("voting.voted_for")
                                 .Replace("{playerName}", chosenPlayer.GetNameAndNumber())
                         ,player,false);
             }else{
-                _gameService.MessageService.SendMessage(category.GetTranslation("voted_for_none"), player, false);
+                _gameService.MessageService.SendMessage(TextManager.Translate("voting.voted_for_none"), player, false);
             }
 
         }

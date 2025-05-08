@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using game.models.player;
+using Networking.DataTransferObjects;
 using UnityEngine;
 
 namespace SceneControllers.GameScene.Graveyard
@@ -7,9 +8,9 @@ namespace SceneControllers.GameScene.Graveyard
     public class GraveyardLayout : MonoBehaviour
     {
         [SerializeField] private GameObject deathPlayerBoxPrefab;
-        private List<Player> _players = new ();
+        private List<PlayerDto> _players = new ();
         
-        public void RefreshLayout(List<Player> deadPlayers)
+        public void RefreshLayout(List<PlayerDto> deadPlayers)
         {
 
             if (_players.Count == deadPlayers.Count)
@@ -20,12 +21,12 @@ namespace SceneControllers.GameScene.Graveyard
             {
                 if(_players.Contains(player)) continue;
                 
-                var timeObject = Instantiate(deathPlayerBoxPrefab, gameObject.transform);
-                var timePeriodBox = timeObject.GetComponentInChildren<GraveyardBox>();
-                timePeriodBox.Init(player);
+                var graveyardObject = Instantiate(deathPlayerBoxPrefab, gameObject.transform);
+                var graveyardBox = graveyardObject.GetComponentInChildren<GraveyardBox>();
+                graveyardBox.Init(player);
             }
             
-            _players = new List<Player>(deadPlayers);
+            _players = new List<PlayerDto>(deadPlayers);
             
         }
     }

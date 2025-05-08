@@ -1,10 +1,6 @@
-﻿using game.Constants;
-using game.models.player;
+﻿using game.models.player;
 using Game.Models.Roles.Enums;
-using game.models.roles.Templates;
-using game.Services;
 using game.Services.GameServices;
-using Managers;
 
 namespace game.models.roles.interfaces.abilities
 {
@@ -49,13 +45,13 @@ namespace game.models.roles.interfaces.abilities
             return roleOwner.Role.Template.ExecuteAbility(roleOwner, target, gameService);
         }
 
-        AbilityResult PerformAbilityLoreKeeper(Player roleOwner, Player target, BaseGameService gameService, RoleTemplate targetRole)
+        AbilityResult PerformAbilityLoreKeeper(Player roleOwner, Player target, BaseGameService gameService, RoleId targetRole)
         {
             var canPerformCheck = AbilityValidator.CanPerformAbility(roleOwner, target, gameService);
             if (canPerformCheck != AbilityResult.Success)
                 return canPerformCheck;
 
-            if (targetRole == null)
+            if (targetRole == RoleId.None)
                 return AbilityResult.NoRoleSelected;
 
             return roleOwner.Role.Template.ExecuteAbility(roleOwner, target, gameService);

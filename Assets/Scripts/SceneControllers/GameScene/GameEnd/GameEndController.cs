@@ -1,13 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
-using game.Constants;
-using game.models;
-using game.models.gamestate;
 using Game.Models.Roles.Enums;
-using game.Services.GameServices;
+using game.Services;
 using game.Utils;
 using Managers;
 using Managers.enums;
+using Networking.Interfaces;
 using SceneControllers.GameScene.Helper;
 using TMPro;
 using UnityEngine;
@@ -24,11 +21,11 @@ namespace SceneControllers.GameScene.GameEnd
         [SerializeField] private GameEndTable gameEndTable;
         [SerializeField] private TextMeshProUGUI gameEndText;
         private WinningTeam _winningTeam;
-        private IDataProvider _dataProvider;
+        private IClient _client;
 
         private void Start()
         {
-            _dataProvider = ServiceLocator.Get<StartGameManager>().GameService;
+            _client = ServiceLocator.Get<IClient>();
             mainMenuButton.onClick.AddListener(GoToMainMenu);
             
             InitWinningTeam();
@@ -37,17 +34,17 @@ namespace SceneControllers.GameScene.GameEnd
             InitWinningTeamText();
 
             mainMenuButton.GetComponentInChildren<TextMeshProUGUI>().text 
-                = TextCategory.Alerts.GetTranslation("go_back_to_main_menu");
+                = TextManager.Translate("alerts.go_back_to_main_menu");
             
         }
 
         private void InitTable()
         {
-            var rows = _dataProvider.GetAllPlayers()
+            var rows = _client.GetCurrentGameInformation().AllPlayers
                 .Select(player => new TableRowData(
                     player.Number.ToString(),
                     player.Name,
-                    player.Role.Template.GetName(),
+                    RoleCatalog.GetRole(player.RoleDto.RoleId).GetName(),
                     player.WinStatus.ToString(),
                     player.DeathProperties.IsAlive.ToString(),
                     player.DeathProperties.GetCausesOfDeathAsString()
@@ -59,17 +56,10 @@ namespace SceneControllers.GameScene.GameEnd
 
         private void InitWinningTeam()
         {
-            if (_dataProvider.GetGameSettings().GameMode == GameMode.Offline)
-            {
-                var gameService = _dataProvider as SingleDeviceGameService;
-                _winningTeam = gameService.FinishGameService.GetHighestPriorityWinningTeam();
-                
-            }
+            _winningTeam = _client.GetCurrentGameInformation().WinnerTeam;
         }
         private void InitBackground()
         {
-            
-            
             background.sprite = _winningTeam switch
             {
                 WinningTeam.Folk => Resources.Load<Sprite>("Canvas/GameEnd/folk"),
@@ -83,12 +73,12 @@ namespace SceneControllers.GameScene.GameEnd
             string winnerTeamText;
             if (_winningTeam == WinningTeam.Unknown)
             {
-                winnerTeamText = TextCategory.GameEnd.GetTranslation("draw");
+                winnerTeamText = TextManager.Translate("game_end.draw");
             }
             else
             {
-                winnerTeamText = TextCategory.GameEnd.GetTranslation("winner_team_text");
-                string winnerTeamStr = TextCategory.GameEnd.GetTranslation(_winningTeam.FormatEnum());
+                winnerTeamText = TextManager.Translate("game_end.winner_team_text");
+                string winnerTeamStr = TextManager.Translate($"winner_team.{_winningTeam.FormatEnum()}");
                 winnerTeamText = winnerTeamText.Replace("{team}", winnerTeamStr);
             }
 

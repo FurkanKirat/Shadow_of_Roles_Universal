@@ -1,5 +1,4 @@
-﻿using game.Constants;
-using game.models.player;
+﻿using game.models.player;
 using game.models.player.properties;
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces;
@@ -10,13 +9,22 @@ namespace game.Services
 {
     public class AbilityService
     {
-        public readonly int LoreKeLoreKeeperWinningCount;
         private readonly BaseGameService _gameService;
+        private readonly int playerCount;
 
         public AbilityService(BaseGameService gameService) {
             _gameService = gameService;
-            int playerCount = gameService.AllPlayers.Count;
-            LoreKeLoreKeeperWinningCount = playerCount >= 8 ? 3 : 2;
+            playerCount = gameService.AllPlayers.Count;
+        }
+
+        public static int GetLoreKeeperWinningCount(int playerCount)
+        {
+            return playerCount >= 8 ? 3 : 2;
+        }
+
+        public int GetLoreKeeperWinningCount()
+        {
+            return GetLoreKeeperWinningCount(playerCount);
         }
 
 
@@ -25,10 +33,9 @@ namespace game.Services
          */
         private void SendChosenPlayerMessages(Player player){
 
-            Player chosenPlayer = player.Role.ChosenPlayer;
+            Player chosenPlayer = _gameService.GetPlayer(player.Role.ChosenPlayer);
 
             AbilityType abilityType = player.Role.Template.AbilityType;
-            const TextCategory category = TextCategory.Abilities;
             
             if (abilityType == AbilityType.Passive 
                 || abilityType == AbilityType.NoAbility 
@@ -38,9 +45,9 @@ namespace game.Services
             }
 
             string message = chosenPlayer != null
-                ? category.GetTranslation("used_on")
+                ? TextManager.Translate("abilities.used_on")
                     .Replace("{playerName}", chosenPlayer.GetNameAndNumber())
-                : category.GetTranslation("did_not_used");
+                : TextManager.Translate("abilities.did_not_used");
 
             _gameService.MessageService.SendAbilityMessage(message, player);
         }
@@ -50,7 +57,7 @@ namespace game.Services
          */
         public void PerformAllAbilities()
         {
-            var players = _gameService.CopyAlivePlayers();
+            var players = _gameService.GetAlivePlayersAsPlayerList();
             _gameService.ChooseRandomPlayersForAI(players);
 
             // If the roles priority changes in each turn changes the priority
@@ -67,6 +74,7 @@ namespace game.Services
             // Sorts the roles according to priority and if priorities are same sorts
             players.Sort((player1, player2) =>
             {
+                
                 int priorityComparison = player2.Role.Template.RolePriority.GetPriority()
                     .CompareTo(player1.Role.Template.RolePriority.GetPriority());
                 if (priorityComparison != 0)
@@ -79,7 +87,7 @@ namespace game.Services
             foreach (var player in players)
             {
                 player.Role.Template.PerformAbility(
-                    player, player.Role.ChosenPlayer, _gameService);
+                    player, _gameService.GetPlayer(player.Role.ChosenPlayer), _gameService);
             }
 
             // Send some messages to some roles
@@ -89,7 +97,7 @@ namespace game.Services
             }
 
             // Resets the players' attributes according to their role
-            foreach (var player in _gameService.AlivePlayers)
+            foreach (var player in players)
             {
                 player.Role.ResetStates();
             }

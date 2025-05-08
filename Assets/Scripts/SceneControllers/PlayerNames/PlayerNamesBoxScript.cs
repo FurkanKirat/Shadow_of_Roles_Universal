@@ -1,5 +1,3 @@
-
-using game.Constants;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -17,7 +15,7 @@ namespace SceneControllers.PlayerNames
             _isAIToggle = gameObject.GetComponentInChildren<Toggle>();
             
             _isAIToggle.GetComponentInChildren<TextMeshProUGUI>().text 
-                = TextCategory.General.GetTranslation("ai");
+                = TextManager.Translate("general.ai");
         }
 
         public void SetPlayerName(string playerName)

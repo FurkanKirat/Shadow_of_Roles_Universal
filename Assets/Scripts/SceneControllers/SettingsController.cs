@@ -38,7 +38,7 @@ namespace SceneControllers
             }
             languageDropdown.options = options;
             languageDropdown.value = 0;
-            languageText.text = TextCategory.Settings.GetTranslation("language");
+            languageText.text = TextManager.Translate("settings.language");
             InitSelectedLanguage();
             languageDropdown.onValueChanged.AddListener((value) => SelectLanguage(value));
             

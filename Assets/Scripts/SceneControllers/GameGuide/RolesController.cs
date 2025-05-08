@@ -1,5 +1,4 @@
-﻿using System;
-using game.models.gamestate;
+﻿using game.models.gamestate;
 using Game.Models.Roles.Enums;
 using game.Services;
 using game.Utils;
@@ -18,7 +17,7 @@ namespace SceneControllers.GameGuide
             _rolesBookPanel.Initialize(RolePack.All);
             var firstId = EnumUtils.GetEnumValue<RoleId>(1);
             var firstRole = RoleCatalog.GetRole(firstId);
-            _rolesBookPanel.SelectRole(firstRole);
+            _rolesBookPanel.SelectRole(firstRole.RoleID);
         }
     }
 }

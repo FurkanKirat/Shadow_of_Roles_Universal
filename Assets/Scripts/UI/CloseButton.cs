@@ -1,4 +1,3 @@
-using game.Constants;
 using UnityEngine;
 using UnityEngine.UI;
 

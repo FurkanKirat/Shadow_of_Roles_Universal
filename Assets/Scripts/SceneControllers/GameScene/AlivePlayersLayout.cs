@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using game.models;
 using game.models.player;
 using Managers;
+using Networking.DataTransferObjects;
+using Networking.Interfaces;
 using SceneControllers.GameScene.Helper;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,19 +15,17 @@ namespace SceneControllers.GameScene
         [SerializeField] private GameObject playerPrefab;
         [SerializeField] private ScrollRect playersScrollRect;
         private readonly List<AlivePlayersBox> _boxes = new ();
-        private IDataProvider _dataProvider;
+        private IClient _client;
 
         private void Awake()
         {
-            var startGameManager = ServiceLocator.Get<StartGameManager>();
-            _dataProvider = startGameManager.GameService;
-            var alivePlayers = _dataProvider.GetAlivePlayers();
-            
+            _client = ServiceLocator.Get<IClient>();
+            var alivePlayers = _client.GetCurrentGameInformation().AlivePlayers;
             PlayerClick playerClick = (currentPlayer, targetPlayer, index) =>
             {
-                var chosenPlayer = currentPlayer.Role.ChosenPlayer;
-                bool isChosen = chosenPlayer != null && chosenPlayer == targetPlayer;
-                currentPlayer.Role.ChosenPlayer = isChosen ? null : targetPlayer;
+                var chosenPlayerNum = _client.GetCurrentClientInfo().TargetNumber;
+                bool isChosen = chosenPlayerNum >=0 && targetPlayer.IsSamePlayer(chosenPlayerNum);
+                _client.GetCurrentClientInfo().TargetNumber = isChosen ? -1 : targetPlayer.Number;
                 
                 bool isSelected = _boxes[index].IsSelected;
                 for (int i = 0; i < _boxes.Count; i++)
@@ -39,25 +38,27 @@ namespace SceneControllers.GameScene
             {
                 var newBox = Instantiate(playerPrefab, transform);
                 var boxScript = newBox.GetComponent<AlivePlayersBox>();
-                boxScript.Init(_dataProvider.GetCurrentPlayer(), alivePlayers[i], 
-                    _dataProvider.GetTimePeriod().Time, playerClick,i);
+                boxScript.Init(_client.GetCurrentGameInformation().CurrentPlayer, alivePlayers[i], 
+                    _client.GetCurrentGameInformation().TimePeriod.Time, playerClick,i);
                 _boxes.Add(boxScript);
             }
         }
         
-        public void RefreshAllBoxes(Player newCurrentPlayer)
+        public void RefreshAllBoxes(PlayerDto newCurrentPlayer)
         {
+            var alivePlayers = _client.GetCurrentGameInformation().AlivePlayers;
             foreach (var box in _boxes)
             {
-                box.UpdatePlayer(newCurrentPlayer);
+                box.UpdatePlayer(newCurrentPlayer, alivePlayers[box.Index]);
             }
             playersScrollRect.ScrollToTop();
         }
         
-        public void RefreshLayout(Player currentPlayer, Time time)
+        public void RefreshLayout(PlayerDto currentPlayer, Time time)
         {
             List<AlivePlayersBox> boxesToRemove = new ();
-
+            int index = 0;
+            var alivePlayers = _client.GetCurrentGameInformation().AlivePlayers;
             foreach (var box in _boxes)
             {
                 if (!box.IsPlayerAlive())
@@ -67,7 +68,8 @@ namespace SceneControllers.GameScene
                 }
                 else
                 {
-                    box.UpdateTime(currentPlayer, time);
+                    box.UpdateTime(currentPlayer, alivePlayers[index], time);
+                    ++index;
                 }
             }
             
@@ -84,10 +86,7 @@ namespace SceneControllers.GameScene
         }
 
     }
-    
-    
-
-    public delegate void PlayerClick(Player currentPlayer, Player targetPlayer, int index);
+    public delegate void PlayerClick(PlayerDto currentPlayer, PlayerDto targetPlayer, int index);
     
     
 }

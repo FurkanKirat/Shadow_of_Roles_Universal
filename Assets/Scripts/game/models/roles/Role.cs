@@ -1,13 +1,11 @@
-﻿using game.models.player;
-using Game.Models.Roles.Enums;
-using game.models.roles.Templates;
+﻿using game.models.roles.Templates;
 
 namespace game.models.roles
 {
     public class Role
     {
         public RoleTemplate Template {get; set;}
-        public Player ChosenPlayer { get; set; }
+        public int ChosenPlayer { get; set; }
         public bool CanPerform { get; set; }
         public bool IsImmune { get; set; }
         public bool IsRevealed { get; set; }
@@ -20,12 +18,12 @@ namespace game.models.roles
         }
         
         public void ResetStates(){
-            ChosenPlayer = null;
+            ChosenPlayer = -1;
             Template.RoleProperties.Defence.Reset();
             Template.RoleProperties.Attack.Reset();
             
             var cooldown = Template.RoleProperties.Cooldown;
-            if (cooldown.Default > 0)
+            if (cooldown.Default > 0 && cooldown.Current > 0)
             {
                 Template.RoleProperties.Cooldown.DecrementCurrent();
             }

@@ -10,7 +10,7 @@ namespace game.models.roles.Templates.CorruptedRoles
     public class LastJoke : RoleTemplate, IAttackAbility
     {
         public LastJoke() : base(RoleId.LastJoke, RoleCategory.CorrupterSupport, 
-            RolePriority.LastJoke, AbilityType.OtherThanCorrupted, WinningTeam.Corrupter)
+            RolePriority.LastJoke, AbilityType.OtherThanTeamMembers, WinningTeam.Corrupter)
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)

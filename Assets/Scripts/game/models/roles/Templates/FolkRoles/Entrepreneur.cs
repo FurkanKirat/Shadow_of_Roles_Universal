@@ -98,9 +98,9 @@ namespace game.models.roles.Templates.FolkRoles
         
         private AbilityResult InsufficientMoney(Player roleOwner, BaseGameService gameService)
         {
-            string message = TextManager.GetEnumCategoryTranslation(RoleID, "money_insufficient");
+            string message = TextManager.TranslateEnum(RoleID, "money_insufficient");
             message = message
-                .Replace("{abilityName}", TextManager.GetEnumCategoryTranslation(RoleID, TargetAbility.Name));
+                .Replace("{abilityName}", TextManager.TranslateEnum(RoleID, TargetAbility.Name));
             
             SendAbilityMessage(message, roleOwner, gameService.MessageService);
             return AbilityResult.InsufficientMoney;

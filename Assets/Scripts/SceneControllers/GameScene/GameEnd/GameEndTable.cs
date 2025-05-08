@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using game.Constants;
 using Managers;
 using SceneControllers.GameScene.Helper;
 using TMPro;
@@ -19,12 +18,12 @@ namespace SceneControllers.GameScene.GameEnd
                 Destroy(child.gameObject);
 
             var headers = new TableRowData(
-                TextCategory.GameEnd.GetTranslation("number_column"),
-                TextCategory.GameEnd.GetTranslation("name_column"),
-                TextCategory.GameEnd.GetTranslation("role_column"),
-                TextCategory.GameEnd.GetTranslation("win_loss_column"),
-                TextCategory.GameEnd.GetTranslation("alive_dead_column"),
-                TextCategory.GameEnd.GetTranslation( "causes_of_death_column")
+                TextManager.Translate("game_end.number_column"),
+                TextManager.Translate("game_end.name_column"),
+                TextManager.Translate("game_end.role_column"),
+                TextManager.Translate("game_end.win_loss_column"),
+                TextManager.Translate("game_end.alive_dead_column"),
+                TextManager.Translate( "game_end.causes_of_death_column")
             );
             CreateRow(headers, true);
             

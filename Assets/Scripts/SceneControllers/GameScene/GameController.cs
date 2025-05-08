@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using game.Constants;
 using game.models;
 using game.models.gamestate;
-using game.models.player;
-using game.Services.GameServices;
+using game.Services;
 using game.Utils;
 using Managers;
 using Managers.enums;
+using Networking.DataTransferObjects;
+using Networking.Interfaces;
 using SceneControllers.GameScene.Graveyard;
 using SceneControllers.GameScene.Messages;
 using SceneControllers.GameScene.RoleBook;
@@ -36,13 +36,24 @@ namespace SceneControllers.GameScene
         
         private Sprite _daySprite, _nightSprite, _votingSprite;
         
-        private IDataProvider _gameInformation;
+        private IGameInformation _gameInformation;
+        private IClient _client;
         private GameSettings _gameSettings;
         private SceneChanger _sceneChanger;
         private readonly Dictionary<int, TimePeriod> _messagesLastCheck = new ();
+        private Time _lastTime;
 
         private void Start()
         {
+            ServiceLocator.Register(this);
+            _client = ServiceLocator.Get<IClient>();
+            _client.InitUIUpdater(this);
+        }
+        
+        public void Initialize(IGameInformation gameInformation)
+        {
+            _gameInformation = gameInformation;
+
             InitScripts();
             InitTexts();
             LoadSprites();
@@ -52,6 +63,7 @@ namespace SceneControllers.GameScene
             SetOnClickListeners();
         }
 
+
         private void Update()
         {
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
@@ -59,13 +71,19 @@ namespace SceneControllers.GameScene
             
             if(!isActivePanel) _sceneChanger.GoBack();
             
-            
+        }
+        
+        public void UpdateUI(IGameInformation gameInformation)
+        {
+            _gameInformation = gameInformation;
+            PassTurn(_lastTime != gameInformation.TimePeriod.Time);
+            _lastTime = gameInformation.TimePeriod.Time;
         }
 
         private void InitMessagesLastCheck()
         {
             var timePeriod = TimePeriod.Start();
-            foreach (var player in _gameInformation.GetAllPlayers())
+            foreach (var player in _gameInformation.AllPlayers)
             {
                 _messagesLastCheck[player.Number] = timePeriod;
             }
@@ -74,10 +92,10 @@ namespace SceneControllers.GameScene
         private void InitScripts()
         {
             _sceneChanger = ServiceLocator.Get<SceneChanger>();
-            _gameInformation = ServiceLocator.Get<StartGameManager>().GameService;
-            _gameSettings = _gameInformation.GetGameSettings();
+            
+            _gameSettings = _gameInformation.GameSettings;
             _panelController = GetComponent<PanelController>();
-            roleBookPanel.Initialize(_gameInformation.GetGameSettings().RolePack);
+            roleBookPanel.Initialize(_gameInformation.GameSettings.RolePack);
             _alphaThresholdManager = ServiceLocator.Get<AlphaThresholdManager>();
             specialRolesContainer.InitializePanel(_gameInformation);
         }
@@ -85,8 +103,8 @@ namespace SceneControllers.GameScene
         private void InitTexts()
         {
             rolePackText.text = string.Format(
-                TextCategory.RolePackTexts.GetTranslation("current_role_pack")
-                , TextCategory.RolePack.GetEnumTranslation(_gameSettings.RolePack));
+                TextManager.Translate("role_pack_texts.current_role_pack")
+                , TextManager.Translate($"role_pack.{_gameSettings.RolePack.FormatEnum()}"));
         }
         
         private void LoadSprites()
@@ -96,19 +114,22 @@ namespace SceneControllers.GameScene
             _votingSprite = Resources.Load<Sprite>("Canvas/Phase/voting0");
         }
 
+       
         private void ChangePlayerUI()
         {
-            Player currentPlayer = _gameInformation.GetCurrentPlayer();
             
-            string numberString = TextCategory.General.GetTranslation("player_number");
+            PlayerDto currentPlayer = _gameInformation.CurrentPlayer;
+            
+            string numberString = TextManager.Translate("general.player_number");
             
             numberText.text = string.Format(numberString, currentPlayer.Number);
             nameText.text = currentPlayer.Name;
-            roleText.text = currentPlayer.Role.Template.GetName();
+            roleText.text = RoleCatalog.GetRole(currentPlayer.RoleDto.RoleId).GetName();
             
             alivePlayersLayout.RefreshAllBoxes(currentPlayer);
             ManageNotification();
-            specialRolesContainer.ShowPanel(currentPlayer.Role.Template);
+            specialRolesContainer.ResetBoxes();
+            specialRolesContainer.ShowPanel(currentPlayer.RoleDto, _client.GetCurrentGameInformation().TimePeriod.Time);
         }
 
         private void SetOnClickListeners()
@@ -119,10 +140,10 @@ namespace SceneControllers.GameScene
                 case GameMode.Online:
                     passTurnButton.gameObject.SetActive(false);
                     break;
-                case GameMode.Offline:
+                case GameMode.Local:
                     passTurnButton.GetComponentInChildren<TextMeshProUGUI>().text =
-                        TextCategory.General.GetTranslation( "pass_turn");
-                    passTurnButton.onClick.AddListener(PassTurn);
+                        TextManager.Translate("general.pass_turn");
+                    passTurnButton.onClick.AddListener(SendInfo);
                     break;
                 default : 
                     throw new ArgumentOutOfRangeException(nameof(gameMode), gameMode, "Unknown game mode!");
@@ -137,65 +158,71 @@ namespace SceneControllers.GameScene
             _alphaThresholdManager.SetAlphaThreshold(roleBookButton);
             
         }
+
+        private void SendInfo()
+        {
+            _client.GetCurrentClientInfo().Number = _gameInformation.CurrentPlayer.Number;
+            _client.SendClientInfo();
+            _client.ResetClientInfo();
+        }
         
         private void ShowMessagesPanel()
         {
             _panelController.ShowPanel("MessagesPanel");
-            messagesLayout.RefreshLayout(_gameInformation.GetCurrentPlayer(), _gameInformation.GetMessages());
-            _messagesLastCheck[_gameInformation.GetCurrentPlayer().Number] = (TimePeriod)_gameInformation.GetTimePeriod().Clone();
+            messagesLayout.RefreshLayout(_gameInformation.CurrentPlayer, _gameInformation.Messages);
+            _messagesLastCheck[_gameInformation.CurrentPlayer.Number] = (TimePeriod)_gameInformation.TimePeriod.Clone();
             ManageNotification();
         }
         
         private void ShowRoleBookPanel()
         {
             _panelController.ShowPanel("RoleBookPanel");
-            roleBookPanel.SelectRole(_gameInformation.GetCurrentPlayer().Role.Template);
+            roleBookPanel.SelectRole(_gameInformation.CurrentPlayer.RoleDto.RoleId);
         }
 
         private void ShowGraveyardPanel()
         {
             const string panel = "GraveyardPanel";
             _panelController.ShowPanel(panel);
-            graveyardLayout.RefreshLayout(_gameInformation.GetDeadPlayers());
+            graveyardLayout.RefreshLayout(_gameInformation.DeadPlayers);
         }
 
         private void ManageNotification()
         {
-            int currentPlayerNum = _gameInformation.GetCurrentPlayer().Number;
+            int currentPlayerNum = _gameInformation.CurrentPlayer.Number;
             TimePeriod lastCheckTimePeriod = _messagesLastCheck.GetValueOrDefault(currentPlayerNum);
-            bool isChecked = lastCheckTimePeriod.GetPrevious() >= _gameInformation.GetLastMessagePeriod();
+            bool isChecked = lastCheckTimePeriod.GetPrevious() >= _gameInformation.LastMessagePeriod;
             messageNotificationImage.gameObject.SetActive(!isChecked);
             
         }
 
-        private void PassTurn()
+        private void PassTurn(bool timeChanged)
         {
-            var gameService = _gameInformation as SingleDeviceGameService;
-            
-            if (gameService.PassTurn())
+            if (timeChanged)
             {
                 ToggleTimeCycleUI();
             }
             ChangePlayerUI();
             _panelController.ShowPanel("PassTurnPanel");
             var passTurnController = _panelController.GetComponent<PassTurnPanelController>("PassTurnPanel");
-            passTurnController.UpdatePanel(_gameInformation.GetCurrentPlayer(), _gameInformation.GetTimePeriod().Time);
+            passTurnController.UpdatePanel(_gameInformation.CurrentPlayer, _gameInformation.TimePeriod.Time);
+            
         }
 
         private void ToggleTimeCycleUI()
         {
-            if (_gameInformation.GetGameStatus() == GameStatus.Ended)
+            if (_gameInformation.GameStatus == GameStatus.Ended)
             {
                 _sceneChanger.LoadScene(SceneType.GameEnd);
                 return;
             }
             
-            TimePeriod timePeriod = _gameInformation.GetTimePeriod();
+            TimePeriod timePeriod = _gameInformation.TimePeriod;
             Time time = timePeriod.Time;
-            string timeString = TextCategory.Time.GetTranslation(timePeriod.Time.FormatEnum());
+            string timeString = TextManager.Translate($"time.{timePeriod.Time.FormatEnum()}");
             timeText.text = string.Format(timeString, timePeriod.DayCount);
 
-            alivePlayersLayout.RefreshLayout(_gameInformation.GetCurrentPlayer(), timePeriod.Time);
+            alivePlayersLayout.RefreshLayout(_gameInformation.CurrentPlayer, timePeriod.Time);
             
             backgroundImage.sprite = time switch
             {
@@ -204,6 +231,7 @@ namespace SceneControllers.GameScene
                 Time.Voting => _votingSprite,
                 _ => throw new ArgumentOutOfRangeException(nameof(time), time, "Unknown time")
             };
+            
         }
     }
 }

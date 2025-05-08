@@ -1,14 +1,17 @@
 ﻿using game.models.player;
+using Game.Models.Roles.Enums;
 using game.models.roles.properties;
+using game.models.roles.Templates;
+using game.Services;
+using Networking.DataTransferObjects;
 
 namespace SceneControllers.GameScene.Helper
 {
     public class PlayerRoleVisibility
     {
-        private Player _self;
-        private Player _target;
+        private readonly PlayerDto _self, _target;
 
-        public PlayerRoleVisibility(Player self, Player target)
+        public PlayerRoleVisibility(PlayerDto self, PlayerDto target)
         {
             _self = self;
             _target = target;
@@ -16,18 +19,23 @@ namespace SceneControllers.GameScene.Helper
 
         public bool ShouldShowRole()
         {
-            bool isRevealed = _target.Role.IsRevealed;
+            if(_target.RoleDto.RoleId == RoleId.None) return false;
+            
             bool sameTeamKnowsMembers = SameTeamAndShouldShowRole();
 
             bool isPlayerCurrentPlayer = _self.IsSamePlayer(_target);
-            
-            return isRevealed || sameTeamKnowsMembers || isPlayerCurrentPlayer;
+
+            bool targetRevealed = _target.RoleDto.IsRevealed;
+            return targetRevealed || sameTeamKnowsMembers || isPlayerCurrentPlayer;
         }
 
         private bool SameTeamAndShouldShowRole()
         {
-            bool knowsTeamMembers = _self.Role.Template.RoleProperties.HasAttribute(RoleAttribute.KnowsTeamMembers);
-            bool sameTeam = _self.Role.Template.WinningTeam == _target.Role.Template.WinningTeam;
+            RoleTemplate selfRole = RoleCatalog.GetRole(_self.RoleDto.RoleId);
+            RoleTemplate targetRole = RoleCatalog.GetRole(_target.RoleDto.RoleId);
+            
+            bool knowsTeamMembers = selfRole.RoleProperties.HasAttribute(RoleAttribute.KnowsTeamMembers);
+            bool sameTeam = selfRole.WinningTeam == targetRole.WinningTeam;
             
             return knowsTeamMembers && sameTeam;
         }

@@ -2,6 +2,7 @@
 {
     public enum RoleId
     {
+        None = 0,
         Detective = 1,
         Observer = 2,
         SoulBinder = 3,

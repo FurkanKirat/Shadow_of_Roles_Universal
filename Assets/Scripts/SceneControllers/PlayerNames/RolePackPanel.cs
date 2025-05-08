@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using game.models.gamestate;
 using game.Services;
 using game.Services.RoleDistributor.GameRolesStrategy;
+using game.Utils;
 using Managers;
 using Managers.enums;
+using Networking.Client;
+using Networking.Interfaces;
+using Networking.Server;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +30,7 @@ namespace SceneControllers.PlayerNames
             startGameButton.onClick.AddListener(StartGame);
             _currentRolePackInfo = RolePackCatalog.GetFirst();
             var roleBuilder = StrategyChooser.GetStrategy(_currentRolePackInfo.RolePack);
-            var settings = new GameSettings(GameMode.Offline, _currentRolePackInfo.RolePack, 10);
+            var settings = new GameSettings(GameMode.Local, _currentRolePackInfo.RolePack, 10);
             rolesInfoContainer.ChangeInfo(roleBuilder.Build(settings));
             ChangeRolePackInfo(_currentRolePackInfo, _selectedRolePackIndex);
         }
@@ -47,11 +51,16 @@ namespace SceneControllers.PlayerNames
         private void StartGame()
         {
             var players = playerNamesController.Players;
-            var gameSettings = new GameSettings(GameMode.Offline, _currentRolePackInfo.RolePack, players.Count);
+            var gameSettings = new GameSettings(GameMode.Local, _currentRolePackInfo.RolePack, players.Count);
+
+            var server = new LocalServer();
+            var client = new LocalClient(server);
             
-            var startGameManager = new StartGameManager();
-            startGameManager.InitializeGameService(players, gameSettings);
-            ServiceLocator.Register(startGameManager);
+            server.SetClient(client);
+            server.InitGameService(players, gameSettings);
+            
+            ServiceLocator.Register<IServer>(server);
+            ServiceLocator.Register<IClient>(client);
             
             var sceneChanger = ServiceLocator.Get<SceneChanger>();
             sceneChanger.LoadScene(SceneType.Game);

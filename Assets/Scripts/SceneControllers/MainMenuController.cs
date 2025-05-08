@@ -1,5 +1,4 @@
-﻿using game.Constants;
-using Managers;
+﻿using Managers;
 using Managers.enums;
 using SceneControllers.GameGuide;
 using TMPro;
@@ -39,16 +38,14 @@ namespace SceneControllers
             AddAlphaThreshold(settingsButton);
             
             AddListener(startGameButton, OnStartGameClicked);
+            AddListener(onlineButton, OnOnlineModeClicked);
             AddListener(settingsButton, OnSettingsClicked);
             AddListener(quitButton, OnQuitClicked);
             AddListener(gameGuideButton, OnGameGuideClicked);
             AddListener(creditsButton, OnCreditsClicked);
         }
 
-        private void OnCreditsClicked()
-        {
-            _sceneChanger.LoadScene(SceneType.Credits);
-        }
+        
 
         private void InitText(Button button, string key)
         {
@@ -56,7 +53,7 @@ namespace SceneControllers
         }
         private void InitText(TextMeshProUGUI text, string key)
         {
-            text.text = TextCategory.MainMenu.GetTranslation(key);
+            text.text = TextManager.Translate($"main_menu.{key}");
         }
         private void AddListener(Button button, UnityAction action)
         {
@@ -80,15 +77,27 @@ namespace SceneControllers
         {
             LoadScene(SceneType.Settings);
         }
+        
+        private void OnOnlineModeClicked()
+        {
+            LoadScene(SceneType.OnlineMode);
+        }
 
         private void OnGameGuideClicked()
         {
             gameGuideController.gameObject.SetActive(true);
+        }
+        
+        private void OnCreditsClicked()
+        {
+            _sceneChanger.LoadScene(SceneType.Credits);
         }
 
         private void OnQuitClicked()
         {
             Application.Quit();
         }
+
+        
     }
 }

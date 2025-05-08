@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using game.Constants;
 using game.models.gamestate;
 using game.Utils;
 using Managers;
@@ -26,7 +25,7 @@ namespace game.models.player.properties
 
         public string GetDeathTimeAndDayCount()
         {
-            string deathTimeStr = TextCategory.Time.GetEnumTranslation(DeathTimePeriod.Time);
+            string deathTimeStr = TextManager.Translate($"time.{DeathTimePeriod.Time.FormatEnum()}");
             return string.Format(deathTimeStr, DeathTimePeriod.DayCount);
         }
 
@@ -36,7 +35,7 @@ namespace game.models.player.properties
             var causeList = Enum.GetValues(typeof(CauseOfDeath))
                 .Cast<CauseOfDeath>()
                 .Where(x => x != CauseOfDeath.None && HasCause(x))
-                .Select(cause => TextCategory.CauseOfDeath.GetTranslation(cause.FormatEnum()));
+                .Select(cause => TextManager.Translate($"cause_of_death.{cause.FormatEnum()}"));
             return string.Join(", ", causeList);
         }
         

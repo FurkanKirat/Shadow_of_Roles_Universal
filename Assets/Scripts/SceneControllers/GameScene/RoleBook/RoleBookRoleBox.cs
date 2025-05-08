@@ -24,7 +24,7 @@ namespace SceneControllers.GameScene.RoleBook
 
         private void BoxSelected()
         {
-            _roleBookPanel.SelectRole(_role, _index);
+            _roleBookPanel.SelectRole(_role.RoleID, _index);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using game.models.player;
+﻿using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.properties;
 using game.Services.GameServices;
@@ -11,7 +10,7 @@ namespace game.models.roles.Templates.CorruptedRoles
     public class Blinder : RoleTemplate
     {
         public Blinder() : base(RoleId.Blinder, RoleCategory.CorrupterSupport, 
-            RolePriority.Blinder, AbilityType.OtherThanCorrupted, WinningTeam.Corrupter)
+            RolePriority.Blinder, AbilityType.OtherThanTeamMembers, WinningTeam.Corrupter)
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)
@@ -20,15 +19,15 @@ namespace game.models.roles.Templates.CorruptedRoles
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
-            string message = TextManager.GetEnumCategoryTranslation(RoleID,"ability_message");
+            string message = TextManager.TranslateEnum(RoleID,"ability_message");
             SendAbilityMessage(message,roleOwner, gameService.MessageService);
-            List<Player> players = new List<Player>(gameService.AlivePlayers);
+            var players = gameService.CopyAlivePlayers();
 
-            players.Remove(choosenPlayer);
+            players.Remove(choosenPlayer.Number);
 
             choosenPlayer.Role.ChosenPlayer = players.GetRandomElement();
 
-            SendAbilityMessage(TextManager.GetEnumCategoryTranslation(RoleID,"got_blinded_message"), choosenPlayer, gameService.MessageService);
+            SendAbilityMessage(TextManager.TranslateEnum(RoleID,"got_blinded_message"), choosenPlayer, gameService.MessageService);
 
             return AbilityResult.Success;
         }

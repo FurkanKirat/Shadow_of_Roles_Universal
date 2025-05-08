@@ -1,33 +1,35 @@
-﻿using game.models.gamestate;
+﻿using System.Collections.Generic;
+using game.models.gamestate;
 using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.Templates;
-using game.models.roles.Templates.NeutralRoles;
+using game.Services;
+using Networking.DataTransferObjects;
+using Networking.DataTransferObjects.RoleViewStrategies;
 
 namespace SceneControllers.GameScene.Helper
 {
     public class PlayerButtonVisibility
     {
-        private bool IsLocalPlayer { get; }
-        private bool IsPlayerAlive { get; }
-        private Player Self { get; } 
-        private Player Target { get;}
-        private Time Time { get; }
+        private readonly bool _isPlayerAlive, _isLocalPlayer;
+        private readonly PlayerDto _target, _self;
+        private readonly Time _time;
+        private readonly RoleTemplate _selfRole;
+        
+        public PlayerButtonVisibility(PlayerDto self, PlayerDto target, Time time){
+            _self = self;
+            _target = target;
+            _time = time;
 
+            _isLocalPlayer = self.IsSamePlayer(target);
+            _isPlayerAlive = self.DeathProperties.IsAlive;
 
-        public PlayerButtonVisibility(Player self, Player target, Time time){
-            Self = self;
-            Target = target;
-            Time = time;
-
-            IsLocalPlayer = self.IsSamePlayer(target);
-            IsPlayerAlive = self.DeathProperties.IsAlive;
+            _selfRole = RoleCatalog.GetRole(self.RoleDto.RoleId);
         }
-
-
+        
         public bool ShouldShowButton()
         {
-            return Time switch
+            return _time switch
             {
                 Time.Day => ShouldShowButtonDuringDay(),
                 Time.Voting => ShouldShowButtonDuringVoting(),
@@ -42,7 +44,7 @@ namespace SceneControllers.GameScene.Helper
         }
 
         private bool ShouldShowButtonDuringVoting(){
-            return IsPlayerAlive && !IsLocalPlayer;
+            return _isPlayerAlive && !_isLocalPlayer;
         }
 
         private bool ShouldShowButtonDuringNight(){
@@ -53,28 +55,27 @@ namespace SceneControllers.GameScene.Helper
 
         private bool CanUseAbilityOnTarget(){
 
-            if(!IsPlayerAlive || !Self.Role.Template.RoleProperties.CanUseAbility){
+            if(!_isPlayerAlive || !_self.RoleDto.CanUseAbility()){
                 return false;
             }
 
-            return Self.Role.Template.AbilityType.CanUseAbility(Self, Target);
+            return _selfRole.AbilityType.CanUseAbility(_self, _target);
 
         }
 
         private bool ApplySpecialRoleRules(bool previous){
             bool visible = previous;
-            if (Self.Role.Template.RoleID == RoleId.LoreKeeper) {
-                var lorekeeper = (LoreKeeper) Self.Role.Template;
-                if (lorekeeper.AlreadyChosenPlayers.Contains(Target))
+            if (_selfRole.RoleID == RoleId.LoreKeeper) {
+                var alreadyChosenPlayers = (HashSet<int>)_self.RoleDto.ExtraData[ExtraData.LoreKeeperAlreadyChosenPlayers];
+                if (alreadyChosenPlayers.Contains(_target.Number))
                     visible = false;
 
             }
 
-            else if (Self.Role.Template.RoleID == RoleId.LastJoke) {
-                RoleTemplate lastJoke = Self.Role.Template;
-                if(Self.DeathProperties.IsAlive) visible = false;
-                else if(lastJoke.RoleProperties.AbilityUsesLeft.Current > 0 )
-                    visible = lastJoke.AbilityType.CanUseAbility(Self, Target);
+            else if (_selfRole.RoleID == RoleId.LastJoke) {
+                if(_self.DeathProperties.IsAlive) visible = false;
+                else if(_self.RoleDto.AbilityUsesLeft > 0 )
+                    visible = RoleCatalog.GetRole(RoleId.LastJoke).AbilityType.CanUseAbility(_self, _target);
             }
             
             return visible;

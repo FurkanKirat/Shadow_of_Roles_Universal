@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace game.models.roles.properties
 {
@@ -18,7 +17,7 @@ namespace game.models.roles.properties
         private HashSet<RoleAttribute> RoleAttributes { get; } = new ();
 
         public RoleProperties() {}
-
+        
         public RoleProperties AddAttribute(RoleAttribute attribute)
         {
             RoleAttributes.Add(attribute);

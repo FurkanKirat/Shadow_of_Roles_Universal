@@ -1,26 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using game.models.gamestate;
 using game.models.player;
 using game.models.player.properties;
+using Game.Models.Roles.Enums;
 using game.models.roles.properties;
 using game.models.roles.Templates.CorruptedRoles;
+using game.models.roles.Templates.FolkRoles;
+using game.models.roles.Templates.NeutralRoles;
+using Networking.DataTransferObjects;
+using Networking.DataTransferObjects.RoleViewStrategies;
+using UnityEngine;
+using Time = game.models.gamestate.Time;
 
 namespace game.Services.GameServices
 {
     public abstract class BaseGameService
     {
-        public List<Player> AllPlayers { get; } = new ();
-        public List<Player> AlivePlayers { get; } = new ();
-        public List<Player> DeadPlayers { get; } = new ();
+        public SortedDictionary<int,Player> AllPlayers { get; private set; } = new ();
+        public List<int> AlivePlayers { get; } = new ();
         public VotingService VotingService { get; }
-        public BaseTimeService TimeService { get; }
+        public TimeService TimeService { get; }
         public MessageService MessageService { get; }
         public FinishGameService FinishGameService { get; }
         public AbilityService AbilityService { get; }
         public GameSettings GameSettings { get; }
+        public DtoProvider DtoProvider { get; }
 
-        protected BaseGameService(List<Player> players, BaseTimeService timeService, GameSettings gameSettings)
+        protected BaseGameService(List<Player> players, TimeService timeService, GameSettings gameSettings)
         {
             TimeService = timeService;
             VotingService = new VotingService(this);
@@ -28,11 +36,10 @@ namespace game.Services.GameServices
             FinishGameService = new FinishGameService(this);
             AbilityService = new AbilityService(this);
             GameSettings = gameSettings;
-
+            DtoProvider = new DtoProvider(this);
             InitializePlayers(players);
         }
-
-
+        
         /**
          * Initializes the players and distributes their roles
          * @param players players' list
@@ -40,9 +47,11 @@ namespace game.Services.GameServices
         private void InitializePlayers(List<Player> players)
         {
 
-            AllPlayers.AddRange(players);
+            AllPlayers = new SortedDictionary<int, Player>(
+                players.ToDictionary(player => player.Number, player => player)
+            );
             UpdateAlivePlayers();
-
+            
         }
 
         public void ToggleDayNightCycle()
@@ -71,12 +80,11 @@ namespace game.Services.GameServices
         public virtual void UpdateAlivePlayers()
         {
             AlivePlayers.Clear();
-            foreach (var player in AllPlayers)
+            foreach (var (num, player) in AllPlayers)
             {
-
                 if (player.DeathProperties.IsAlive)
                 {
-                    AlivePlayers.Add(player);
+                    AlivePlayers.Add(num);
                 }
 
                 else
@@ -92,7 +100,7 @@ namespace game.Services.GameServices
                     LastJoke lastJoker = (LastJoke)player.Role.Template;
                     if (lastJoker.CanUseAbility() && TimeService.TimePeriod.Time == Time.Night)
                     {
-                        AlivePlayers.Add(player);
+                        AlivePlayers.Add(num);
                     }
 
                 }
@@ -101,6 +109,11 @@ namespace game.Services.GameServices
 
         }
 
+        public Player GetPlayer(int number)
+        {
+            if(number <= 0) return null;
+            return AllPlayers[number];
+        }
 
         /**
          * Updates the dead players
@@ -108,33 +121,34 @@ namespace game.Services.GameServices
          */
         public List<Player> GetDeadPlayers()
         {
-            foreach (var player in AllPlayers)
+            List<Player> deadPlayersList = new();
+            foreach (var (_,player) in AllPlayers)
             {
-                if (!player.DeathProperties.IsAlive && !DeadPlayers.Contains(player))
+                if (!player.DeathProperties.IsAlive)
                 {
-                    DeadPlayers.Add(player);
+                    deadPlayersList.Add(player);
                 }
             }
 
-            return DeadPlayers;
+            return deadPlayersList;
         }
 
-        public void ChooseRandomPlayersForAI(List<Player> players)
+        public void ChooseRandomPlayersForAI(List<Player> alivePlayers)
         {
-            foreach (var player in players)
+            foreach (var player in alivePlayers)
             {
                 if (player.PlayerType == PlayerType.AI)
                 {
-                    player.Brain.ChooseNightPlayer(player, AlivePlayers);
+                    player.Brain.ChooseNightPlayer(player, alivePlayers);
                 }
             }
         }
 
         protected bool DoesHumanPlayerExist()
         {
-            foreach (var alivePlayer in AlivePlayers)
+            foreach (var playerNum in AlivePlayers)
             {
-                if (alivePlayer.PlayerType == PlayerType.Human)
+                if (GetPlayer(playerNum).PlayerType == PlayerType.Human)
                 {
                     return true;
                 }
@@ -144,9 +158,48 @@ namespace game.Services.GameServices
 
         }
 
-        public List<Player> CopyAlivePlayers()
+        public List<int> CopyAlivePlayers()
         {
-            return new List<Player>(AlivePlayers);
+            return new List<int>(AlivePlayers);
+        }
+
+        public List<Player> GetAlivePlayersAsPlayerList()
+        {
+            return AllPlayers
+                .Values
+                .Where(player => AlivePlayers.Contains(player.Number))
+                .ToList();
+        }
+
+        public virtual void ReceiveInfo(ClientInfoDto clientInfo)
+        {
+            Player player = GetPlayer(clientInfo.Number);
+            player.Role.ChosenPlayer = clientInfo.TargetNumber;
+
+            switch (player.Role.Template.RoleID)
+            {
+                case RoleId.Entrepreneur:
+                    if (player.Role.Template is Entrepreneur entrepreneur)
+                    {
+                        if (clientInfo.ExtraData.TryGetValue(ExtraData.EntrepreneurTargetAbility, out var abilityObj) && abilityObj is Entrepreneur.ChosenAbility ability)
+                        {
+                            entrepreneur.TargetAbility = ability;
+                        }
+                    }
+                    break;
+
+                case RoleId.LoreKeeper:
+                    if (player.Role.Template is LoreKeeper loreKeeper)
+                    {
+                        Debug.Log("1");
+                        if (clientInfo.ExtraData.TryGetValue(ExtraData.LoreKeeperGuessedRole, out var roleObj) && roleObj is RoleId roleId)
+                        {
+                            loreKeeper.GuessedRole = roleId;
+                            Debug.Log(2);
+                        }
+                    }
+                    break;
+            }
         }
 
     }

@@ -25,7 +25,7 @@ namespace game.models.roles.Templates.FolkRoles
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             RoleProperties.Cooldown.Reset();
-            SendAbilityMessage(TextManager.GetEnumCategoryTranslation(RoleID, "ability_message"),
+            SendAbilityMessage(TextManager.TranslateEnum(RoleID, "ability_message"),
                 roleOwner, gameService.MessageService);
             choosenPlayer.Role.IsImmune = true;
             return AbilityResult.Success;

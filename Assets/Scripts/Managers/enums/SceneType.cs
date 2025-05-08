@@ -4,6 +4,7 @@
     {
         MainMenu,
         PlayerNames,
+        OnlineMode,
         Settings,
         Game,
         Pause,

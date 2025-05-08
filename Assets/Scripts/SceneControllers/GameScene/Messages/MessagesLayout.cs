@@ -2,6 +2,7 @@
 using game.models;
 using game.models.gamestate;
 using game.models.player;
+using Networking.DataTransferObjects;
 using SceneControllers.GameScene.Helper;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,10 +14,17 @@ namespace SceneControllers.GameScene.Messages
         [SerializeField] private GameObject messagePrefab, timePeriodPrefab;
         [SerializeField] private ScrollRect scrollRect;
         private readonly List<TimePeriod> _timePeriods = new ();
-        private Player _player;
-        public void RefreshLayout(Player player, Dictionary<TimePeriod, List<Message>> messages)
+        private PlayerDto _player;
+        public void RefreshLayout(PlayerDto player, Dictionary<TimePeriod, List<Message>> messages)
         {
-            if (_player != null && player.IsSamePlayer(_player) && messages.Count == _timePeriods.Count) return;
+            bool isSamePlayer = _player != null && player.IsSamePlayer(_player);
+            bool messagesAreSame = messages.Count == _timePeriods.Count;
+            if (isSamePlayer && messagesAreSame) return;
+            
+            foreach (Transform child in gameObject.transform) 
+                Destroy(child.gameObject);
+            _timePeriods.Clear();
+            
             foreach (var (key, value) in messages)
             {
                 if(_timePeriods.Contains(key)) continue;

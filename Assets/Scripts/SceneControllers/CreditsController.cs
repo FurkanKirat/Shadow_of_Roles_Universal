@@ -1,5 +1,4 @@
-﻿using game.Constants;
-using Managers;
+﻿using Managers;
 using TMPro;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ namespace SceneControllers
         private void Start()
         {
             _sceneChanger = ServiceLocator.Get<SceneChanger>();
-            creditsText.text = TextCategory.Credits.GetTranslation("credits_text");
+            creditsText.text = TextManager.Translate("credits.credits_text");
         }
         
         private void Update()

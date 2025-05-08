@@ -1,10 +1,8 @@
 ﻿using game.models;
 using Game.Models.Roles.Enums;
-using game.models.roles.Templates;
-using game.models.roles.Templates.FolkRoles;
-using game.models.roles.Templates.NeutralRoles;
+using Networking.DataTransferObjects;
 using UnityEngine;
-
+using Time = game.models.gamestate.Time;
 namespace SceneControllers.GameScene.SpecialRoles
 {
     public class SpecialRolesContainer : MonoBehaviour
@@ -14,38 +12,36 @@ namespace SceneControllers.GameScene.SpecialRoles
         [SerializeField] private LorekeeperBox lorekeeperBox;
         [SerializeField] private GameObject parent;
 
-        public void InitializePanel(IDataProvider dataProvider)
+        public void InitializePanel(IGameInformation gameInformation)
         {
-            foreach (var player in dataProvider.GetAllPlayers())
-            {
-                if (player.Role.Template.RoleID == RoleId.LoreKeeper)
-                {
-                    lorekeeperBox.Initialize(player.Role.Template as LoreKeeper, 
-                        dataProvider.GetGameSettings().RolePack, 6);
-                    break;
-                }
-            }
+            lorekeeperBox.Initialize(gameInformation.GameSettings.RolePack);
         }
         
-        public void ShowPanel(RoleTemplate role)
+        public void ShowPanel(RoleDto roleDto, Time time)
         {
             parent.SetActive(true);
             HideAllBoxes();
 
-            switch (role.RoleID)
+            if (time != Time.Night)
+            {
+                parent.SetActive(false);
+                return;
+            }
+            
+            switch (roleDto.RoleId)
             {
                 case RoleId.FolkHero:
-                    abilityCooldownBox.UpdateBox(role.RoleProperties.Cooldown.Current);
+                    abilityCooldownBox.UpdateBox(roleDto.Cooldown);
                     abilityCooldownBox.gameObject.SetActive(true);
                     break;
 
                 case RoleId.Entrepreneur:
-                    entrepreneurBox.UpdateBox(role as Entrepreneur);
+                    entrepreneurBox.UpdateBox(roleDto);
                     entrepreneurBox.gameObject.SetActive(true);
                     break;
 
                 case RoleId.LoreKeeper:
-                    lorekeeperBox.UpdateBox(role as LoreKeeper);
+                    lorekeeperBox.UpdateBox(roleDto);
                     lorekeeperBox.gameObject.SetActive(true);
                     break;
 
@@ -53,6 +49,11 @@ namespace SceneControllers.GameScene.SpecialRoles
                     parent.SetActive(false);
                     break;
             }
+        }
+
+        public void ResetBoxes()
+        {
+            lorekeeperBox.ResetBox();
         }
 
         private void HideAllBoxes()

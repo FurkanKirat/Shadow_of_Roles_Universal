@@ -1,11 +1,8 @@
-﻿
-using System.Collections.Generic;
-using game.Constants;
-using game.models.player;
+﻿using game.models.player;
 using game.models.player.properties;
 using Game.Models.Roles.Enums;
-using game.Services;
 using game.Services.GameServices;
+using game.Utils;
 using Managers;
 
 namespace game.models.roles.interfaces.abilities
@@ -17,19 +14,18 @@ namespace game.models.roles.interfaces.abilities
             var messageService = gameService.MessageService;
             if (roleOwner.Role.Template.RoleProperties.Attack.Current <= target.Role.Template.RoleProperties.Defence.Current)
             {
-                messageService.SendAbilityMessage(TextCategory.Abilities.GetTranslation("defence"), roleOwner);
+                messageService.SendAbilityMessage(TextManager.Translate("abilities.defence"), roleOwner);
                 return AbilityResult.AttackInsufficient;
             }
             
             target.KillPlayer(gameService.TimeService.TimePeriod, causeOfDeath);
             
-            string killMessage = TextManager.GetEnumCategoryTranslation(causeOfDeath, "kill_message");
-            
-            string killAnnouncement = TextManager.FormatEnumCategoryMessage(causeOfDeath, "kill_announcement", new Dictionary<string, string>{
-                {"playerName", target.GetNameAndNumber()},
-                {"roleName", target.Role.Template.GetName()}
-                }); 
-            
+            string killMessage = TextManager.TranslateEnum(causeOfDeath,"kill_message");
+
+            string killAnnouncement = TextManager.TranslateEnum(causeOfDeath, "kill_announcement")
+                .Replace("playerName", target.GetNameAndNumber()
+                    .Replace("roleName", target.Role.Template.GetName())
+                );
             messageService.SendAbilityMessage(killMessage, roleOwner);
             
             messageService.SendAbilityAnnouncement(killAnnouncement);

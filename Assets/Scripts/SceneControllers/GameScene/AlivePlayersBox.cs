@@ -1,7 +1,9 @@
-﻿
-using game.Constants;
-using game.models.player;
+﻿using game.Constants;
+using Game.Models.Roles.Enums;
+using game.models.roles.Templates;
+using game.Services;
 using Managers;
+using Networking.DataTransferObjects;
 using SceneControllers.GameScene.Helper;
 using TMPro;
 using UnityEngine;
@@ -16,7 +18,7 @@ namespace SceneControllers.GameScene
         [SerializeField] private TextMeshProUGUI playerNameText, numberText, roleText;
         [SerializeField] private Image circleImage;
         private TextMeshProUGUI _buttonText;
-        private Player _currentPlayer, _targetPlayer;
+        private PlayerDto _currentPlayer, _targetPlayer;
         private Time _time;
         private PlayerClick _playerClick;
         public int Index {get;set;}
@@ -34,7 +36,7 @@ namespace SceneControllers.GameScene
         }
         
 
-        public void Init(Player currentPlayer, Player targetPlayer, Time time, PlayerClick playerClick, int index)
+        public void Init(PlayerDto currentPlayer, PlayerDto targetPlayer, Time time, PlayerClick playerClick, int index)
         {
             _targetPlayer = targetPlayer;
             _time = time;
@@ -44,7 +46,7 @@ namespace SceneControllers.GameScene
             _buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
             
             UpdateButtonText();
-            UpdatePlayer(currentPlayer);
+            UpdatePlayer(currentPlayer, targetPlayer);
             playerNameText.text = _targetPlayer.Name;
             numberText.text = _targetPlayer.Number.ToString();
 
@@ -55,10 +57,10 @@ namespace SceneControllers.GameScene
             });
         }
 
-        public void UpdatePlayer(Player currentPlayer)
+        public void UpdatePlayer(PlayerDto currentPlayer, PlayerDto targetPlayer)
         {
             _currentPlayer = currentPlayer;
-            
+            _targetPlayer = targetPlayer;
             UpdateCircleColor();
             UpdateButtonVisibility();
             UpdateRoleVisibilityAndText();
@@ -69,7 +71,7 @@ namespace SceneControllers.GameScene
         
         private void UpdateCircleColor()
         {
-            circleImage.color = _currentPlayer.IsSamePlayer(_targetPlayer) 
+            circleImage.color = _currentPlayer.Number == _targetPlayer.Number
                 ? UIConstants.CircleColorCurrent 
                 : UIConstants.CircleColorDefault;
         }
@@ -87,10 +89,14 @@ namespace SceneControllers.GameScene
             bool shouldShowRole = roleVisibility.ShouldShowRole();
     
             SetCanvasGroupVisibility(roleText.GetComponent<CanvasGroup>(), shouldShowRole);
-    
-            roleText.text = _targetPlayer.Role.Template.GetName();
+            if (!shouldShowRole) return;
+            RoleId targetId = _targetPlayer.RoleDto.RoleId;
+            
+            RoleTemplate role = RoleCatalog.GetRole(targetId);
+            
+            roleText.text = role.GetName();
 
-            var roleTextColor = new RoleTextColor(_targetPlayer.Role.Template.WinningTeam);
+            var roleTextColor = new RoleTextColor(role.WinningTeam);
             roleText.color = roleTextColor.GetColor();
         }
 
@@ -101,16 +107,16 @@ namespace SceneControllers.GameScene
             group.blocksRaycasts = visible;
         }
         
-        public void UpdateTime(Player currentPlayer, Time time)
+        public void UpdateTime(PlayerDto currentPlayer, PlayerDto targetPlayer, Time time)
         {
             _time = time;
-            UpdatePlayer(currentPlayer);
+            UpdatePlayer(currentPlayer, targetPlayer);
         }
         
         private void UpdateButtonText()
         {
             string key = IsSelected ? "unselect" : "select";
-            _buttonText.text = TextCategory.General.GetTranslation(key);
+            _buttonText.text = TextManager.Translate($"general.{key}");
         }
 
         public bool IsPlayerAlive()
