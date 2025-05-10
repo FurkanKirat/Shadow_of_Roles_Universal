@@ -13,7 +13,7 @@ namespace SceneControllers.OnlineMode
         [SerializeField] private Button joinGameButton, hostGameButton;
         [SerializeField] private TMP_InputField gameCodeInputField;
         [SerializeField] private GameLobbyController gameLobbyController;
-
+        [SerializeField] private GameObject lobbyManager;
         private void Start()
         {
             joinGameButton.onClick.AddListener(() => _ = OnJoinGameClicked());
@@ -22,7 +22,8 @@ namespace SceneControllers.OnlineMode
         
         private async Task OnHostGameClicked()
         {
-            var manager = new LobbyManager();
+            var managerObj = Instantiate(lobbyManager);
+            var manager = managerObj.GetComponent<LobbyManager>();
             try
             {
                 await manager.CreateLobbyWithRelayAsync();
@@ -44,7 +45,9 @@ namespace SceneControllers.OnlineMode
             if (string.IsNullOrEmpty(code)) return;
             try
             {
-                var manager = new LobbyManager();
+                var managerObj = Instantiate(lobbyManager);
+                var manager = managerObj.GetComponent<LobbyManager>();
+                Debug.Log("DSFSADFADSFASFD");
                 await manager.JoinLobbyWithRelayAsync(code);
                 Debug.Log("Lobbyye katıldın");
                 gameLobbyController.gameObject.SetActive(true);
