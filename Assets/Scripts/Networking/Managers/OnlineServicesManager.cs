@@ -17,7 +17,6 @@ namespace Networking.Managers
                 if (!AuthenticationService.Instance.IsSignedIn)
                 {
                     await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                    Debug.Log("Signed in anonymously as: " + AuthenticationService.Instance.PlayerId);
                 }
             }
             catch (Exception e)

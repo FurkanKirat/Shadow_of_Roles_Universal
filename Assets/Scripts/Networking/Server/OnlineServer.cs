@@ -7,6 +7,7 @@ using Managers;
 using System.Collections.Generic;
 using Networking.DataTransferObjects;
 using Networking.Interfaces;
+using Newtonsoft.Json;
 
 namespace Networking.Server
 {
@@ -23,7 +24,7 @@ namespace Networking.Server
         {
             Instance = this;
         }
-
+        
         public void InitGameService(List<Player> players, GameSettings gameSettings)
         {
             _gameService = (OnlineGameService)StartGameManager.InitializeGameService(players, gameSettings);
@@ -68,24 +69,25 @@ namespace Networking.Server
             }
         }
 
-        private void SendGameStateToClient(ulong clientId)
+        public void SendGameStateToClient(ulong clientId)
         {
             if (!_clientIdToPlayerNumberMap.ContainsKey(clientId)) return;
 
             int playerNumber = _clientIdToPlayerNumberMap[clientId];
             var dto = _gameService.DtoProvider.GetGameInformationFor(playerNumber);
-            string json = JsonUtility.ToJson(dto);
+            string json = JsonConvert.SerializeObject(dto);
 
             SendGameStateToClientRpc(json, new ClientRpcParams
             {
                 Send = new ClientRpcSendParams { TargetClientIds = new[] { clientId } }
             });
+            Debug.Log(json);
         }
 
         [ClientRpc]
         private void SendGameStateToClientRpc(string json, ClientRpcParams rpcParams = default)
         {
-            var dto = JsonUtility.FromJson<GameDto>(json);
+            var dto = JsonConvert.DeserializeObject<GameDto>(json);
             ServiceLocator.Get<IClient>().ReceiveGameState(dto);
         }
     }

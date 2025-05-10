@@ -6,6 +6,7 @@ using Managers;
 
 namespace game.models.player.properties
 {
+    [Serializable]
     public class DeathProperties
     {
 

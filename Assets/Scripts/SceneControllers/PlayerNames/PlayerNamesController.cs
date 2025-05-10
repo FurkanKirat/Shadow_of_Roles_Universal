@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using game.models.gamestate;
 using game.models.player;
 using game.models.player.properties;
 using Managers;
@@ -15,7 +15,6 @@ namespace SceneControllers.PlayerNames
         [SerializeField] private Button startGameButton, increasePCountButton, decreasePCountButton;
         [SerializeField] private RolePackPanel rolePackPanel;
         private SceneChanger _sceneChanger;
-        public List<Player> Players { get; } = new ();
         private void Start()
         {
             _sceneChanger = ServiceLocator.Get<SceneChanger>();
@@ -55,8 +54,9 @@ namespace SceneControllers.PlayerNames
 
         private void StartGameClicked()
         {
+            rolePackPanel.GameMode = GameMode.Local;
             var playerNames = playerNamesContainer.PlayerNames;
-            Players.Clear();
+            rolePackPanel.Players.Clear();
             bool humanPlayerExist = false;
             for (int i = 0; i < playerNames.Count; i++)
             {
@@ -64,7 +64,7 @@ namespace SceneControllers.PlayerNames
                 string playerName = playerNames[i].GetPlayerName();
                 PlayerType playerType = isAIPlayer ? PlayerType.AI : PlayerType.Human;
                 Player player = Player.PlayerFactory.CreatePlayer(i + 1, playerName, playerType);
-                Players.Add(player);
+                rolePackPanel.Players.Add(player);
                 
                 if (!isAIPlayer)
                 {

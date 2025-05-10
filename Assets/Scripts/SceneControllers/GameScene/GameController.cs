@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using game.models;
 using game.models.gamestate;
@@ -46,9 +47,36 @@ namespace SceneControllers.GameScene
         private void Start()
         {
             ServiceLocator.Register(this);
-            _client = ServiceLocator.Get<IClient>();
-            _client.InitUIUpdater(this);
+    
+            // StartCoroutine çağrısından önce client var mı diye kontrol et
+            if (ServiceLocator.TryGet<IClient>(out var client))
+            {
+                _client = client;
+                StartCoroutine(WaitForGameInformation());
+            }
+            else
+            {
+                Debug.LogError("IClient not registered yet. Delaying StartCoroutine...");
+                StartCoroutine(WaitForClientAndThenStart());
+            }
         }
+
+        private IEnumerator WaitForClientAndThenStart()
+        {
+            while (!ServiceLocator.TryGet<IClient>(out _client))
+                yield return null;
+
+            StartCoroutine(WaitForGameInformation());
+        }
+
+        private IEnumerator WaitForGameInformation()
+        {
+            while (_client.GetCurrentGameInformation() == null)
+                yield return null;
+
+            Initialize(_client.GetCurrentGameInformation());
+        }
+
         
         public void Initialize(IGameInformation gameInformation)
         {
@@ -117,7 +145,6 @@ namespace SceneControllers.GameScene
        
         private void ChangePlayerUI()
         {
-            
             PlayerDto currentPlayer = _gameInformation.CurrentPlayer;
             
             string numberString = TextManager.Translate("general.player_number");

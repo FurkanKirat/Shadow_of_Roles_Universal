@@ -5,7 +5,6 @@ using Managers.enums;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 namespace Managers
 {
     public class SceneChanger : MonoBehaviour

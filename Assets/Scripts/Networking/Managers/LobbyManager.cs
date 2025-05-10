@@ -9,12 +9,13 @@ using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
+using UnityEngine;
 
 namespace Networking.Managers
 {
     public class LobbyManager
     {
-        public Lobby Lobby { get; private set; }
+        public Lobby Lobby { get; set; }
         public string LobbyCode {get; private set;}
         
         /// <summary>
@@ -27,11 +28,15 @@ namespace Networking.Managers
             // Create Relay Allocation
             var allocation = await RelayService.Instance.CreateAllocationAsync(GameConstants.MaxPlayerCount);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
+            
+            var player = new Player(
+                id: AuthenticationService.Instance.PlayerId,
+                data: GetPlayerData()
+            );
             // Create Lobby with joinCode
             var lobby = await LobbyService.Instance.CreateLobbyAsync("ShadowOfRoles", GameConstants.MaxPlayerCount, new CreateLobbyOptions
             {
-                Player = new Player(AuthenticationService.Instance.PlayerId),
+                Player = player,
                 Data = new Dictionary<string, DataObject>
                 {
                     { "joinCode", new DataObject(DataObject.VisibilityOptions.Member, joinCode) }
@@ -71,11 +76,7 @@ namespace Networking.Managers
                 Player = new Player(
                     id: AuthenticationService.Instance.PlayerId,
                     connectionInfo: null,
-                    data: new Dictionary<string, PlayerDataObject>
-                    {
-                        { "name", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, GetPlayerName()) },
-                        { "isAI", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "false") }
-                    }
+                    data: GetPlayerData()
                 )
             };
             
@@ -99,14 +100,18 @@ namespace Networking.Managers
             var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
             transport.SetRelayServerData(serverData);
             NetworkManager.Singleton.StartClient();
-            
+            Lobby = lobby;
         }
 
-        private string GetPlayerName()
+        private Dictionary<string, PlayerDataObject> GetPlayerData()
         {
             var settings = ServiceLocator.Get<SettingsManager>().UserSettings;
-
-            return settings.Username;
+            
+            return new Dictionary<string, PlayerDataObject>
+            {
+                { "name", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, settings.Username) },
+                { "isAI", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "false") }
+            };
         }
     }
 

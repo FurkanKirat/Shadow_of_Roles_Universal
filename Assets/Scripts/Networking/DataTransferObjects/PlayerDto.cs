@@ -3,6 +3,7 @@ using game.models.gamestate;
 using game.models.player;
 using game.models.player.properties;
 using Networking.DataTransferObjects.RoleViewStrategies;
+using Newtonsoft.Json;
 
 namespace Networking.DataTransferObjects
 {
@@ -14,6 +15,7 @@ namespace Networking.DataTransferObjects
         public DeathProperties DeathProperties { get; }
         public RoleDto RoleDto { get; set; }
         public WinStatus WinStatus { get; }
+        
         public PlayerDto(Player player, RoleInfoLevel roleInfoLevel, int playerCount)
         {
             Name = player.Name;
@@ -21,6 +23,16 @@ namespace Networking.DataTransferObjects
             DeathProperties = player.DeathProperties;
             RoleDto = RoleDataDtoBuilder.Build(player.Role, roleInfoLevel, playerCount );
             WinStatus = player.WinStatus;
+        }
+        
+        [JsonConstructor]
+        public PlayerDto(string name, int number, DeathProperties deathProperties, RoleDto roleDto, WinStatus winStatus)
+        {
+            Name = name;
+            Number = number;
+            DeathProperties = deathProperties;
+            RoleDto = roleDto;
+            WinStatus = winStatus;
         }
         
         public override string ToString()

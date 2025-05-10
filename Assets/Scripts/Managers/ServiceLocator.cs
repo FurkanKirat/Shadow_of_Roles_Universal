@@ -24,5 +24,17 @@ namespace Managers
         {
             return (T)Services[typeof(T)];
         }
+        
+        public static bool TryGet<T>(out T service)
+        {
+            if (Services.TryGetValue(typeof(T), out var obj) && obj is T casted)
+            {
+                service = casted;
+                return true;
+            }
+
+            service = default;
+            return false;
+        }
     }
 }

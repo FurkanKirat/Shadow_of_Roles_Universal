@@ -42,13 +42,21 @@ namespace SceneControllers.OnlineMode
         {
             string code = gameCodeInputField.text;
             if (string.IsNullOrEmpty(code)) return;
-
-            var manager = new LobbyManager();
-            await manager.JoinLobbyWithRelayAsync(code);
-            Debug.Log("Lobbyye katıldın");
-            gameLobbyController.gameObject.SetActive(true);
-            gameLobbyController.JoinGame(manager);
-            ServiceLocator.Register(manager);
+            try
+            {
+                var manager = new LobbyManager();
+                await manager.JoinLobbyWithRelayAsync(code);
+                Debug.Log("Lobbyye katıldın");
+                gameLobbyController.gameObject.SetActive(true);
+                gameLobbyController.JoinGame(manager);
+                ServiceLocator.Register(manager);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Hata bulundu zorttttt: " + e);
+                throw;
+            }
+            
         }
     }
 }

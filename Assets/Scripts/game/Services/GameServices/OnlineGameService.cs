@@ -9,10 +9,10 @@ namespace game.Services.GameServices
     {
         public TurnTimerService TurnTimerService { get; }
 
-        public OnlineGameService(List<Player> players, TurnTimerService.IOnTimeChangeListener onTimeChangeListener, RolePack rolePack)
+        public OnlineGameService(List<Player> players,  RolePack rolePack)
         : base(players, new TimeService(), new GameSettings(GameMode.Online, rolePack, players.Count))
         {
-            TurnTimerService = new TurnTimerService(this, onTimeChangeListener);
+            TurnTimerService = new TurnTimerService(this, null);
         }
 
         private readonly object _lock = new object();

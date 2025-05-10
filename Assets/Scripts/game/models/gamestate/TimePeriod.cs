@@ -1,15 +1,17 @@
 ﻿using System;
 using Managers;
+using Newtonsoft.Json;
 
 namespace game.models.gamestate
 {
+    [Serializable]
     public class TimePeriod : IEquatable<TimePeriod>, IComparable<TimePeriod>, ICloneable
     {
         public Time Time {get; set;}
         public int DayCount {get; set;}
-
-        // Constructor
-        private TimePeriod(Time time, int dayCount)
+        
+        [JsonConstructor]
+        public TimePeriod(Time time, int dayCount)
         {
             Time = time;
             DayCount = dayCount;

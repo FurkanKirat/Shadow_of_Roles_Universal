@@ -73,7 +73,7 @@
   "psycho.kill_announcement": "{playerName} ({roleName}) has been slain by a Psycho",
   
   "dark_revealer.name": "Dark Revealer",
-  "dark_revealer.abilities": "At night you see someone's role",
+  "dark_revealer.abilities": "You choose one and see two roles, including that person's role",
   "dark_revealer.attributes": "N/A",
   "dark_revealer.ability_message": "Your target's role is: {roleName}",
   
@@ -98,7 +98,7 @@
   
   "chill_guy.name": "Chill Guy",
   "chill_guy.abilities": "Just simple person. You do nothing",
-  "chill_guy.attributes": "If you reveal your role you will lose the game",
+  "chill_guy.attributes": "N/A",
   
   "last_joke.name": "Last Joke",
   "last_joke.abilities": "When you die you will comeback to life and you must kill one player",
@@ -176,12 +176,11 @@
   "cause_of_death.last_joke": "Last Joke",
   "cause_of_death.entrepreneur": "Entrepreneur",
   
-  "goals.folk": "Find and execute all corrupters and neutrals",
+  "goals.folk": "Find and execute all corrupts and neutrals",
   "goals.corrupter": "Kill the folk and neutrals",
   "goals.lore_keeper": "You try to guess the players' roles",
   "goals.clown": "You have to die at night by someone to win the game",
-  "goals.assassin": "Kill every folk and corrupter member",
-  "goals.chill_guy": "Have Fun",
+  "goals.assassin": "Kill every folk and corrupt member",
   
   "voting.voted_for": "You have voted for : {playerName}",
   "voting.voted_for_none": "You did not voted for anybody",
@@ -193,7 +192,7 @@
   
   "role_categories.role_book_role": "Roles",
   "role_categories.role_book_folk_role": "Folk Roles",
-  "role_categories.role_book_corrupter_role": "Corrupter Roles",
+  "role_categories.role_book_corrupter_role": "Corrupt Roles",
   "role_categories.role_book_neutral_role": "Neutral Roles",
   "role_categories.folk_analyst": "Folk Analyst",
   "role_categories.folk_protector": "Folk Protector",
@@ -201,9 +200,9 @@
   "role_categories.folk_support": "Folk Support",
   "role_categories.folk_unique": "Folk Unique",
   "role_categories.folk_villager": "Folk Villager",
-  "role_categories.corrupter_analyst": "Corrupter Analyst",
-  "role_categories.corrupter_killing": "Corrupter Killing",
-  "role_categories.corrupter_support": "Corrupter Support",
+  "role_categories.corrupter_analyst": "Corrupt Analyst",
+  "role_categories.corrupter_killing": "Corrupt Killing",
+  "role_categories.corrupter_support": "Corrupt Support",
   "role_categories.neutral_evil": "Neutral Evil",
   "role_categories.neutral_killing": "Neutral Killing",
   "role_categories.neutral_chaos": "Neutral Chaos",
@@ -225,7 +224,7 @@
   "role_book.chosen_player_text_voting": "You are voting for: {playerName}",
   "role_book.chosen_player_text_voting_nobody": "You did not voted for anybody",
   "role_book.main_goal_text": "Have Fun",
-  "role_book.rules_text": "Game Rules and Flow\n\n1. Night Phase:\nThe game begins at night, and each player, in turn, takes the device to check their role.\nEach player performs their assigned task according to their role and then passes the device to the next player.\nThe night phase ends once all players have used their abilities.\n\n2. Day Phase:\nIn the day, each player takes the device in turn to see the results of the task performed by their role during the night.\n\nAfter all players have reviewed their results, the device is returned to the first player, and the voting phase begins.\n\n3. Voting Phase:\nBefore voting, players discuss and exchange ideas based on the information they gathered during the night. \nThe voting is open, and each player cast their vote and pass the device to next player.\nThe player who receives more than half of the votes is eliminated.\nAfter voting is complete, the game transitions back to the night phase, and this cycle continues.\n\nTeams and Objectives\n\nFolk:\nTheir goal is to ensure that, by the end of the game, all surviving players belong only to the Folk team.\n\nCorrupted:\nTheir goal is to ensure that, by the end of the game, all surviving players belong only to the Corrupted team.\n\nNeutral:\nNeutral players have unique win conditions or tasks specific to their roles. Their goal is to achieve their individual objectives. For more information check the role guide.",
+  "role_book.rules_text": "Game Rules and Flow\n\n1. Night Phase:\nThe game begins at night, and each player, in turn, takes the device to check their role.\nEach player performs their assigned task according to their role and then passes the device to the next player.\nThe night phase ends once all players have used their abilities.\n\n2. Day Phase:\nIn the day, each player takes the device in turn to see the results of the task performed by their role during the night.\n\nAfter all players have reviewed their results, the device is returned to the first player, and the voting phase begins.\n\n3. Voting Phase:\nBefore voting, players discuss and exchange ideas based on the information they gathered during the night. \nThe voting is open, and each player cast their vote and pass the device to next player.\nThe player who receives more than half of the votes is eliminated.\nAfter voting is complete, the game transitions back to the night phase, and this cycle continues.\n\nTeams and Objectives\n\nFolk:\nTheir goal is to ensure that, by the end of the game, all surviving players belong only to the Folk team.\n\nCorrupt:\nTheir goal is to ensure that, by the end of the game, all surviving players belong only to the Corrupt team.\n\nNeutral:\nNeutral players have unique win conditions or tasks specific to their roles. Their goal is to achieve their individual objectives. For more information check the role guide.",
   "role_book.role_book_abilities": "Abilities",
   "role_book.role_book_attributes": "Attributes",
   "role_book.role_book_goal": "Goal",
@@ -238,10 +237,9 @@
   "current_role.team": "Team:",
   "current_role.current_role": "Current Role:",
   
-  "game_end.corrupter": "Corrupter",
+  "game_end.corrupter": "Corrupt",
   "game_end.folk": "Folk",
   "game_end.assassin": "Assassin",
-  "game_end.chill_guy": "Chill Guy",
   "game_end.clown": "Clown",
   "game_end.lore_keeper": "Lore Keeper",
   "game_end.winner_team_text": "{team} has won!",

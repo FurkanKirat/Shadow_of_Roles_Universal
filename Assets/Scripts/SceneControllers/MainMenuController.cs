@@ -16,6 +16,7 @@ namespace SceneControllers
 
         [SerializeField] private Transform buttonsContainer;
         [SerializeField] private GameGuideController gameGuideController;
+        [SerializeField] private SettingsController settingsController;
         private SceneChanger _sceneChanger;
         private AlphaThresholdManager _alphaThresholdManager;
         private void Start()
@@ -75,7 +76,7 @@ namespace SceneControllers
 
         private void OnSettingsClicked()
         {
-            LoadScene(SceneType.Settings);
+            settingsController.gameObject.SetActive(true);
         }
         
         private void OnOnlineModeClicked()

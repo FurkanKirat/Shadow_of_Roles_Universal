@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using game.models;
+﻿using System;
+using System.Collections.Generic;
 using game.models.gamestate;
 using game.models.player;
 using game.models.roles;
 using game.Services.GameServices;
 using game.Services.RoleDistributor;
 using game.Services.RoleDistributor.GameRolesStrategy;
-using game.Utils;
-using UnityEngine;
 
 namespace Managers
 {
@@ -26,10 +24,13 @@ namespace Managers
             for(var i=0; i < playerCount ; ++i){
                 players[i].Role = new Role(roles[i]);
             }
-            
-            var gameService = new LocalGameService(players, ruleSet);
-            
-            return gameService;
+
+            return gameSettings.GameMode switch
+            {
+                GameMode.Local => new LocalGameService(players, ruleSet),
+                GameMode.Online => new OnlineGameService(players, ruleSet),
+                _ => throw new NotImplementedException(),
+            };
         }
         
     }
