@@ -17,7 +17,7 @@ namespace Networking.DataTransferObjects
         public GameSettings GameSettings {get; set;}
         public GameStatus GameStatus {get; set;}
         public WinningTeam WinnerTeam {get; set;}
-        public Dictionary<TimePeriod, List<Message>> Messages {get; set;}
+        public List<Message> Messages {get; set;}
         public TimePeriod LastMessagePeriod {get; set;}
         
     }

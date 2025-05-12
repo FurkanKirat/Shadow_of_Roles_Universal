@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace game.models.gamestate
 {
@@ -11,29 +12,30 @@ namespace game.models.gamestate
 
     public static class TimeExtensions
     {
-        public static Time Next(this Time time)
-        {
-            return (Time) (((int)time+1) % Enum.GetValues(typeof(Time)).Length);
-        }
-        
         public static Time Next(this Time current, GameMode gameMode)
         {
             var cycle = gameMode == GameMode.Online ? OnlineCycle : OfflineCycle;
             int index = Array.IndexOf(cycle, current);
             return cycle[(index + 1) % cycle.Length];
         }
-
-        public static Time Previous(this Time time)
-        {
-            int size = Enum.GetValues(typeof(Time)).Length;
-            return (Time) (((int)time - 1 + size) % size);
-        }
         
         public static Time Previous(this Time current, GameMode gameMode)
         {
             var cycle = gameMode == GameMode.Online ? OnlineCycle : OfflineCycle;
             int index = Array.IndexOf(cycle, current);
-            return cycle[(index - 1 + + cycle.Length) % cycle.Length];
+            return cycle[(index - 1 + cycle.Length) % cycle.Length];
+        }
+
+        public static Time GetFirst(GameMode gameMode)
+        {
+            var cycle = gameMode == GameMode.Online ? OnlineCycle : OfflineCycle;
+            return cycle.First();
+        }
+
+        public static Time GetLast(GameMode gameMode)
+        {
+            var cycle = gameMode == GameMode.Online ? OnlineCycle : OfflineCycle;
+            return cycle.Last();
         }
 
         private static readonly Time[] OfflineCycle = { Time.Day, Time.Voting, Time.Night };

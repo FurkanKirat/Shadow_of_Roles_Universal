@@ -5,6 +5,7 @@ using UnityEngine;
 using game.Services.GameServices;
 using Managers;
 using System.Collections.Generic;
+using Game.Services;
 using Networking.DataTransferObjects;
 using Networking.Interfaces;
 using Newtonsoft.Json;
@@ -16,6 +17,7 @@ namespace Networking.Server
         public static OnlineServer Instance { get; private set; }
 
         private OnlineGameService _gameService;
+        private TurnTimerService turnTimerService;
 
         // Bağlı oyuncuların clientId ↔ playerNumber eşlemesi
         private readonly Dictionary<ulong, int> _clientIdToPlayerNumberMap = new();
@@ -23,12 +25,17 @@ namespace Networking.Server
         private void Awake()
         {
             Instance = this;
+            ServiceLocator.Register<IServer>(this);
+            
         }
         
         public void InitGameService(List<Player> players, GameSettings gameSettings)
         {
             _gameService = (OnlineGameService)StartGameManager.InitializeGameService(players, gameSettings);
-
+            var go = new GameObject("TurnTimer");
+            DontDestroyOnLoad(go);
+            turnTimerService = go.AddComponent<TurnTimerService>();
+            turnTimerService.Initialize(_gameService);
             // Oyuncuları bağlandıkları sıraya göre eşle
             int i = 0;
             foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)

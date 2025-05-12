@@ -2,6 +2,7 @@ using game.models;
 using Networking.DataTransferObjects;
 using Networking.Interfaces;
 using SceneControllers.GameScene;
+using UnityEngine;
 
 namespace Networking.Client
 {
@@ -32,6 +33,7 @@ namespace Networking.Client
         {
             _currentGameInformation = gameInformation;
             _uiUpdater?.UpdateUI(gameInformation);
+            
         }
         
         public IGameInformation GetCurrentGameInformation() => _currentGameInformation;

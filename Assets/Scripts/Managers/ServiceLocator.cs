@@ -6,7 +6,7 @@ namespace Managers
 {
     public static class ServiceLocator
     {
-        private static readonly Dictionary<Type, object> Services = new Dictionary<Type, object>();
+        private static readonly Dictionary<Type, object> Services = new ();
         
         public static void Register<T>(T service)
         {

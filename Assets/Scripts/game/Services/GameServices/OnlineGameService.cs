@@ -1,18 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using game.models.gamestate;
 using game.models.player;
-using Game.Services;
+using UnityEngine;
+using Time = game.models.gamestate.Time;
 
 namespace game.Services.GameServices
 {
     public class OnlineGameService : BaseGameService
     {
-        public TurnTimerService TurnTimerService { get; }
 
         public OnlineGameService(List<Player> players,  RolePack rolePack)
-        : base(players, new TimeService(), new GameSettings(GameMode.Online, rolePack, players.Count))
+        : base(players, new GameSettings(GameMode.Online, rolePack, players.Count))
         {
-            TurnTimerService = new TurnTimerService(this, null);
+            
+        }
+        
+        public override void ToggleDayNightCycle()
+        {
+            Debug.Log("Toggle day night cycle");
+            TimeService.ToggleTimeCycle();
+            Time time = TimeService.TimePeriod.Time;
+            switch (time)
+            {
+                case Time.Day:
+                    // No day phase in online mode
+                    break;
+                case Time.Night:
+                    VotingService.ExecuteMaxVoted();
+                    break;
+                case Time.Voting:
+                    AbilityService.PerformAllAbilities();
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown time phase.");
+            }
+            
+            FinishGameService.FinishGameIfNeeded();
         }
 
         private readonly object _lock = new object();

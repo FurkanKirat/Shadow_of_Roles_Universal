@@ -13,7 +13,7 @@ namespace game.Services
     public class MessageService
     {
         private readonly BaseGameService _gameService;
-        private readonly Dictionary<TimePeriod, List<Message>> _messages = new ();
+        private readonly List<Message> _messages = new ();
 
         public MessageService(BaseGameService gameService)
         {
@@ -27,13 +27,10 @@ namespace game.Services
 
         public void SendMessage(string message, Player receiver, bool isPublic)
         {
-            TimePeriod messageTimePeriod = _gameService.TimeService.TimePeriod.GetPrevious();
-            if (!_messages.ContainsKey(messageTimePeriod))
-            {
-                _messages[messageTimePeriod] = new List<Message>();
-            }
+            TimePeriod messageTimePeriod = _gameService.TimeService.TimePeriod.GetPrevious(_gameService.GameSettings.GameMode);
 
-            _messages[messageTimePeriod].Add(new Message(messageTimePeriod, message, receiver, isPublic));
+            int receiverNumber = receiver?.Number ?? -1;
+            _messages.Add(new Message(messageTimePeriod, message, receiverNumber, isPublic));
         }
         
 
@@ -60,52 +57,38 @@ namespace game.Services
             }
         }
 
-        public Dictionary<TimePeriod, List<Message>> GetPlayerMessages(Player player)
+        public List<Message> GetPlayerMessages(Player player)
         {
             return GetPlayerMessages(player.Number);
         }
         
-        public Dictionary<TimePeriod, List<Message>> GetPlayerMessages(int number)
+        public List<Message> GetPlayerMessages(int number)
         {
-            var sendMap = new Dictionary<TimePeriod, List<Message>>();
-
-            foreach (var entry in _messages)
-            {
-                var filteredMessages = entry.Value
-                    .Where(message => message.IsPublic || message.Receiver.Number == number)
-                    .ToList();
-
-                sendMap[entry.Key] = filteredMessages;
-            }
-
-            return sendMap;
+            return _messages
+                .Where(message => message.IsPublic || message.ReceiverNumber == number)
+                .ToList();
         }
 
-        public Dictionary<TimePeriod, List<Message>> GetDailyAnnouncements()
+        public List<Message> GetDailyAnnouncements()
         {
-            return GetDailyAnnouncements(_messages, _gameService.TimeService.TimePeriod);
+            return GetDailyAnnouncements(_messages, _gameService.TimeService.TimePeriod, _gameService.GameSettings.GameMode);
         }
 
-        public static Dictionary<TimePeriod, List<Message>> GetDailyAnnouncements(Dictionary<TimePeriod, List<Message>> messages, TimePeriod currentPeriod)
+        public static List<Message> GetDailyAnnouncements(List<Message> messages, TimePeriod currentPeriod, GameMode gameMode)
         {
-            var sendMap = new Dictionary<TimePeriod, List<Message>>();
 
-            var timePeriod = currentPeriod.GetPrevious();
-            var messageList = messages.ContainsKey(timePeriod) ? messages[timePeriod]
-                .Where(m => m.IsPublic)
-                .ToList() : new List<Message>();
-
-            sendMap[timePeriod] = messageList;
-
-            return sendMap;
+            var timePeriod = currentPeriod.GetPrevious(gameMode);
+            return messages
+                .Where(m => m.IsPublic && m.TimePeriod == timePeriod)
+                .ToList();
         }
 
         public TimePeriod GetLastMessagePeriod(Player player)
         {
             return GetPlayerMessages(player)
-                .Where(pair => pair.Key != null && pair.Value.Count > 0)
-                .OrderByDescending(pair => pair.Key)
-                .Select(pair => pair.Key.Clone() as TimePeriod)
+                .Where(message => message.IsPublic || player.IsSamePlayer(message.ReceiverNumber))
+                .OrderByDescending(message => message.TimePeriod)
+                .Select(message => message.TimePeriod.Clone() as TimePeriod)
                 .FirstOrDefault() ?? TimePeriod.Default();
         }
 

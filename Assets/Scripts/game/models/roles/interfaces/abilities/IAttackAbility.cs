@@ -18,7 +18,7 @@ namespace game.models.roles.interfaces.abilities
                 return AbilityResult.AttackInsufficient;
             }
             
-            target.KillPlayer(gameService.TimeService.TimePeriod, causeOfDeath);
+            target.KillPlayer(gameService.TimeService.TimePeriod, causeOfDeath, gameService.GameSettings.GameMode);
             
             string killMessage = TextManager.TranslateEnum(causeOfDeath,"kill_message");
 

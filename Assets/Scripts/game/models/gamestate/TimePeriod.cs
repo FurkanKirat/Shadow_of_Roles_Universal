@@ -32,17 +32,17 @@ namespace game.models.gamestate
             return new TimePeriod(Time, DayCount);
         }
 
-        public void Next()
+        public void Next(GameMode gameMode)
         {
-            if(Time == Time.Night) DayCount++;
-            Time = Time.Next();
+            if(Time == TimeExtensions.GetLast(gameMode)) DayCount++;
+            Time = Time.Next(gameMode);
         }
 
-        public TimePeriod GetPrevious()
+        public TimePeriod GetPrevious(GameMode gameMode)
         {
             var timePeriod = new TimePeriod(Time, DayCount);
-            if(Time == Time.Day) timePeriod.DayCount--;
-            timePeriod.Time = timePeriod.Time.Previous();
+            if(Time == TimeExtensions.GetFirst(gameMode)) timePeriod.DayCount--;
+            timePeriod.Time = timePeriod.Time.Previous(gameMode);
             return timePeriod;
         }
 
@@ -88,7 +88,7 @@ namespace game.models.gamestate
         {
             if (timePeriod1 == null || timePeriod2 == null)
             {
-                throw new ArgumentNullException("Null values cannot be compared.");
+                throw new ArgumentNullException(nameof(timePeriod1), "Null values cannot be compared.");
             }
             
             return timePeriod1.CompareTo(timePeriod2) > 0;
@@ -98,7 +98,7 @@ namespace game.models.gamestate
         {
             if (timePeriod1 == null || timePeriod2 == null)
             {
-                throw new ArgumentNullException("Null values cannot be compared.");
+                throw new ArgumentNullException(nameof(timePeriod1),"Null values cannot be compared.");
             }
 
             return timePeriod1.CompareTo(timePeriod2) < 0;
@@ -108,7 +108,7 @@ namespace game.models.gamestate
         {
             if (timePeriod1 == null || timePeriod2 == null)
             {
-                throw new ArgumentNullException("Null values cannot be compared.");
+                throw new ArgumentNullException(nameof(timePeriod1), "Null values cannot be compared.");
             }
 
             return timePeriod1.CompareTo(timePeriod2) <= 0;
@@ -118,7 +118,7 @@ namespace game.models.gamestate
         {
             if (timePeriod1 == null || timePeriod2 == null)
             {
-                throw new ArgumentNullException("Null values cannot be compared.");
+                throw new ArgumentNullException(nameof(timePeriod1), "Null values cannot be compared.");
             }
 
             return timePeriod1.CompareTo(timePeriod2) >= 0;

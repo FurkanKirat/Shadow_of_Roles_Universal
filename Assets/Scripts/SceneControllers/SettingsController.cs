@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
-using game.Constants;
 using game.models.Settings;
 using Managers;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SceneControllers
 {
     public class SettingsController : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI languageText;
+        [SerializeField] private TextMeshProUGUI languageText, playerNameText;
         [SerializeField] private TMP_Dropdown languageDropdown;
+        [SerializeField] private TMP_InputField playerNameInput;
+        [SerializeField] private Button closeButton;
         private SettingsManager _settingsManager;
         private SceneChanger _sceneChanger;
         private void Start()
@@ -19,6 +21,7 @@ namespace SceneControllers
             _settingsManager = ServiceLocator.Get<SettingsManager>();
             _sceneChanger = ServiceLocator.Get<SceneChanger>();
             InitLanguageSettings();
+            closeButton.onClick.AddListener(SaveSettings);
         }
 
         private void Update()
@@ -42,6 +45,8 @@ namespace SceneControllers
             InitSelectedLanguage();
             languageDropdown.onValueChanged.AddListener((value) => SelectLanguage(value));
             
+            playerNameText.text = TextManager.Translate("settings.username");
+            playerNameInput.text = _settingsManager.UserSettings.Username;
         }
 
         private void InitSelectedLanguage()
@@ -57,6 +62,12 @@ namespace SceneControllers
             var language = Language.Values().FirstOrDefault(x => x.Text == selectedLanguage);
             _settingsManager.ChangeLanguage(language);
             _sceneChanger.RefreshScene();
+        }
+
+        private void SaveSettings()
+        {
+            _settingsManager.UserSettings.Username = playerNameInput.text;
+            _settingsManager.SaveSettings();
         }
     
     }

@@ -6,6 +6,7 @@ using Managers;
 using Networking.Client;
 using Networking.DataTransferObjects;
 using Networking.Interfaces;
+using UnityEngine;
 
 namespace Networking.Server
 {
@@ -29,10 +30,12 @@ namespace Networking.Server
         {
             GameService.ReceiveInfo(clientInfoDto);
             SendGameState();
+            
         }
 
         public void SendGameState()
         {
+            Debug.Log("SendGameState");
             ConnectedClient?.ReceiveGameState(GameService.DtoProvider.GetGameInformationFor(GameService.CurrentPlayer.Number));
         }
     }

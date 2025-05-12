@@ -43,10 +43,10 @@ namespace game.models.player
             }
         }
         
-        public void KillPlayer(TimePeriod timePeriod, CauseOfDeath causeOfDeath )
+        public void KillPlayer(TimePeriod timePeriod, CauseOfDeath causeOfDeath, GameMode gameMode )
         {
             DeathProperties.IsAlive = false;
-            DeathProperties.DeathTimePeriod = timePeriod.GetPrevious();
+            DeathProperties.DeathTimePeriod = timePeriod.GetPrevious(gameMode);
             DeathProperties.AddCauseOfDeath(causeOfDeath);
         }
         

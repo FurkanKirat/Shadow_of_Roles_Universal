@@ -15,7 +15,7 @@ namespace SceneControllers.GameScene.Messages
         [SerializeField] private ScrollRect scrollRect;
         private readonly List<TimePeriod> _timePeriods = new ();
         private PlayerDto _player;
-        public void RefreshLayout(PlayerDto player, Dictionary<TimePeriod, List<Message>> messages)
+        public void RefreshLayout(PlayerDto player, List<Message> messages)
         {
             bool isSamePlayer = _player != null && player.IsSamePlayer(_player);
             bool messagesAreSame = messages.Count == _timePeriods.Count;
@@ -25,19 +25,18 @@ namespace SceneControllers.GameScene.Messages
                 Destroy(child.gameObject);
             _timePeriods.Clear();
             
-            foreach (var (key, value) in messages)
+            foreach (var message in messages)
             {
-                if(_timePeriods.Contains(key)) continue;
-                
-                var timeObject = Instantiate(timePeriodPrefab, gameObject.transform);
-                var timePeriodBox = timeObject.GetComponentInChildren<TimePeriodBox>();
-                timePeriodBox.Init(key);
-                _timePeriods.Add(key);
-                foreach (var message in value)
+                if (!_timePeriods.Contains(message.TimePeriod))
                 {
-                    var messageBox = Instantiate(messagePrefab, gameObject.transform);
-                    messageBox.GetComponentInChildren<MessageBox>().Init(message);
+                    var timeObject = Instantiate(timePeriodPrefab, gameObject.transform);
+                    var timePeriodBox = timeObject.GetComponentInChildren<TimePeriodBox>();
+                    timePeriodBox.Init(message.TimePeriod);
+                    _timePeriods.Add(message.TimePeriod);
                 }
+                
+                var messageBox = Instantiate(messagePrefab, gameObject.transform);
+                messageBox.GetComponentInChildren<MessageBox>().Init(message);
             }
             _player = player;
             

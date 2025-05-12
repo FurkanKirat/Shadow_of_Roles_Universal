@@ -7,7 +7,7 @@ namespace game.models
 {
     public interface IGameInformation
     {
-        Dictionary<TimePeriod, List<Message>> Messages { get; }
+        List<Message> Messages { get; }
         TimePeriod LastMessagePeriod { get; }
         List<PlayerDto> AlivePlayers { get; }
         List<PlayerDto> DeadPlayers { get; }

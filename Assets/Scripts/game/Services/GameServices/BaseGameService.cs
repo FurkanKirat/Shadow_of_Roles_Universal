@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using game.models.gamestate;
 using game.models.player;
@@ -28,9 +27,9 @@ namespace game.Services.GameServices
         public GameSettings GameSettings { get; }
         public DtoProvider DtoProvider { get; }
 
-        protected BaseGameService(List<Player> players, TimeService timeService, GameSettings gameSettings)
+        protected BaseGameService(List<Player> players, GameSettings gameSettings)
         {
-            TimeService = timeService;
+            TimeService = new TimeService(this);
             VotingService = new VotingService(this);
             MessageService = new MessageService(this);
             FinishGameService = new FinishGameService(this);
@@ -54,28 +53,7 @@ namespace game.Services.GameServices
             
         }
 
-        public void ToggleDayNightCycle()
-        {
-            TimeService.ToggleTimeCycle();
-            Time time = TimeService.TimePeriod.Time;
-            switch (time)
-            {
-                case Time.Day:
-                    AbilityService.PerformAllAbilities();
-                    break;
-                case Time.Night:
-                    VotingService.ExecuteMaxVoted();
-                    break;
-                
-                case Time.Voting:
-                    // No operation during voting time
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown time phase.");
-            }
-            
-            FinishGameService.FinishGame();
-        }
+        public abstract void ToggleDayNightCycle();
 
         public virtual void UpdateAlivePlayers()
         {

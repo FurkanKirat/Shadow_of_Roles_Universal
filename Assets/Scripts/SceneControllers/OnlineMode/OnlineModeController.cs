@@ -24,42 +24,82 @@ namespace SceneControllers.OnlineMode
         {
             var managerObj = Instantiate(lobbyManager);
             var manager = managerObj.GetComponent<LobbyManager>();
+            DontDestroyOnLoad(manager);
+
             try
             {
+                Debug.Log("[HostGame] Lobi ve Relay oluşturuluyor...");
                 await manager.CreateLobbyWithRelayAsync();
-                Debug.Log("Lobby oluşturuldu: " + manager.Lobby.LobbyCode);
+
+                if (manager.Lobby == null || string.IsNullOrEmpty(manager.Lobby.LobbyCode))
+                {
+                    Debug.LogError("[HostGame] Lobby oluşturulamadı veya lobbyCode boş!");
+                    return;
+                }
+
+                Debug.Log($"[HostGame] Lobby oluşturuldu: {manager.Lobby.LobbyCode}");
 
                 gameLobbyController.gameObject.SetActive(true);
-                gameLobbyController.JoinGame(manager);
+                await gameLobbyController.JoinGame(manager);
                 ServiceLocator.Register(manager);
             }
             catch (Exception ex)
             {
-                Debug.LogError("Lobby oluşturulurken hata: " + ex.Message);
+                Debug.LogError("[HostGame] Lobby oluşturulurken hata: " + ex.Message + "\n" + ex);
             }
         }
 
         private async Task OnJoinGameClicked()
         {
-            string code = gameCodeInputField.text;
-            if (string.IsNullOrEmpty(code)) return;
+            string code = gameCodeInputField.text.Trim().ToUpper(); // Güvenli giriş
+            if (string.IsNullOrEmpty(code))
+            {
+                Debug.LogWarning("[JoinGame] Lobi kodu boş.");
+                return;
+            }
+
             try
             {
+                Debug.Log($"[JoinGame] Kullanıcı şu kod ile lobbyye katılmaya çalışıyor: {code}");
+
                 var managerObj = Instantiate(lobbyManager);
+                if (managerObj == null)
+                {
+                    Debug.LogError("[JoinGame] LobbyManager prefab instantiate edilemedi!");
+                    return;
+                }
+
                 var manager = managerObj.GetComponent<LobbyManager>();
-                Debug.Log("DSFSADFADSFASFD");
+                if (manager == null)
+                {
+                    Debug.LogError("[JoinGame] LobbyManager component eksik!");
+                    return;
+                }
+
+                DontDestroyOnLoad(manager);
+                Debug.Log("[JoinGame] LobbyManager başlatılıyor...");
+
                 await manager.JoinLobbyWithRelayAsync(code);
-                Debug.Log("Lobbyye katıldın");
+
+                if (manager.Lobby == null)
+                {
+                    Debug.LogError("[JoinGame] Lobiye katılım başarısız: Lobby null.");
+                    return;
+                }
+
+                Debug.Log("[JoinGame] Lobbyye katılma başarılı!");
+
                 gameLobbyController.gameObject.SetActive(true);
-                gameLobbyController.JoinGame(manager);
+                await gameLobbyController.JoinGame(manager);
+
                 ServiceLocator.Register(manager);
             }
             catch (Exception e)
             {
-                Debug.Log("Hata bulundu zorttttt: " + e);
-                throw;
+                Debug.LogError("[JoinGame] Hata bulundu zorttttt: " + e.Message + "\n" + e);
             }
-            
         }
+
+
     }
 }

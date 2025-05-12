@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using game.Constants;
 using Managers;
@@ -16,9 +17,24 @@ namespace Networking.Managers
     public class LobbyManager : MonoBehaviour
     {
         public Lobby Lobby { get; private set; }
-        public string LobbyJoinCode { get; private set; }   // Kullanıcıların lobby'e girmesi için
-        private string RelayJoinCode { get; set; }   // Relay bağlantısı için
+        public string LobbyJoinCode { get; private set; }
+        private string RelayJoinCode { get; set; }
 
+        
+        private void Awake()
+        {
+            NetworkManager.Singleton.OnTransportFailure += OnTransportFailure;
+        }
+
+        private void OnDestroy()
+        {
+            NetworkManager.Singleton.OnTransportFailure -= OnTransportFailure;
+        }
+
+        private void OnTransportFailure()
+        {
+            Debug.LogError("Relay Transport failure occurred. Restart required.");
+        }
         /// <summary>
         /// Host lobby + create Relay + start host
         /// </summary>
@@ -26,42 +42,75 @@ namespace Networking.Managers
         {
             await OnlineServicesManager.InitializeAndSignInAsync();
 
-            // 1. Create Relay Allocation
-            var allocation = await RelayService.Instance.CreateAllocationAsync(GameConstants.MaxPlayerCount);
-            RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
-            // 2. Create Lobby (with relayJoinCode stored as member-visible)
-            var player = new Player(
-                id: AuthenticationService.Instance.PlayerId,
-                data: GetPlayerData()
-            );
-
-            Lobby = await LobbyService.Instance.CreateLobbyAsync("ShadowOfRoles", GameConstants.MaxPlayerCount, new CreateLobbyOptions
+            try
             {
-                Player = player,
-                Data = new Dictionary<string, DataObject>
+                Debug.Log("[Relay] Relay allocation is being created...");
+                var allocation = await RelayService.Instance.CreateAllocationAsync(GameConstants.MaxPlayerCount);
+                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+                if (string.IsNullOrEmpty(RelayJoinCode))
                 {
-                    { "joinCode", new DataObject(DataObject.VisibilityOptions.Member, RelayJoinCode) }
+                    Debug.LogError("[Relay] Relay join code is null or empty. Aborting lobby creation.");
+                    return;
                 }
-            });
 
-            LobbyJoinCode = Lobby.LobbyCode;
+                Debug.Log($"[Relay] Relay join code created: {RelayJoinCode}");
 
-            // 3. Setup Unity Transport with relay
-            var serverData = new RelayServerData(
-                allocation.RelayServer.IpV4,
-                (ushort)allocation.RelayServer.Port,
-                allocation.AllocationIdBytes,
-                allocation.ConnectionData,
-                allocation.ConnectionData, // host's own
-                allocation.Key,
-                true // DTLS
-            );
+                var player = new Player(
+                    id: AuthenticationService.Instance.PlayerId,
+                    data: GetPlayerData()
+                );
 
-            var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-            transport.SetRelayServerData(serverData);
+                Debug.Log("[Lobby] Creating lobby...");
+                Lobby = await LobbyService.Instance.CreateLobbyAsync("ShadowOfRoles", GameConstants.MaxPlayerCount, new CreateLobbyOptions
+                {
+                    Player = player,
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { "joinCode", new DataObject(DataObject.VisibilityOptions.Member, RelayJoinCode) }
+                    }
+                });
 
-            NetworkManager.Singleton.StartHost();
+                if (Lobby == null || string.IsNullOrEmpty(Lobby.LobbyCode))
+                {
+                    Debug.LogError("[Lobby] Lobby creation failed or lobby code is empty.");
+                    return;
+                }
+
+                LobbyJoinCode = Lobby.LobbyCode;
+                Debug.Log($"[Lobby] Lobby created successfully with code: {LobbyJoinCode}");
+
+                var serverData = new RelayServerData(
+                    allocation.RelayServer.IpV4,
+                    (ushort)allocation.RelayServer.Port,
+                    allocation.AllocationIdBytes,
+                    allocation.ConnectionData,
+                    allocation.ConnectionData,
+                    allocation.Key,
+                    true // DTLS
+                );
+
+                var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+                transport.SetRelayServerData(serverData);
+
+                Debug.Log("[Netcode] Starting host...");
+                if (!NetworkManager.Singleton.IsListening)
+                {
+                    NetworkManager.Singleton.StartHost();
+                }
+            }
+            catch (RelayServiceException e)
+            {
+                Debug.LogError($"[Relay ERROR] Failed to create allocation: {e.Message}\n{e}");
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.LogError($"[Lobby ERROR] Failed to create lobby: {e.Message}\n{e}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[GENERAL ERROR] Unexpected error during lobby creation: {e.Message}\n{e}");
+            }
         }
 
         /// <summary>
@@ -71,40 +120,71 @@ namespace Networking.Managers
         {
             await OnlineServicesManager.InitializeAndSignInAsync();
 
-            LobbyJoinCode = lobbyCode;
-
-            var joinOptions = new JoinLobbyByCodeOptions
+            try
             {
-                Player = new Player(
-                    id: AuthenticationService.Instance.PlayerId,
-                    data: GetPlayerData()
-                )
-            };
+                Debug.Log($"[JoinLobby] Attempting to join lobby with code: {lobbyCode}");
+                LobbyJoinCode = lobbyCode;
 
-            // 1. Join lobby
-            Lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
+                var joinOptions = new JoinLobbyByCodeOptions
+                {
+                    Player = new Player(
+                        id: AuthenticationService.Instance.PlayerId,
+                        data: GetPlayerData()
+                    )
+                };
 
-            // 2. Get relay join code from lobby's data
-            RelayJoinCode = Lobby.Data["joinCode"].Value;
+                Lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
 
-            // 3. Join relay using code from lobby
-            var joinAlloc = await RelayService.Instance.JoinAllocationAsync(RelayJoinCode);
+                if (Lobby == null)
+                {
+                    Debug.LogError("[JoinLobby] Failed to join lobby. Lobby is null.");
+                    return;
+                }
 
-            var serverData = new RelayServerData(
-                joinAlloc.RelayServer.IpV4,
-                (ushort)joinAlloc.RelayServer.Port,
-                joinAlloc.AllocationIdBytes,
-                joinAlloc.ConnectionData,
-                joinAlloc.HostConnectionData,
-                joinAlloc.Key,
-                true
-            );
+                if (!Lobby.Data.ContainsKey("joinCode") || string.IsNullOrEmpty(Lobby.Data["joinCode"].Value))
+                {
+                    Debug.LogError("[JoinLobby] joinCode not found or empty in lobby data. Relay may not have been set.");
+                    return;
+                }
 
-            var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-            transport.SetRelayServerData(serverData);
+                RelayJoinCode = Lobby.Data["joinCode"].Value;
+                Debug.Log($"[JoinLobby] Relay join code retrieved: {RelayJoinCode}");
 
-            NetworkManager.Singleton.StartClient();
+                var joinAlloc = await RelayService.Instance.JoinAllocationAsync(RelayJoinCode);
+
+                var serverData = new RelayServerData(
+                    joinAlloc.RelayServer.IpV4,
+                    (ushort)joinAlloc.RelayServer.Port,
+                    joinAlloc.AllocationIdBytes,
+                    joinAlloc.ConnectionData,
+                    joinAlloc.HostConnectionData,
+                    joinAlloc.Key,
+                    true
+                );
+
+                var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+                transport.SetRelayServerData(serverData);
+
+                Debug.Log("[Netcode] Starting client...");
+                if (!NetworkManager.Singleton.IsListening)
+                {
+                    NetworkManager.Singleton.StartClient();
+                }
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.LogError($"[Lobby ERROR] Failed to join lobby: {e.Message}\n{e}");
+            }
+            catch (RelayServiceException e)
+            {
+                Debug.LogError($"[Relay ERROR] Failed to join Relay: {e.Message}\n{e}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[GENERAL ERROR] Unexpected error while joining lobby: {e.Message}\n{e}");
+            }
         }
+
         
         public async Task RefreshLobbyAsync()
         {

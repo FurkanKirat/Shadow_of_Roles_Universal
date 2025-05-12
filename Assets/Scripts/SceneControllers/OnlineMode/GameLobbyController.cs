@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using game.models.gamestate;
 using game.models.player;
@@ -19,20 +18,19 @@ namespace SceneControllers.OnlineMode
         [SerializeField] private TextMeshProUGUI lobbyIdText;
         [SerializeField] private Button startButton;
         [SerializeField] private RolePackPanel rolePackPanel;
-
-        private readonly List<GameObject> _spawnedEntries = new();
+        
         private LobbyManager _lobbyManager;
         private const float RefreshInterval = 3f;
         private bool isRefreshing = true;
 
-        public void JoinGame(LobbyManager lobbyManager)
+        public async Task JoinGame(LobbyManager lobbyManager)
         {
             _lobbyManager = lobbyManager;
             lobbyIdText.text = $"Lobby Code: {_lobbyManager.LobbyJoinCode}";
             RefreshPlayerList();
-            StartPollingLobby();
-            
             startButton.onClick.AddListener(OnStartClicked);
+            await StartPollingLobby();
+            
         }
 
         private void RefreshPlayerList()
@@ -52,11 +50,11 @@ namespace SceneControllers.OnlineMode
             }
         }
 
-        private async void StartPollingLobby()
+        private async Task StartPollingLobby()
         {
             while (_lobbyManager.Lobby != null && isRefreshing)
             {
-                await _lobbyManager.RefreshLobbyAsync(); // 👍 YENİ: Soyutlama eklendi
+                await _lobbyManager.RefreshLobbyAsync();
                 RefreshPlayerList();
                 await Task.Delay(TimeSpan.FromSeconds(RefreshInterval));
             }
@@ -69,8 +67,8 @@ namespace SceneControllers.OnlineMode
 
             foreach (var player in _lobbyManager.Lobby.Players)
             {
-                string name = player.Data["name"].Value;
-                rolePackPanel.Players.Add(Player.PlayerFactory.CreatePlayer(humanNumber++, name, PlayerType.Human));
+                string playerName = player.Data["name"].Value;
+                rolePackPanel.Players.Add(Player.PlayerFactory.CreatePlayer(humanNumber++, playerName, PlayerType.Human));
             }
 
             int botName = 1;

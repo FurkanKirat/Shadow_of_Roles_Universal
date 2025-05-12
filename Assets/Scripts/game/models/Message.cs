@@ -10,13 +10,13 @@ namespace game.models
 
         public string Text { get; }
 
-        public Player Receiver { get; }
+        public int ReceiverNumber { get; }
 
         public bool IsPublic { get; }
-        public Message(TimePeriod timePeriod, string text, Player receiver, bool isPublic){
+        public Message(TimePeriod timePeriod, string text, int receiverNumber, bool isPublic){
             TimePeriod = timePeriod;
             Text = text;
-            Receiver = receiver;
+            ReceiverNumber = receiverNumber;
             IsPublic = isPublic;
         }
         

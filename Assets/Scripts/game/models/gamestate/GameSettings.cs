@@ -9,13 +9,15 @@ namespace game.models.gamestate
         public GameMode GameMode { get; set; }
         public RolePack RolePack { get; set; }
         public int PlayerCount { get;}
+        public int PhaseTime { get; }
         
         [JsonConstructor]
-        public GameSettings(GameMode gameMode, RolePack rolePack, int playerCount)
+        public GameSettings(GameMode gameMode, RolePack rolePack, int playerCount, int phaseTime = 30)
         {
             GameMode = gameMode;
             RolePack = rolePack;
             PlayerCount = playerCount;
+            PhaseTime = phaseTime;
         }
     }
 }

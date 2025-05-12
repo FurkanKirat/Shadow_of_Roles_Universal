@@ -25,13 +25,14 @@ namespace SceneControllers.GameScene
     {
    
         [SerializeField] private Button messagesButton, roleBookButton, graveyardButton, passTurnButton;
-        [SerializeField] private TextMeshProUGUI timeText, nameText, numberText, roleText, rolePackText;
+        [SerializeField] private TextMeshProUGUI timeText, nameText, numberText, roleText, rolePackText, clockText;
         [SerializeField] private Image backgroundImage, messageNotificationImage;
         [SerializeField] private AlivePlayersLayout alivePlayersLayout;
         [SerializeField] private GraveyardLayout graveyardLayout;
         [SerializeField] private MessagesLayout messagesLayout;
         [SerializeField] private RoleBookPanel roleBookPanel;
         [SerializeField] private SpecialRolesContainer specialRolesContainer;
+        [SerializeField] private PhaseCountdownUI phaseCountdownUI;
         private PanelController _panelController;
         private AlphaThresholdManager _alphaThresholdManager;
         
@@ -52,6 +53,7 @@ namespace SceneControllers.GameScene
             if (ServiceLocator.TryGet<IClient>(out var client))
             {
                 _client = client;
+                _client.InitUIUpdater(this);
                 StartCoroutine(WaitForGameInformation());
             }
             else
@@ -63,7 +65,7 @@ namespace SceneControllers.GameScene
 
         private IEnumerator WaitForClientAndThenStart()
         {
-            while (!ServiceLocator.TryGet<IClient>(out _client))
+            while (!ServiceLocator.TryGet(out _client))
                 yield return null;
 
             StartCoroutine(WaitForGameInformation());
@@ -71,7 +73,7 @@ namespace SceneControllers.GameScene
 
         private IEnumerator WaitForGameInformation()
         {
-            while (_client.GetCurrentGameInformation() == null)
+            while (_client?.GetCurrentGameInformation() == null)
                 yield return null;
 
             Initialize(_client.GetCurrentGameInformation());
@@ -104,7 +106,7 @@ namespace SceneControllers.GameScene
         public void UpdateUI(IGameInformation gameInformation)
         {
             _gameInformation = gameInformation;
-            PassTurn(_lastTime != gameInformation.TimePeriod.Time);
+            PassTurn(_lastTime != gameInformation.TimePeriod.Time, _gameSettings.GameMode == GameMode.Local);
             _lastTime = gameInformation.TimePeriod.Time;
         }
 
@@ -133,6 +135,8 @@ namespace SceneControllers.GameScene
             rolePackText.text = string.Format(
                 TextManager.Translate("role_pack_texts.current_role_pack")
                 , TextManager.Translate($"role_pack.{_gameSettings.RolePack.FormatEnum()}"));
+            
+            phaseCountdownUI.StartCountdown(_gameSettings.PhaseTime);
         }
         
         private void LoadSprites()
@@ -146,7 +150,6 @@ namespace SceneControllers.GameScene
         private void ChangePlayerUI()
         {
             PlayerDto currentPlayer = _gameInformation.CurrentPlayer;
-            
             string numberString = TextManager.Translate("general.player_number");
             
             numberText.text = string.Format(numberString, currentPlayer.Number);
@@ -170,7 +173,9 @@ namespace SceneControllers.GameScene
                 case GameMode.Local:
                     passTurnButton.GetComponentInChildren<TextMeshProUGUI>().text =
                         TextManager.Translate("general.pass_turn");
+                    passTurnButton.onClick.RemoveAllListeners();
                     passTurnButton.onClick.AddListener(SendInfo);
+                    clockText?.GetComponentInParent<Image>()?.gameObject.SetActive(false);
                     break;
                 default : 
                     throw new ArgumentOutOfRangeException(nameof(gameMode), gameMode, "Unknown game mode!");
@@ -218,21 +223,27 @@ namespace SceneControllers.GameScene
         {
             int currentPlayerNum = _gameInformation.CurrentPlayer.Number;
             TimePeriod lastCheckTimePeriod = _messagesLastCheck.GetValueOrDefault(currentPlayerNum);
-            bool isChecked = lastCheckTimePeriod.GetPrevious() >= _gameInformation.LastMessagePeriod;
+            bool isChecked = lastCheckTimePeriod.GetPrevious(_gameSettings.GameMode) >= _gameInformation.LastMessagePeriod;
             messageNotificationImage.gameObject.SetActive(!isChecked);
             
         }
 
-        private void PassTurn(bool timeChanged)
+        private void PassTurn(bool timeChanged, bool playerChanged = false)
         {
             if (timeChanged)
             {
                 ToggleTimeCycleUI();
+                phaseCountdownUI.StartCountdown(_gameSettings.PhaseTime);
+                
             }
-            ChangePlayerUI();
-            _panelController.ShowPanel("PassTurnPanel");
-            var passTurnController = _panelController.GetComponent<PassTurnPanelController>("PassTurnPanel");
-            passTurnController.UpdatePanel(_gameInformation.CurrentPlayer, _gameInformation.TimePeriod.Time);
+
+            if (playerChanged)
+            {
+                ChangePlayerUI();
+                _panelController.ShowPanel("PassTurnPanel");
+                var passTurnController = _panelController.GetComponent<PassTurnPanelController>("PassTurnPanel");
+                passTurnController.UpdatePanel(_gameInformation.CurrentPlayer, _gameInformation.TimePeriod.Time);
+            }
             
         }
 

@@ -88,6 +88,7 @@ namespace SceneControllers.PlayerNames
             
             ServiceLocator.Register(client);
             ServiceLocator.Register(server);
+            Debug.Log("Server started");
             
             var sceneChanger = ServiceLocator.Get<SceneChanger>();
             sceneChanger.LoadScene(SceneType.Game);

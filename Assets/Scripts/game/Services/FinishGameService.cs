@@ -90,7 +90,7 @@ namespace game.Services
             }
 
             TimePeriod currentPeriod = _gameService.TimeService.TimePeriod;
-            if(currentPeriod.Time == Time.Day){
+            if(currentPeriod.Time == TimeExtensions.GetFirst(_gameService.GameSettings.GameMode)){
                 TimePeriod lastKillPeriod = FindLastKilledTime();
                 int daysWithoutKilling = currentPeriod.Subtract(lastKillPeriod) - 1;
                 if(daysWithoutKilling > GameConstants.MaxNightsWithoutKills)
@@ -103,7 +103,7 @@ namespace game.Services
         /**
          * Finishes the game if the end conditions are taken place
          */
-        public void FinishGame(){
+        public void FinishGameIfNeeded(){
 
             GameEndResult gameEndResult = CheckGameFinished();
 
@@ -230,7 +230,7 @@ namespace game.Services
             _gameService.MessageService.ResetMessages();
 
             var multiDeviceGameService = _gameService as OnlineGameService;
-            multiDeviceGameService?.TurnTimerService.StopTimer();
+           // multiDeviceGameService?.TurnTimerService.StopTimer();
         }
 
         private List<Player> FindLastLivingPlayers(){

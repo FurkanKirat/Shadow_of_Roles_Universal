@@ -1,20 +1,46 @@
-﻿using System.Timers;
-using game.models.gamestate;
+﻿using System;
+using System.Collections.Generic;
+using System.Timers;
 using game.Services.GameServices;
+using Managers;
+using Networking.Interfaces;
+using Networking.Server;
+using UnityEngine;
 
 namespace Game.Services
 {
-    public class TurnTimerService
+    public class TurnTimerService : MonoBehaviour
     {
+        private BaseGameService _onlineGameService;
+        private OnlineServer onlineServer;
         private Timer _timer;
-        private readonly OnlineGameService _onlineDeviceGameService;
         private bool _isRunning = true;
-        private readonly IOnTimeChangeListener _onTimeChangeListener;
 
-        public TurnTimerService(OnlineGameService onlineDeviceGameService, IOnTimeChangeListener onTimeChangeListener)
+        private static readonly Queue<Action> MainThreadActions = new();
+
+        public static void RunOnMainThread(Action action)
         {
-            _onlineDeviceGameService = onlineDeviceGameService;
-            _onTimeChangeListener = onTimeChangeListener;
+            lock (MainThreadActions)
+            {
+                MainThreadActions.Enqueue(action);
+            }
+        }
+
+        private void Update()
+        {
+            lock (MainThreadActions)
+            {
+                while (MainThreadActions.Count > 0)
+                {
+                    MainThreadActions.Dequeue().Invoke();
+                }
+            }
+        }
+
+        public void Initialize(OnlineGameService onlineGameService)
+        {
+            _onlineGameService = onlineGameService;
+            onlineServer = (OnlineServer)ServiceLocator.Get<IServer>();
             SchedulePhase();
         }
 
@@ -22,9 +48,9 @@ namespace Game.Services
         {
             if (!_isRunning) return;
 
-            int delay = GetCurrentPhaseDuration();
-
-            _timer = new Timer(delay);
+            Debug.Log("Timer scheduled");
+            int phaseTime = _onlineGameService.GameSettings.PhaseTime * 1000;
+            _timer = new Timer(phaseTime);
             _timer.Elapsed += TimerElapsed;
             _timer.Start();
         }
@@ -32,41 +58,22 @@ namespace Game.Services
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
             if (!_isRunning) return;
-
-            _onlineDeviceGameService.ToggleDayNightCycle();
-
-            _onTimeChangeListener?.OnTimeChange();
-
-            UpdatePhase();
-        }
-
-        private int GetCurrentPhaseDuration()
-        {
-            const int delay = 500;
-            return _onlineDeviceGameService.TimeService.TimePeriod.Time switch
+            
+            RunOnMainThread(() =>
             {
-                Time.Day => TimeManager.DayTime + delay,
-                Time.Voting => TimeManager.VotingTime + delay,
-                Time.Night => TimeManager.NightTime + delay,
-                _ => 20000 + delay
-            };
-        }
-
-        private void UpdatePhase()
-        {
-            SchedulePhase();
+                Debug.Log("Timer elapsed");
+                _onlineGameService.ToggleDayNightCycle();
+                onlineServer.SendGameState();
+                SchedulePhase();
+            });
         }
 
         public void StopTimer()
         {
             _isRunning = false;
-            _timer.Stop();
-            _timer.Dispose();
-        }
-
-        public interface IOnTimeChangeListener
-        {
-            void OnTimeChange();
+            _timer?.Stop();
+            _timer?.Dispose();
         }
     }
+    
 }

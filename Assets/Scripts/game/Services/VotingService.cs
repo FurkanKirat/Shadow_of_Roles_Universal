@@ -89,7 +89,8 @@ namespace game.Services
                         alivePlayer
                             .KillPlayer(
                                 _gameService.TimeService.TimePeriod, 
-                                CauseOfDeath.Hanging
+                                CauseOfDeath.Hanging,
+                                _gameService.GameSettings.GameMode
                             );
                         break;
                     }

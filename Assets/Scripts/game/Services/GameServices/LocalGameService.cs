@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using game.models.gamestate;
 using game.models.player;
 using game.models.player.properties;
 using Networking.DataTransferObjects;
+using Time = game.models.gamestate.Time;
 
 namespace game.Services.GameServices
 {
@@ -12,11 +14,33 @@ namespace game.Services.GameServices
         private int CurrentPlayerIndex { get; set; }
         
         public LocalGameService(List<Player> players, RolePack rolePack)  
-            : base(players, new TimeService(), new GameSettings(GameMode.Local, rolePack, players.Count))
+            : base(players, new GameSettings(GameMode.Local, rolePack, players.Count))
         {
             
         }
-        
+
+        public override void ToggleDayNightCycle()
+        {
+            TimeService.ToggleTimeCycle();
+            Time time = TimeService.TimePeriod.Time;
+            switch (time)
+            {
+                case Time.Day:
+                    AbilityService.PerformAllAbilities();
+                    break;
+                case Time.Night:
+                    VotingService.ExecuteMaxVoted();
+                    break;
+                case Time.Voting:
+                    // No operation during voting time
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown time phase.");
+            }
+            
+            FinishGameService.FinishGameIfNeeded();
+        }
+
         public override void UpdateAlivePlayers(){
 
             base.UpdateAlivePlayers();
