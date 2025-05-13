@@ -21,8 +21,16 @@ namespace SceneControllers.GameScene
 
         private void Start()
         {
-            _client = ServiceLocator.Get<IClient>();
-            StartCoroutine(WaitForGameInformation());
+            if (ServiceLocator.TryGet<IClient>(out var client))
+            {
+                _client = client;
+                StartCoroutine(WaitForGameInformation());
+            }
+            else
+            {
+                Debug.LogError("IClient not registered yet. Delaying StartCoroutine...");
+                StartCoroutine(WaitForClientAndThenStart());
+            }
         }
 
         private IEnumerator WaitForGameInformation()
@@ -37,6 +45,15 @@ namespace SceneControllers.GameScene
             _isInitialized = true;
             InitializeLayout();
         }
+        
+        private IEnumerator WaitForClientAndThenStart()
+        {
+            while (!ServiceLocator.TryGet(out _client))
+                yield return null;
+
+            StartCoroutine(WaitForGameInformation());
+        }
+        
 
         private void InitializeLayout()
         {

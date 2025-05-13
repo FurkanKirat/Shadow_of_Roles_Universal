@@ -65,7 +65,8 @@ namespace Networking.Managers
                 );
 
                 Debug.Log("[Lobby] Creating lobby...");
-                Lobby = await LobbyService.Instance.CreateLobbyAsync("ShadowOfRoles", GameConstants.MaxPlayerCount, new CreateLobbyOptions
+                string lobbyName = "shadow_of_roles" + UnityEngine.Random.Range(1000, 9999);
+                Lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, GameConstants.MaxPlayerCount, new CreateLobbyOptions
                 {
                     Player = player,
                     Data = new Dictionary<string, DataObject>
@@ -90,7 +91,7 @@ namespace Networking.Managers
                     allocation.ConnectionData,
                     allocation.ConnectionData,
                     allocation.Key,
-                    true // DTLS
+                    false // DTLS
                 );
 
                 var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
@@ -101,6 +102,7 @@ namespace Networking.Managers
                 {
                     NetworkManager.Singleton.StartHost();
                 }
+                
             }
             catch (RelayServiceException e)
             {
@@ -162,7 +164,7 @@ namespace Networking.Managers
                     joinAlloc.ConnectionData,
                     joinAlloc.HostConnectionData,
                     joinAlloc.Key,
-                    true
+                    false
                 );
 
                 var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();

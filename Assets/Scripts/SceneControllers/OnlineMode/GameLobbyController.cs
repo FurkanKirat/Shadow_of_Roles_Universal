@@ -6,6 +6,7 @@ using game.models.player.properties;
 using Networking.Managers;
 using SceneControllers.PlayerNames;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 

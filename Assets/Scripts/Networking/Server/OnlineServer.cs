@@ -9,6 +9,7 @@ using Game.Services;
 using Networking.DataTransferObjects;
 using Networking.Interfaces;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 
 namespace Networking.Server
 {
@@ -18,8 +19,8 @@ namespace Networking.Server
 
         private OnlineGameService _gameService;
         private TurnTimerService turnTimerService;
+        private GameObject onlineClientPrefab;
 
-        // Bağlı oyuncuların clientId ↔ playerNumber eşlemesi
         private readonly Dictionary<ulong, int> _clientIdToPlayerNumberMap = new();
 
         private void Awake()
@@ -27,6 +28,24 @@ namespace Networking.Server
             Instance = this;
             ServiceLocator.Register<IServer>(this);
             
+        }
+        
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            }
+        }
+        private void OnClientConnected(ulong clientId)
+        {
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+                return;
+
+            var clientObj = Instantiate(onlineClientPrefab);
+            var netObj = clientObj.GetComponent<NetworkObject>();
+            netObj.SpawnAsPlayerObject(clientId);
+            DontDestroyOnLoad(clientObj);
         }
         
         public void InitGameService(List<Player> players, GameSettings gameSettings)

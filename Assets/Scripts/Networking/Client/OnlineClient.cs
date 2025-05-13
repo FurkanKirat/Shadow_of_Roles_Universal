@@ -18,13 +18,13 @@ namespace Networking.Client
 
         public override void OnNetworkSpawn()
         {
+            base.OnNetworkSpawn();
             if (IsOwner)
             {
                 ServiceLocator.Register<IClient>(this);
                 Debug.Log("OnlineClient registered.");
-
-                // Şu anda client hazır, serverdan info isteyebilir
-                RequestInitialGameStateServerRpc(); // örnek
+                
+                RequestInitialGameStateServerRpc();
             }
         }
         
@@ -32,7 +32,7 @@ namespace Networking.Client
         private void RequestInitialGameStateServerRpc(ServerRpcParams rpcParams = default)
         {
             ulong clientId = rpcParams.Receive.SenderClientId;
-            OnlineServer.Instance.SendGameStateToClient(clientId); // veya başka bir şey
+            OnlineServer.Instance.SendGameStateToClient(clientId);
         }
         
         

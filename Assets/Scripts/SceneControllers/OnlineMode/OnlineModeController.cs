@@ -13,7 +13,7 @@ namespace SceneControllers.OnlineMode
         [SerializeField] private Button joinGameButton, hostGameButton;
         [SerializeField] private TMP_InputField gameCodeInputField;
         [SerializeField] private GameLobbyController gameLobbyController;
-        [SerializeField] private GameObject lobbyManager;
+        [SerializeField] private GameObject lobbyManager, clientPrefab;
         private void Start()
         {
             joinGameButton.onClick.AddListener(() => _ = OnJoinGameClicked());
@@ -49,7 +49,7 @@ namespace SceneControllers.OnlineMode
             }
         }
 
-        private async Task OnJoinGameClicked()
+      private async Task OnJoinGameClicked()
         {
             string code = gameCodeInputField.text.Trim().ToUpper(); // Güvenli giriş
             if (string.IsNullOrEmpty(code))
@@ -88,7 +88,8 @@ namespace SceneControllers.OnlineMode
                 }
 
                 Debug.Log("[JoinGame] Lobbyye katılma başarılı!");
-
+                
+                // Lobi UI gösteriliyor
                 gameLobbyController.gameObject.SetActive(true);
                 await gameLobbyController.JoinGame(manager, false);
 
@@ -99,7 +100,6 @@ namespace SceneControllers.OnlineMode
                 Debug.LogError("[JoinGame] Hata bulundu zorttttt: " + e.Message + "\n" + e);
             }
         }
-
-
+      
     }
 }

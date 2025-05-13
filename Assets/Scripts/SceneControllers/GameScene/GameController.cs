@@ -277,7 +277,7 @@ namespace SceneControllers.GameScene
         {
             if (_gameInformation.GameStatus == GameStatus.Ended)
             {
-                _sceneChanger.LoadScene(SceneType.GameEnd);
+                _sceneChanger.LoadScene(SceneType.GameEnd, true);
                 return;
             }
             

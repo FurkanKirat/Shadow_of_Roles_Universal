@@ -310,6 +310,7 @@ MonoBehaviour:
   gameCodeInputField: {fileID: 1451155429}
   gameLobbyController: {fileID: 1199084680}
   lobbyManager: {fileID: 8212887378471342702, guid: 6cba47a3d9dfc94459343e92f8be3f27, type: 3}
+  clientPrefab: {fileID: 6235305803111981632, guid: 6db9171ad55489f469ac8a5c52158d0d, type: 3}
 --- !u!4 &288150236
 Transform:
   m_ObjectHideFlags: 0
@@ -1143,7 +1144,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 970411827}
-    PlayerPrefab: {fileID: 0}
+    PlayerPrefab: {fileID: 6235305803111981632, guid: 6db9171ad55489f469ac8a5c52158d0d, type: 3}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: e50b0584e37e75241880db2e3360c704, type: 2}
