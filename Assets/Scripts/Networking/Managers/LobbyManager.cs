@@ -28,7 +28,10 @@ namespace Networking.Managers
 
         private void OnDestroy()
         {
-            NetworkManager.Singleton.OnTransportFailure -= OnTransportFailure;
+            if (NetworkManager.Singleton != null)
+            {
+                NetworkManager.Singleton.OnTransportFailure -= OnTransportFailure;
+            }
         }
 
         private void OnTransportFailure()

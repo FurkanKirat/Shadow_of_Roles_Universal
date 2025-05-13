@@ -34,8 +34,10 @@ namespace SceneControllers.GameScene.Helper
 
         private static IEnumerator ScrollCoroutine(ScrollRect scrollRect, float position)
         {
-            yield return null;
+            yield return new WaitUntil(() => scrollRect.gameObject.activeInHierarchy);
+            yield return new WaitForEndOfFrame();
             Canvas.ForceUpdateCanvases();
+            yield return null;
             scrollRect.verticalNormalizedPosition = position;
         }
         

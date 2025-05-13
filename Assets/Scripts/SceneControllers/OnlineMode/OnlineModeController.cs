@@ -40,7 +40,7 @@ namespace SceneControllers.OnlineMode
                 Debug.Log($"[HostGame] Lobby oluşturuldu: {manager.Lobby.LobbyCode}");
 
                 gameLobbyController.gameObject.SetActive(true);
-                await gameLobbyController.JoinGame(manager);
+                await gameLobbyController.JoinGame(manager, true);
                 ServiceLocator.Register(manager);
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace SceneControllers.OnlineMode
                 Debug.Log("[JoinGame] Lobbyye katılma başarılı!");
 
                 gameLobbyController.gameObject.SetActive(true);
-                await gameLobbyController.JoinGame(manager);
+                await gameLobbyController.JoinGame(manager, false);
 
                 ServiceLocator.Register(manager);
             }

@@ -91,7 +91,7 @@ namespace SceneControllers.PlayerNames
             Debug.Log("Server started");
             
             var sceneChanger = ServiceLocator.Get<SceneChanger>();
-            sceneChanger.LoadScene(SceneType.Game);
+            sceneChanger.LoadScene(SceneType.Game, gameSettings.GameMode == GameMode.Online);
         }
     }
 }

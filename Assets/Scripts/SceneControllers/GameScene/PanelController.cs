@@ -28,7 +28,6 @@ namespace SceneControllers.GameScene
         public bool HideActivePanel()
         {
             if (ActivePanel == null) return false;
-            
             _panelAnimators[ActivePanel].Hide();
             ActivePanel = null;
             return true;
@@ -36,6 +35,7 @@ namespace SceneControllers.GameScene
 
         public void ShowPanel(string panelName)
         {
+            Debug.Log($"Showing panel {panelName} : {ActivePanel}");
             HideActivePanel();
             ActivePanel = panelName;
             _panelAnimators[panelName].Show();

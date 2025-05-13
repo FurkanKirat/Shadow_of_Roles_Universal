@@ -23,14 +23,27 @@ namespace SceneControllers.OnlineMode
         private const float RefreshInterval = 3f;
         private bool isRefreshing = true;
 
-        public async Task JoinGame(LobbyManager lobbyManager)
+        public async Task JoinGame(LobbyManager lobbyManager, bool isHost)
         {
             _lobbyManager = lobbyManager;
             lobbyIdText.text = $"Lobby Code: {_lobbyManager.LobbyJoinCode}";
             RefreshPlayerList();
-            startButton.onClick.AddListener(OnStartClicked);
+            InitButton(isHost);
             await StartPollingLobby();
             
+        }
+
+        private void InitButton(bool isHost = false)
+        {
+            startButton.onClick.RemoveAllListeners();
+            if (isHost)
+            {
+                startButton.onClick.AddListener(OnStartClicked);
+            }
+            else
+            {
+                startButton.gameObject.SetActive(false);
+            }
         }
 
         private void RefreshPlayerList()

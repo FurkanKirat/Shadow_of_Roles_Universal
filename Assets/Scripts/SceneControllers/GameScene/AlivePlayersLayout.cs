@@ -17,6 +17,7 @@ namespace SceneControllers.GameScene
         [SerializeField] private ScrollRect playersScrollRect;
         private readonly List<AlivePlayersBox> _boxes = new ();
         private IClient _client;
+        private bool _isInitialized;
 
         private void Start()
         {
@@ -31,6 +32,9 @@ namespace SceneControllers.GameScene
                 yield return null;
             }
 
+            if (_isInitialized) yield break;
+
+            _isInitialized = true;
             InitializeLayout();
         }
 
@@ -90,8 +94,7 @@ namespace SceneControllers.GameScene
                 }
                 else
                 {
-                    box.UpdateTime(currentPlayer, alivePlayers[index], time);
-                    ++index;
+                    box.UpdateTime(currentPlayer, alivePlayers[index++], time);
                 }
             }
             

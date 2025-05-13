@@ -4,6 +4,7 @@ using Game.Models.Roles.Enums;
 using game.Services.GameServices;
 using game.Utils;
 using Managers;
+using UnityEngine;
 
 namespace game.models.roles.interfaces.abilities
 {
@@ -21,10 +22,10 @@ namespace game.models.roles.interfaces.abilities
             target.KillPlayer(gameService.TimeService.TimePeriod, causeOfDeath, gameService.GameSettings.GameMode);
             
             string killMessage = TextManager.TranslateEnum(causeOfDeath,"kill_message");
-
+            
             string killAnnouncement = TextManager.TranslateEnum(causeOfDeath, "kill_announcement")
-                .Replace("playerName", target.GetNameAndNumber()
-                    .Replace("roleName", target.Role.Template.GetName())
+                .Replace("{playerName}", target.GetNameAndNumber())
+                .Replace("{roleName}", target.Role.Template.GetName()
                 );
             messageService.SendAbilityMessage(killMessage, roleOwner);
             

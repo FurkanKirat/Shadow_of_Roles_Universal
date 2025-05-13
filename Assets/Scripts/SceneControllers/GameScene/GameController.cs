@@ -44,6 +44,7 @@ namespace SceneControllers.GameScene
         private SceneChanger _sceneChanger;
         private readonly Dictionary<int, TimePeriod> _messagesLastCheck = new ();
         private Time _lastTime;
+        private bool _isInitialized;
 
         private void Start()
         {
@@ -75,7 +76,10 @@ namespace SceneControllers.GameScene
         {
             while (_client?.GetCurrentGameInformation() == null)
                 yield return null;
+            
+            if(_isInitialized) yield break;
 
+            _isInitialized = true;
             Initialize(_client.GetCurrentGameInformation());
         }
 
@@ -165,6 +169,12 @@ namespace SceneControllers.GameScene
         private void SetOnClickListeners()
         {
             GameMode gameMode = _gameSettings.GameMode;
+            
+            messagesButton.onClick.RemoveAllListeners();
+            graveyardButton.onClick.RemoveAllListeners();
+            roleBookButton.onClick.RemoveAllListeners();
+            passTurnButton.onClick.RemoveAllListeners();
+            
             switch (gameMode)
             {
                 case GameMode.Online:
@@ -173,7 +183,6 @@ namespace SceneControllers.GameScene
                 case GameMode.Local:
                     passTurnButton.GetComponentInChildren<TextMeshProUGUI>().text =
                         TextManager.Translate("general.pass_turn");
-                    passTurnButton.onClick.RemoveAllListeners();
                     passTurnButton.onClick.AddListener(SendInfo);
                     clockText?.GetComponentInParent<Image>()?.gameObject.SetActive(false);
                     break;
@@ -198,25 +207,42 @@ namespace SceneControllers.GameScene
             _client.ResetClientInfo();
         }
         
-        private void ShowMessagesPanel()
+        private void ShowPanelWithDelay(string panelName, Action onReady)
         {
-            _panelController.ShowPanel("MessagesPanel");
-            messagesLayout.RefreshLayout(_gameInformation.CurrentPlayer, _gameInformation.Messages);
-            _messagesLastCheck[_gameInformation.CurrentPlayer.Number] = (TimePeriod)_gameInformation.TimePeriod.Clone();
-            ManageNotification();
+            _panelController.ShowPanel(panelName);
+            StartCoroutine(DelayedAction(onReady));
+        }
+
+        private IEnumerator DelayedAction(Action callback)
+        {
+            yield return new WaitForEndOfFrame();
+            callback?.Invoke();
         }
         
+        private void ShowMessagesPanel()
+        {
+            ShowPanelWithDelay("MessagesPanel", () =>
+            {
+                messagesLayout.RefreshLayout(_gameInformation.CurrentPlayer, _gameInformation.Messages);
+                _messagesLastCheck[_gameInformation.CurrentPlayer.Number] = (TimePeriod)_gameInformation.TimePeriod.Clone();
+                ManageNotification();
+            });
+        }
+
         private void ShowRoleBookPanel()
         {
-            _panelController.ShowPanel("RoleBookPanel");
-            roleBookPanel.SelectRole(_gameInformation.CurrentPlayer.RoleDto.RoleId);
+            ShowPanelWithDelay("RoleBookPanel", () =>
+            {
+                roleBookPanel.SelectRole(_gameInformation.CurrentPlayer.RoleDto.RoleId);
+            });
         }
 
         private void ShowGraveyardPanel()
         {
-            const string panel = "GraveyardPanel";
-            _panelController.ShowPanel(panel);
-            graveyardLayout.RefreshLayout(_gameInformation.DeadPlayers);
+            ShowPanelWithDelay("GraveyardPanel", () =>
+            {
+                graveyardLayout.RefreshLayout(_gameInformation.DeadPlayers);
+            });
         }
 
         private void ManageNotification()

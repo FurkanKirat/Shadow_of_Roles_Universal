@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Managers.enums;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,12 +12,19 @@ namespace Managers
     {
         private readonly Stack<string> _sceneStack = new ();
         
-        public void LoadScene(SceneType type)
+        public void LoadScene(SceneType type, bool isOnline = false)
         {
-            AddSceneToStack(SceneManager.GetActiveScene().name);
             string sceneName = GetSceneName(type);
-            SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+            if (isOnline && NetworkManager.Singleton.IsHost)
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+            }
+            else
+            {
+                SceneManager.LoadScene(sceneName);
+            }
         }
+        
 
         public void LoadSceneAsync(SceneType type, Action onLoaded = null)
         {
