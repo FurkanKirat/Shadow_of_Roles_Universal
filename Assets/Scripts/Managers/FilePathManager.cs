@@ -5,9 +5,10 @@ namespace Managers
 {
     public class FilePathManager
     {
-        private readonly string _baseDirectory = Application.persistentDataPath;
+        private readonly string _persistentDirectory = Application.persistentDataPath;
         public string SettingsFilePath { get; private set; }
         public string LogFilePath { get; private set; }
+        public string MetaDataFilePath { get; private set; }
 
         public FilePathManager()
         {
@@ -16,12 +17,13 @@ namespace Managers
 
         private void InitializeFilePaths()
         {
-            SettingsFilePath = Path.Combine(_baseDirectory, "settings.json");
+            SettingsFilePath = Path.Combine(_persistentDirectory, "settings.json");
+            MetaDataFilePath = "Assets/Resources/meta-data.json";
         }
 
         public string GetFullPath(string relativePath)
         {
-            return Path.Combine(_baseDirectory, relativePath);
+            return Path.Combine(_persistentDirectory, relativePath);
         }
     }
 

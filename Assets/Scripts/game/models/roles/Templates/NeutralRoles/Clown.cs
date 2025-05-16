@@ -2,7 +2,6 @@
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
-using game.Services;
 using game.Services.GameServices;
 
 namespace game.models.roles.Templates.NeutralRoles
@@ -31,7 +30,7 @@ namespace game.models.roles.Templates.NeutralRoles
         
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(30, ChanceProperty.Unique);
+            return ChancePropertyFactory.Unique(30);
         }
     }
 }

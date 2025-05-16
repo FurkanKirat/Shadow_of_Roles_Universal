@@ -1,10 +1,9 @@
-﻿using game.models.player;
+﻿using System.Collections.Generic;
+using game.models.player;
 using game.models.player.properties;
 using Game.Models.Roles.Enums;
 using game.Services.GameServices;
 using game.Utils;
-using Managers;
-using UnityEngine;
 
 namespace game.models.roles.interfaces.abilities
 {
@@ -15,21 +14,34 @@ namespace game.models.roles.interfaces.abilities
             var messageService = gameService.MessageService;
             if (roleOwner.Role.Template.RoleProperties.Attack.Current <= target.Role.Template.RoleProperties.Defence.Current)
             {
-                messageService.SendAbilityMessage(TextManager.Translate("abilities.defence"), roleOwner);
+                var messageTemplate = new MessageTemplate
+                {
+                    MessageKey = "abilities.defence"
+                };
+                messageService.SendPrivateMessage(messageTemplate, roleOwner);
                 return AbilityResult.AttackInsufficient;
             }
             
             target.KillPlayer(gameService.TimeService.TimePeriod, causeOfDeath, gameService.GameSettings.GameMode);
             
-            string killMessage = TextManager.TranslateEnum(causeOfDeath,"kill_message");
+            var killMessageTemplate = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(causeOfDeath, "kill_message")
+            };
             
-            string killAnnouncement = TextManager.TranslateEnum(causeOfDeath, "kill_announcement")
-                .Replace("{playerName}", target.GetNameAndNumber())
-                .Replace("{roleName}", target.Role.Template.GetName()
-                );
-            messageService.SendAbilityMessage(killMessage, roleOwner);
+            var killAnnouncementTemplate = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(causeOfDeath, "kill_announcement"),
+                PlaceHolders = new Dictionary<string, string>()
+                {
+                    { "playerName", target.GetNameAndNumber() },
+                    { "roleId", target.Role.Template.RoleID.FormatEnum() }
+                }
+            };
             
-            messageService.SendAbilityAnnouncement(killAnnouncement);
+            messageService.SendPrivateMessage(killMessageTemplate, roleOwner);
+            messageService.SendPublicMessage(killAnnouncementTemplate);
+            
             return AbilityResult.Success;
             
         }

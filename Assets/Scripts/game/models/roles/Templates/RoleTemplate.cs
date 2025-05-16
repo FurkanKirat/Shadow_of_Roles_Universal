@@ -5,7 +5,6 @@ using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
-using game.Services;
 using game.Services.GameServices;
 using game.Utils;
 using Managers;
@@ -72,19 +71,11 @@ namespace game.models.roles.Templates
         public virtual AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService){
             return ((IPerformAbility) this).DefaultPerformAbility(roleOwner,choosenPlayer,gameService);
         }
-
-        protected void SendAbilityMessage(string message, Player receiver, MessageService messageService){
-            messageService.SendAbilityMessage(message, receiver);
-        }
-
-        protected void SendAbilityAnnouncement(string message, MessageService messageService){
-            messageService.SendAbilityAnnouncement(message);
-        }
         
         public abstract ChanceProperty GetChanceProperty();
         
         public string GetTeamText(){
-            return TextManager.Translate($"teams.{WinningTeam.GetTeam().FormatEnum()}");
+            return TextManager.TranslateEnum(WinningTeam.GetTeam(),"name");
         }
         
         public string GetName() {
@@ -105,7 +96,7 @@ namespace game.models.roles.Templates
         }
 
         public string GetGoal(){
-            return TextManager.Translate($"goals.{WinningTeam.FormatEnum()}");
+            return TextManager.TranslateEnum(WinningTeam,"goal");
         }
         
     }

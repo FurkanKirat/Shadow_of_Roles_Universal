@@ -3,7 +3,6 @@ using Game.Models.Roles.Enums;
 using game.models.roles.properties;
 using game.Services.GameServices;
 using game.Utils;
-using Managers;
 
 namespace game.models.roles.Templates.CorruptedRoles
 {
@@ -19,22 +18,29 @@ namespace game.models.roles.Templates.CorruptedRoles
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
-            string message = TextManager.TranslateEnum(RoleID,"ability_message");
-            SendAbilityMessage(message,roleOwner, gameService.MessageService);
             var players = gameService.CopyAlivePlayers();
-
             players.Remove(choosenPlayer.Number);
-
             choosenPlayer.Role.ChosenPlayer = players.GetRandomElement();
 
-            SendAbilityMessage(TextManager.TranslateEnum(RoleID,"got_blinded_message"), choosenPlayer, gameService.MessageService);
+            var selfMessage = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(RoleID,"ability_message")
+            };
+            
+            var targetMessage = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(RoleID, "got_blinded_message")
+            };
+            
+            gameService.MessageService.SendPrivateMessage(selfMessage, roleOwner);
+            gameService.MessageService.SendPrivateMessage(targetMessage, choosenPlayer);
 
             return AbilityResult.Success;
         }
 
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(25, ChanceProperty.NoMaxLimit);
+            return ChancePropertyFactory.Unlimited(25);
         }
     }
 }

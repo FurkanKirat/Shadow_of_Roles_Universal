@@ -2,6 +2,7 @@
 using game.models.gamestate;
 using game.models.roles.Templates;
 using game.Services;
+using game.Utils;
 using UnityEngine;
 
 namespace SceneControllers.GameScene.RoleBook
@@ -16,6 +17,7 @@ namespace SceneControllers.GameScene.RoleBook
         {
             _roles = RoleCatalog.GetAllRoles(rolePack);
             int index = 0;
+            
             foreach (var role in _roles)
             {
                 var newBox = Instantiate(rolePackPrefab, gameObject.transform);

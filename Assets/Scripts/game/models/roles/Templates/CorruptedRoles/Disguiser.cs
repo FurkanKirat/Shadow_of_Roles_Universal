@@ -53,7 +53,7 @@ namespace game.models.roles.Templates.CorruptedRoles
         
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(15, ChanceProperty.NoMaxLimit);
+            return ChancePropertyFactory.Unlimited(15);
         }
         
         public void ChangePriority(RolePack rolePack)

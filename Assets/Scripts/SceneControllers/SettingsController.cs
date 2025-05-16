@@ -10,7 +10,7 @@ namespace SceneControllers
 {
     public class SettingsController : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI languageText, playerNameText;
+        [SerializeField] private TextMeshProUGUI languageText, playerNameText, versionText;
         [SerializeField] private TMP_Dropdown languageDropdown;
         [SerializeField] private TMP_InputField playerNameInput;
         [SerializeField] private Button closeButton;
@@ -22,6 +22,8 @@ namespace SceneControllers
             _sceneChanger = ServiceLocator.Get<SceneChanger>();
             InitLanguageSettings();
             closeButton.onClick.AddListener(SaveSettings);
+
+            versionText.text = _settingsManager.MetaData.version;
         }
 
         private void Update()

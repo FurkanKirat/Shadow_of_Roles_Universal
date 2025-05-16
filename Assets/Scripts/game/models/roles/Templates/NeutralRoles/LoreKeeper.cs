@@ -6,7 +6,7 @@ using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
 using game.Services;
 using game.Services.GameServices;
-using Managers;
+using game.Utils;
 
 namespace game.models.roles.Templates.NeutralRoles
 {
@@ -23,7 +23,6 @@ namespace game.models.roles.Templates.NeutralRoles
                 .AddAttribute(RoleAttribute.HasOtherWinCondition)
                 .AddAttribute(RoleAttribute.WinsAlone)
                 .AddAttribute(RoleAttribute.RoleBlockImmune);
-            
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -37,12 +36,17 @@ namespace game.models.roles.Templates.NeutralRoles
             if(choosenPlayer.Role.Template.RoleID == GuessedRole){
                 TrueGuessCount++;
 
-                string messageTemplate = TextManager.TranslateEnum(RoleID, "ability_message");
-
-                string message = messageTemplate
-                    .Replace("{playerName}", choosenPlayer.GetNameAndNumber())
-                    .Replace("{roleName}", choosenPlayer.Role.Template.GetName());
-                SendAbilityAnnouncement(message, gameService.MessageService);
+                var messageTemplate = new MessageTemplate
+                {
+                    MessageKey = StringFormatter.Combine(RoleID, "ability_message"),
+                    PlaceHolders = new Dictionary<string, string>
+                    {
+                        { "playerName", choosenPlayer.GetNameAndNumber() },
+                        { "roleId", choosenPlayer.Role.Template.RoleID.FormatEnum() }
+                    }
+                };
+                
+                gameService.MessageService.SendPublicMessage(messageTemplate);
                 choosenPlayer.Role.IsRevealed = true;
             }
             GuessedRole = RoleId.None;
@@ -51,7 +55,7 @@ namespace game.models.roles.Templates.NeutralRoles
         
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(30, ChanceProperty.Unique);
+            return ChancePropertyFactory.Unique(30);
         }
 
         public void ChooseRoleSpecificValues(List<Player> choosablePlayers)

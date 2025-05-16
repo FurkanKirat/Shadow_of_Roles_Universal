@@ -6,7 +6,6 @@ using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.properties;
 using game.Services.GameServices;
-using Managers;
 
 namespace game.Services
 {
@@ -25,12 +24,12 @@ namespace game.Services
             _messages.Clear();
         }
 
-        public void SendMessage(string message, Player receiver, bool isPublic)
+        public void SendMessage(MessageTemplate messageTemplate, Player receiver, bool isPublic)
         {
             TimePeriod messageTimePeriod = _gameService.TimeService.TimePeriod.GetPrevious(_gameService.GameSettings.GameMode);
 
             int receiverNumber = receiver?.Number ?? -1;
-            _messages.Add(new Message(messageTimePeriod, message, receiverNumber, isPublic));
+            _messages.Add(new Message(messageTemplate, messageTimePeriod, receiverNumber, isPublic));
         }
         
 
@@ -40,7 +39,12 @@ namespace game.Services
                 && !alivePlayer.Role.CanPerform
                 && !alivePlayer.Role.IsImmune)
             {
-                SendMessage(TextManager.Translate("role_block.rb_immune_message"), alivePlayer, false);
+                var template = new MessageTemplate
+                {
+                    MessageKey = "role_block.rb_immune_message",
+                    PlaceHolders = null
+                };
+                SendMessage(template, alivePlayer, false);
             }
 
             Player chosenPlayer = _gameService.GetPlayer(alivePlayer.Role.ChosenPlayer);
@@ -53,7 +57,12 @@ namespace game.Services
                 alivePlayer.Role.Template.RolePriority <= RolePriority.RoleBlock
                 && !alivePlayer.Role.Template.RoleProperties.HasAttribute(RoleAttribute.HasImmuneAbility))
             {
-                SendMessage(TextManager.Translate("role_block.immune_message"), alivePlayer, false);
+                var template = new MessageTemplate
+                {
+                    MessageKey = "role_block.immune_message",
+                    PlaceHolders = null
+                };
+                SendMessage(template, alivePlayer, false);
             }
         }
 
@@ -92,14 +101,14 @@ namespace game.Services
                 .FirstOrDefault() ?? TimePeriod.Default();
         }
 
-        public void SendAbilityMessage(string message, Player receiver)
+        public void SendPrivateMessage(MessageTemplate template, Player receiver)
         {
-            SendMessage(message, receiver, false);
+            SendMessage(template, receiver, false);
         }
 
-        public void SendAbilityAnnouncement(string message)
+        public void SendPublicMessage(MessageTemplate template)
         {
-            SendMessage(message, null, true);
+            SendMessage(template,null, true);
         }
     }
 }

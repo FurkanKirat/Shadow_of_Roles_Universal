@@ -21,7 +21,7 @@
         
         public static string GetNameAndNumber(this IPlayer self)
         {
-            return $"({self.Number}) {self.Name}";
+            return $"{self.Name} #{self.Number}";
         }
     }
 }

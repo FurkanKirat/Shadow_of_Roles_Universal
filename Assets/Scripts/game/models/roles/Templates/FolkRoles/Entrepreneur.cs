@@ -10,7 +10,6 @@ using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
 using game.Services.GameServices;
 using game.Utils;
-using Managers;
 
 namespace game.models.roles.Templates.FolkRoles
 {
@@ -98,11 +97,16 @@ namespace game.models.roles.Templates.FolkRoles
         
         private AbilityResult InsufficientMoney(Player roleOwner, BaseGameService gameService)
         {
-            string message = TextManager.TranslateEnum(RoleID, "money_insufficient");
-            message = message
-                .Replace("{abilityName}", TextManager.TranslateEnum(RoleID, TargetAbility.Name));
+            var messageTemplate = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(RoleID, "money_insufficient"),
+                PlaceHolders = new Dictionary<string, string>
+                {
+                    { "abilityName", StringFormatter.Combine(RoleID, TargetAbility.Name) }
+                }
+            };
             
-            SendAbilityMessage(message, roleOwner, gameService.MessageService);
+            gameService.MessageService.SendPrivateMessage(messageTemplate, roleOwner);
             return AbilityResult.InsufficientMoney;
         }
 
@@ -119,7 +123,7 @@ namespace game.models.roles.Templates.FolkRoles
 
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(15, ChanceProperty.Unique);
+            return ChancePropertyFactory.Unique(15);
         }
         
         

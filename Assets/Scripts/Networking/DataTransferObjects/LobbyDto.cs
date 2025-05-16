@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using game.models.player;
 
-namespace Game.Models.DataTransferObjects
+namespace Networking.DataTransferObjects
 {
     [Serializable]
     public class LobbyDto

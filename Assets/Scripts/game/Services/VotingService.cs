@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using game.models;
 using game.models.player;
 using game.models.player.properties;
 using game.Services.GameServices;
-using Managers;
+using game.Utils;
 
 namespace game.Services
 {
@@ -96,11 +97,19 @@ namespace game.Services
                     }
                 }
                 
-                if(_maxVoted!=null){
-                    _gameService.MessageService.SendMessage(TextManager.Translate("voting.vote_execute")
-                                    .Replace("{playerName}", _maxVoted.Name)
-                                    .Replace("{roleName}", _maxVoted.Role.Template.GetName()),
-                            null, true);
+                if(_maxVoted!=null)
+                {
+                    var template = new MessageTemplate
+                    {
+                        MessageKey = "voting.vote_execute",
+                        PlaceHolders = new Dictionary<string, string>
+                        {
+                            { "playerName", _maxVoted.GetNameAndNumber() },
+                            { "roleId", _maxVoted.Role.Template.RoleID.FormatEnum() }
+                        }
+                    };
+                    
+                    _gameService.MessageService.SendPublicMessage(template);
                 }
 
             }
@@ -121,12 +130,25 @@ namespace game.Services
         {
             Player chosenPlayer = _gameService.GetPlayer(player.Role.ChosenPlayer);
             
-            if(chosenPlayer!=null){
-                _gameService.MessageService.SendMessage(TextManager.Translate("voting.voted_for")
-                                .Replace("{playerName}", chosenPlayer.GetNameAndNumber())
-                        ,player,false);
+            if(chosenPlayer!=null)
+            {
+                var template = new MessageTemplate
+                {
+                    MessageKey = "voting.voted_for",
+                    PlaceHolders = new Dictionary<string, string>
+                    {
+                        { "playerName", chosenPlayer.GetNameAndNumber() }
+                    }
+                };
+                _gameService.MessageService.SendMessage(template, player,false);
+                
             }else{
-                _gameService.MessageService.SendMessage(TextManager.Translate("voting.voted_for_none"), player, false);
+                
+                var template = new MessageTemplate
+                {
+                    MessageKey = "voting.voted_for_none",
+                };
+                _gameService.MessageService.SendPrivateMessage(template, player);
             }
 
         }

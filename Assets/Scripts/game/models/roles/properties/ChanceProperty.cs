@@ -5,7 +5,7 @@ namespace game.models.roles.properties
 {
     public class ChanceProperty
     {
-        public static readonly int NoMaxLimit = GameConstants.MaxPlayerCount;
+        public const int NoMaxLimit = GameConstants.MaxPlayerCount;
         public const int Unique = 1;
         public int Chance { get; }
         public int MaxNumber { get; }
@@ -30,5 +30,14 @@ namespace game.models.roles.properties
         {
             return $"ChanceProperty{{chance={Chance}, maxNumber={MaxNumber}}}";
         }
+    }
+    
+    public static class ChancePropertyFactory
+    {
+        public static ChanceProperty Unique(int chance)
+            => new ChanceProperty(chance, ChanceProperty.Unique);
+
+        public static ChanceProperty Unlimited(int chance)
+            => new ChanceProperty(chance, ChanceProperty.NoMaxLimit);
     }
 }

@@ -1,4 +1,5 @@
-﻿using game.models.Settings;
+﻿using game.models;
+using game.models.Settings;
 using UnityEngine;
 
 namespace Managers
@@ -12,6 +13,7 @@ namespace Managers
         private readonly FilePathManager _filePathManager = ServiceLocator.Get<FilePathManager>();
         private readonly LanguageManager _languageManager = ServiceLocator.Get<LanguageManager>();
         public UserSettings UserSettings { get; private set; } = UserSettings.DefaultSettings;
+        public MetaData MetaData { get; private set; }
 
         public SettingsManager()
         {
@@ -19,6 +21,13 @@ namespace Managers
             {
                 SaveSettings();
             }
+            LoadMetaData();
+        }
+
+        private void LoadMetaData()
+        {
+            string settingsFilePath = _filePathManager.MetaDataFilePath;
+            MetaData = JsonConvert.DeserializeObject<MetaData>(File.ReadAllText(settingsFilePath));
         }
         
         private bool LoadSettingsFile()
@@ -82,6 +91,7 @@ namespace Managers
             _languageManager.LoadLanguageFile(UserSettings.Language);
             return SaveSettings();
         }
+        
 
     }
 

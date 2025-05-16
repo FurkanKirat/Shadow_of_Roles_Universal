@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.Templates;
 using game.Services;
 using game.Services.GameServices;
 using game.Utils;
-using Managers;
 
 namespace game.models.roles.interfaces.abilities
 {
     public interface IInvestigativeAbility : IRoleAbility
     {
-            /**
+        /**
          *
          * @param roleOwner
          * @param choosenPlayer
@@ -26,12 +24,18 @@ namespace game.models.roles.interfaces.abilities
             
             string roleName1 = firstIsChosen ? target.Role.Template.GetName() : randRole.GetName();
             string roleName2 = firstIsChosen ? randRole.GetName() : target.Role.Template.GetName();
-            
-            string message = TextManager.TranslateEnum( RoleId.Detective, "ability_message")
-                .Replace("roleName1", roleName1)
-                .Replace("roleName2", roleName2);
 
-            gameService.MessageService.SendAbilityMessage(message, roleOwner);
+            var template = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(RoleId.Detective, "ability_message"),
+                PlaceHolders = new Dictionary<string, string>()
+                {
+                    { "role1Id", roleName1 },
+                    { "role2Id", roleName2 },
+                }
+            };
+                    
+            gameService.MessageService.SendPrivateMessage(template, roleOwner);
 
             return AbilityResult.Success;
         }
@@ -43,11 +47,18 @@ namespace game.models.roles.interfaces.abilities
          * @param gameService
          * @return
          */
-        AbilityResult ObserverAbility(Player roleOwner, Player target, BaseGameService gameService){
-            string teamName = TextManager.Translate($"teams.{target.Role.Template.WinningTeam.GetTeam()}");
-            gameService.MessageService.SendAbilityMessage(
-                TextManager.TranslateEnum(RoleId.Observer, "ability_message")
-                            .Replace("{teamName}", teamName),roleOwner);
+        AbilityResult ObserverAbility(Player roleOwner, Player target, BaseGameService gameService)
+        {
+            var messageTemplate = new MessageTemplate
+            {
+                MessageKey = $"{RoleId.Observer.FormatEnum()}.ability_message",
+                PlaceHolders = new Dictionary<string, string>
+                {
+                    { "teamId", target.Role.Template.WinningTeam.GetTeam().ToString().ToLower() }
+                }
+            };
+            
+            gameService.MessageService.SendPrivateMessage(messageTemplate, roleOwner);
             return AbilityResult.Success;
         }
 
@@ -59,17 +70,30 @@ namespace game.models.roles.interfaces.abilities
          * @return
          */
         AbilityResult StalkerAbility(Player roleOwner, Player target, BaseGameService gameService){
-            string message;
             Player targetsTarget = gameService.GetPlayer(target.Role.ChosenPlayer);
-            if(targetsTarget == null || !target.Role.CanPerform){
-                message = TextManager.TranslateEnum(RoleId.Stalker,"ability_message_nobody");
+
+            MessageTemplate messageTemplate;
+            
+            if(targetsTarget == null || !target.Role.CanPerform)
+            {
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = StringFormatter.Combine(RoleId.Stalker, "ability_message_nobody")
+                };
             }
             else{
-                message = TextManager.TranslateEnum(RoleId.Stalker,"ability_message")
-                        .Replace("{playerName}", targetsTarget.GetNameAndNumber());
+                
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = StringFormatter.Combine(RoleId.Stalker, "ability_message"),
+                    PlaceHolders = new Dictionary<string, string>()
+                    {
+                        { "playerName", targetsTarget.GetNameAndNumber() }
+                    }
+                };
             }
 
-            gameService.MessageService.SendAbilityMessage(message,roleOwner);
+            gameService.MessageService.SendPrivateMessage(messageTemplate,roleOwner);
             return AbilityResult.Success;
         }
 
@@ -82,9 +106,15 @@ namespace game.models.roles.interfaces.abilities
          */
         AbilityResult DarkRevealerAbility(Player roleOwner, Player target, BaseGameService gameService){
             
-            string message = TextManager.TranslateEnum(RoleId.DarkRevealer,"ability_message")
-                .Replace("{roleName}",target.Role.Template.GetName());
-            gameService.MessageService.SendAbilityMessage(message,roleOwner);
+            var messageTemplate = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(RoleId.DarkRevealer, "ability_message"),
+                PlaceHolders = new Dictionary<string, string>
+                {
+                    {"roleId",target.Role.Template.RoleID.FormatEnum()}
+                }
+            };
+            gameService.MessageService.SendPrivateMessage(messageTemplate,roleOwner);
 
             return AbilityResult.Success;
         }
@@ -101,24 +131,41 @@ namespace game.models.roles.interfaces.abilities
             players.Remove(roleOwner);
             
             players.Shuffle();
-            String message;
+            MessageTemplate messageTemplate;
             const RoleId roleId = RoleId.DarkSeer;
 
-            if (players.Count >= 2) {
-                message = TextManager.TranslateEnum(roleId,"ability_message")
-                        .Replace("{roleName1}",players[0].Role.Template.GetName())
-                        .Replace("{roleName2}",players[1].Role.Template.GetName());
+            if (players.Count >= 2)
+            {
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = StringFormatter.Combine(roleId, "ability_message"),
+                    PlaceHolders = new Dictionary<string, string>()
+                    {
+                        { "role1Id", players[0].Role.Template.RoleID.FormatEnum() },
+                        { "role2Id", players[1].Role.Template.RoleID.FormatEnum() }
+                    }
+                };
             }
-            else if (players.Count == 1) {
-                message = TextManager.TranslateEnum(roleId,"ability_message_one_left")
-                        .Replace("{roleName}",players[0].Role.Template.GetName());
+            else if (players.Count == 1)
+            {
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = StringFormatter.Combine(roleId, "ability_message_one_left"),
+                    PlaceHolders = new Dictionary<string, string>()
+                    {
+                        { "role1Id", players[0].Role.Template.RoleID.FormatEnum() },
+                    }
+                };
             }
             else
             {
-                message = TextManager.TranslateEnum(roleId, "ability_message_no_left");
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = StringFormatter.Combine(roleId, "ability_message_no_left")
+                };
             }
 
-            gameService.MessageService.SendAbilityMessage(message,roleOwner);
+            gameService.MessageService.SendPrivateMessage(messageTemplate, roleOwner);
             return AbilityResult.Success;
         }
     }

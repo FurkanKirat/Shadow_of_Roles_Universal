@@ -17,8 +17,9 @@ namespace game.models.roles.Templates.FolkRoles
 
         }
         
-        public override ChanceProperty GetChanceProperty() {
-            return new ChanceProperty(25, ChanceProperty.NoMaxLimit);
+        public override ChanceProperty GetChanceProperty()
+        {
+            return ChancePropertyFactory.Unlimited(25);
         }
     }
 }

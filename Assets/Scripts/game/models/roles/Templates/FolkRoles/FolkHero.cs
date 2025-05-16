@@ -3,7 +3,7 @@ using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
 using game.Services.GameServices;
-using Managers;
+using game.Utils;
 
 namespace game.models.roles.Templates.FolkRoles
 {
@@ -25,8 +25,13 @@ namespace game.models.roles.Templates.FolkRoles
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             RoleProperties.Cooldown.Reset();
-            SendAbilityMessage(TextManager.TranslateEnum(RoleID, "ability_message"),
-                roleOwner, gameService.MessageService);
+            
+            var template = new MessageTemplate
+            {
+                MessageKey = StringFormatter.Combine(RoleID, "ability_message")
+            };
+            
+            gameService.MessageService.SendPrivateMessage(template, roleOwner);
             choosenPlayer.Role.IsImmune = true;
             return AbilityResult.Success;
                 
@@ -34,7 +39,7 @@ namespace game.models.roles.Templates.FolkRoles
 
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(25, ChanceProperty.Unique);
+            return ChancePropertyFactory.Unique(25);
         }
     }
 }

@@ -25,6 +25,11 @@ namespace game.Utils
             return builder.ToString();
         }
         
+        public static string Combine<T>(T enumName, string key) where T : Enum
+        {
+            return $"{enumName.FormatEnum()}.{key}";
+        }
+        
 
         public static string ReplacePlaceholders(string template, Dictionary<string, string> placeholders)
         {

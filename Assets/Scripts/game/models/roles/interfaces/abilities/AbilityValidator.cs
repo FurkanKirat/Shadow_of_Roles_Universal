@@ -2,7 +2,6 @@
 using Game.Models.Roles.Enums;
 using game.models.roles.properties;
 using game.Services.GameServices;
-using Managers;
 
 namespace game.models.roles.interfaces.abilities
 {
@@ -17,8 +16,11 @@ namespace game.models.roles.interfaces.abilities
         {
             if (!roleOwner.Role.CanPerform && !roleOwner.Role.IsImmune)
             {
-                string blockedMessage = TextManager.Translate("role_block.role_blocked_message");
-                gameService.MessageService.SendAbilityMessage(blockedMessage, roleOwner);
+                var blockedMessage = new MessageTemplate
+                {
+                    MessageKey = "role_block.role_blocked_message"
+                };
+                gameService.MessageService.SendPrivateMessage(blockedMessage, roleOwner);
                 return AbilityResult.RoleBlocked;
             }
 

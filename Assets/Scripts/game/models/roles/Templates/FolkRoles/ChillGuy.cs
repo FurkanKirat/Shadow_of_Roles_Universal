@@ -4,7 +4,7 @@ using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
 using game.Services.GameServices;
 
-namespace game.models.roles.Templates.NeutralRoles
+namespace game.models.roles.Templates.FolkRoles
 {
     public class ChillGuy : RoleTemplate, INoAbility
     {
@@ -26,7 +26,7 @@ namespace game.models.roles.Templates.NeutralRoles
 
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(10, ChanceProperty.NoMaxLimit);
+            return ChancePropertyFactory.Unlimited(10);
         }
     }
 }

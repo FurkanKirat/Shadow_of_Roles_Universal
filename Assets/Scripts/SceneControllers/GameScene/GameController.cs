@@ -86,8 +86,9 @@ namespace SceneControllers.GameScene
         
         public void Initialize(IGameInformation gameInformation)
         {
+            if(_isInitialized) return;
             _gameInformation = gameInformation;
-
+            _isInitialized = true;
             InitScripts();
             InitTexts();
             LoadSprites();

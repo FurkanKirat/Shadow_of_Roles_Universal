@@ -16,7 +16,7 @@ namespace SceneControllers.GameScene.Messages
             _message = message;
             
             _messageText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
-            _messageText.text = _message.Text;
+            _messageText.text = _message.GetText();
 
             var image = gameObject.GetComponentInChildren<Image>();
             if (message.IsPublic)

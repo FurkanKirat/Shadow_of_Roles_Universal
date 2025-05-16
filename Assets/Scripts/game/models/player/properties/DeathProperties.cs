@@ -26,7 +26,7 @@ namespace game.models.player.properties
 
         public string GetDeathTimeAndDayCount()
         {
-            string deathTimeStr = TextManager.Translate($"time.{DeathTimePeriod.Time.FormatEnum()}");
+            string deathTimeStr = DeathTimePeriod.GetAsFormattedString();
             return string.Format(deathTimeStr, DeathTimePeriod.DayCount);
         }
 

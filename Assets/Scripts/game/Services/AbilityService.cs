@@ -1,9 +1,10 @@
-﻿using game.models.player;
+﻿using System.Collections.Generic;
+using game.models;
+using game.models.player;
 using game.models.player.properties;
 using Game.Models.Roles.Enums;
 using game.models.roles.interfaces;
 using game.Services.GameServices;
-using Managers;
 
 namespace game.Services
 {
@@ -44,12 +45,27 @@ namespace game.Services
                 return;
             }
 
-            string message = chosenPlayer != null
-                ? TextManager.Translate("abilities.used_on")
-                    .Replace("{playerName}", chosenPlayer.GetNameAndNumber())
-                : TextManager.Translate("abilities.did_not_used");
-
-            _gameService.MessageService.SendAbilityMessage(message, player);
+            MessageTemplate messageTemplate;
+            if (chosenPlayer == null)
+            {
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = "abilities.did_not_used"
+                };
+            }
+            else
+            {
+                messageTemplate = new MessageTemplate
+                {
+                    MessageKey = "abilities.used_on",
+                    PlaceHolders = new Dictionary<string, string>
+                    {
+                        { "playerName", chosenPlayer.GetNameAndNumber() }
+                    }
+                };
+            }
+            
+            _gameService.MessageService.SendPrivateMessage(messageTemplate, player);
         }
 
         /**

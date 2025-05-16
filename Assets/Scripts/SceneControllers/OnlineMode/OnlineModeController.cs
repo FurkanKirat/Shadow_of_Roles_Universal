@@ -51,7 +51,7 @@ namespace SceneControllers.OnlineMode
 
       private async Task OnJoinGameClicked()
         {
-            string code = gameCodeInputField.text.Trim().ToUpper(); // Güvenli giriş
+            string code = gameCodeInputField.text.Trim().ToUpper();
             if (string.IsNullOrEmpty(code))
             {
                 Debug.LogWarning("[JoinGame] Lobi kodu boş.");

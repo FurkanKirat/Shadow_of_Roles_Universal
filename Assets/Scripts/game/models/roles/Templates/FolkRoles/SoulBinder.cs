@@ -22,7 +22,7 @@ namespace game.models.roles.Templates.FolkRoles
 
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(20, ChanceProperty.NoMaxLimit);;
+            return ChancePropertyFactory.Unlimited(20);
         }
     }
 }

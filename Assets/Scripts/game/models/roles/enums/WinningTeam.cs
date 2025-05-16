@@ -34,7 +34,7 @@ namespace Game.Models.Roles.Enums
                 WinningTeam.Assassin => Team.Neutral,
                 WinningTeam.LoreKeeper => Team.Neutral,
                 WinningTeam.Clown => Team.Neutral,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
 

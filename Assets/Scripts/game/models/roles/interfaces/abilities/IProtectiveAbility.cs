@@ -2,7 +2,6 @@
 using game.models.player;
 using Game.Models.Roles.Enums;
 using game.Services.GameServices;
-using Managers;
 
 namespace game.models.roles.interfaces.abilities
 {
@@ -10,7 +9,11 @@ namespace game.models.roles.interfaces.abilities
     {
         AbilityResult Heal(Player roleOwner, Player target, BaseGameService gameService)
         {
-            gameService.MessageService.SendAbilityMessage(TextManager.Translate("abilities.heal"), roleOwner);
+            var messageTemplate = new MessageTemplate
+            {
+                MessageKey = "abilities.heal"
+            };
+            gameService.MessageService.SendPrivateMessage(messageTemplate, roleOwner);
             
             target.Role.Template.RoleProperties.Defence.Current = Math.Max(1, target.Role.Template.RoleProperties.Defence.Current);
 

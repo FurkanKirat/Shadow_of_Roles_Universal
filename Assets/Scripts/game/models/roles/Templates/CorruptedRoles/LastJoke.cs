@@ -47,7 +47,7 @@ namespace game.models.roles.Templates.CorruptedRoles
 
         public override ChanceProperty GetChanceProperty()
         {
-            return new ChanceProperty(15, ChanceProperty.Unique);
+            return ChancePropertyFactory.Unique(15);
         }
     }
 }
