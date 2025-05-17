@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using game.models;
 using game.models.gamestate;
+using game.models.player;
 using game.Services;
 using game.Utils;
 using Managers;
@@ -25,11 +26,11 @@ namespace SceneControllers.GameScene
     {
    
         [SerializeField] private Button messagesButton, roleBookButton, graveyardButton, passTurnButton;
-        [SerializeField] private TextMeshProUGUI timeText, nameText, numberText, roleText, rolePackText, clockText;
+        [SerializeField] private TextMeshProUGUI timeText, nameText, roleText, rolePackText, clockText;
         [SerializeField] private Image backgroundImage, messageNotificationImage;
         [SerializeField] private AlivePlayersLayout alivePlayersLayout;
         [SerializeField] private GraveyardLayout graveyardLayout;
-        [SerializeField] private MessagesLayout messagesLayout;
+        [SerializeField] private MessagesLayout messagesLayout, announcementsLayout;
         [SerializeField] private RoleBookPanel roleBookPanel;
         [SerializeField] private SpecialRolesContainer specialRolesContainer;
         [SerializeField] private PhaseCountdownUI phaseCountdownUI;
@@ -43,7 +44,7 @@ namespace SceneControllers.GameScene
         private GameSettings _gameSettings;
         private SceneChanger _sceneChanger;
         private readonly Dictionary<int, TimePeriod> _messagesLastCheck = new ();
-        private Time _lastTime;
+        private Time _lastTime = Time.Night;
         private bool _isInitialized;
 
         private void Start()
@@ -111,7 +112,8 @@ namespace SceneControllers.GameScene
         public void UpdateUI(IGameInformation gameInformation)
         {
             _gameInformation = gameInformation;
-            PassTurn(_lastTime != gameInformation.TimePeriod.Time, _gameSettings.GameMode == GameMode.Local);
+            bool timeChanged = _lastTime != gameInformation.TimePeriod.Time;
+            PassTurn(timeChanged, _gameSettings.GameMode == GameMode.Local);
             _lastTime = gameInformation.TimePeriod.Time;
         }
 
@@ -155,10 +157,7 @@ namespace SceneControllers.GameScene
         private void ChangePlayerUI()
         {
             PlayerDto currentPlayer = _gameInformation.CurrentPlayer;
-            string numberString = TextManager.Translate("general.player_number");
-            
-            numberText.text = string.Format(numberString, currentPlayer.Number);
-            nameText.text = currentPlayer.Name;
+            nameText.text = currentPlayer.GetNameAndNumber();
             roleText.text = RoleCatalog.GetRole(currentPlayer.RoleDto.RoleId).GetName();
             
             alivePlayersLayout.RefreshAllBoxes(currentPlayer);
@@ -208,9 +207,9 @@ namespace SceneControllers.GameScene
             _client.ResetClientInfo();
         }
         
-        private void ShowPanelWithDelay(string panelName, Action onReady)
+        private void ShowPanelWithDelay(string panelName, bool hideActivePanel, Action onReady)
         {
-            _panelController.ShowPanel(panelName);
+            _panelController.ShowPanel(panelName, hideActivePanel);
             StartCoroutine(DelayedAction(onReady));
         }
 
@@ -222,7 +221,7 @@ namespace SceneControllers.GameScene
         
         private void ShowMessagesPanel()
         {
-            ShowPanelWithDelay("MessagesPanel", () =>
+            ShowPanelWithDelay("MessagesPanel", true, () =>
             {
                 messagesLayout.RefreshLayout(_gameInformation.CurrentPlayer, _gameInformation.Messages);
                 _messagesLastCheck[_gameInformation.CurrentPlayer.Number] = (TimePeriod)_gameInformation.TimePeriod.Clone();
@@ -230,9 +229,18 @@ namespace SceneControllers.GameScene
             });
         }
 
+        private void ShowAnnouncementsPanel()
+        {
+            ShowPanelWithDelay("AnnouncementsPanel", false, () =>
+            {
+                var messages = MessageService.GetDailyAnnouncements(_gameInformation.Messages, _gameInformation.TimePeriod, _gameInformation.GameSettings.GameMode);
+                announcementsLayout.RefreshLayout(_gameInformation.CurrentPlayer, messages);
+            });
+        }
+
         private void ShowRoleBookPanel()
         {
-            ShowPanelWithDelay("RoleBookPanel", () =>
+            ShowPanelWithDelay("RoleBookPanel", true, () =>
             {
                 roleBookPanel.SelectRole(_gameInformation.CurrentPlayer.RoleDto.RoleId);
             });
@@ -240,7 +248,7 @@ namespace SceneControllers.GameScene
 
         private void ShowGraveyardPanel()
         {
-            ShowPanelWithDelay("GraveyardPanel", () =>
+            ShowPanelWithDelay("GraveyardPanel",true, () =>
             {
                 graveyardLayout.RefreshLayout(_gameInformation.DeadPlayers);
             });
@@ -255,26 +263,27 @@ namespace SceneControllers.GameScene
             
         }
 
-        private void PassTurn(bool timeChanged, bool playerChanged = false)
+        private void PassTurn(bool timeChanged, bool playerChanged)
         {
             if (timeChanged)
             {
-                ToggleTimeCycleUI();
+                ToggleTimeCycleUI(true);
                 phaseCountdownUI.StartCountdown(_gameSettings.PhaseTime);
-                
             }
-
+            
             if (playerChanged)
             {
-                ChangePlayerUI();
-                _panelController.ShowPanel("PassTurnPanel");
+                Debug.Log("1");
+                _panelController.ShowPanel("PassTurnPanel", false);
                 var passTurnController = _panelController.GetComponent<PassTurnPanelController>("PassTurnPanel");
                 passTurnController.UpdatePanel(_gameInformation.CurrentPlayer, _gameInformation.TimePeriod.Time);
+                ChangePlayerUI();
             }
+            
             
         }
 
-        private void ToggleTimeCycleUI()
+        private void ToggleTimeCycleUI(bool showAnnouncements = false)
         {
             if (_gameInformation.GameStatus == GameStatus.Ended)
             {
@@ -296,6 +305,8 @@ namespace SceneControllers.GameScene
                 Time.Voting => _votingSprite,
                 _ => throw new ArgumentOutOfRangeException(nameof(time), time, "Unknown time")
             };
+            
+            if(showAnnouncements) ShowAnnouncementsPanel();
             
         }
     }

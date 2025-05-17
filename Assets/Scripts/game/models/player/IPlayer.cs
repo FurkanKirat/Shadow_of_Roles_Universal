@@ -11,7 +11,7 @@
         public static bool IsSamePlayer(this IPlayer self, IPlayer other)
         {
             if (other == null) return false;
-            return self.Number == other.Number;
+            return self.IsSamePlayer(other.Number);
         }
 
         public static bool IsSamePlayer(this IPlayer self, int number)
@@ -21,7 +21,7 @@
         
         public static string GetNameAndNumber(this IPlayer self)
         {
-            return $"{self.Name} #{self.Number}";
+            return $"{self.Name}#{self.Number}";
         }
     }
 }

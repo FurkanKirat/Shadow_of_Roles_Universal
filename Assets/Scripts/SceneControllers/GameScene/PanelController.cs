@@ -12,14 +12,14 @@ namespace SceneControllers.GameScene
         [SerializeField] private MessagesController messagesController;
         [SerializeField] private GraveyardController graveyardController;
         [SerializeField] private RoleBookController roleBookController;
-        
+        [SerializeField] private PanelAnimator announcementsAnimator;
         private readonly Dictionary<string, PanelAnimator> _panelAnimators = new();
-        private string ActivePanel { get; set; }
+        private readonly HashSet<string> activePanels = new();
         
         private void Awake()
         {
             _panelAnimators["PassTurnPanel"] = GetPanelAnimator(passTurnPanelController);
-            //_panelAnimators["AnnouncementsPanel"] = announcementsPanel.GetComponentInChildren<PanelAnimator>();
+            _panelAnimators["AnnouncementsPanel"] = announcementsAnimator;
             _panelAnimators["MessagesPanel"] = GetPanelAnimator(messagesController);
             _panelAnimators["GraveyardPanel"] = GetPanelAnimator(graveyardController);
             _panelAnimators["RoleBookPanel"] = GetPanelAnimator(roleBookController);
@@ -27,17 +27,17 @@ namespace SceneControllers.GameScene
         
         public bool HideActivePanel()
         {
-            if (ActivePanel == null) return false;
-            _panelAnimators[ActivePanel].Hide();
-            ActivePanel = null;
-            return true;
+            foreach (var panel in activePanels)
+            {
+                _panelAnimators[panel].Hide();
+            }
+            return activePanels.Count != 0;
         }
 
-        public void ShowPanel(string panelName)
+        public void ShowPanel(string panelName, bool hideActivePanel = true)
         {
-            Debug.Log($"Showing panel {panelName} : {ActivePanel}");
-            HideActivePanel();
-            ActivePanel = panelName;
+            if(hideActivePanel) HideActivePanel();
+            activePanels.Add(panelName);
             _panelAnimators[panelName].Show();
         }
 

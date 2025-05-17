@@ -5,6 +5,7 @@ namespace game.models.gamestate
 {
     public enum Time
     {
+        None = -1,
         Day = 0,
         Voting = 1,
         Night = 2

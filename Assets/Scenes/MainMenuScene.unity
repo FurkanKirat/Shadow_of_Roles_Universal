@@ -5684,7 +5684,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4653299235559811670, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_text
-      value: Start Game
+      value: 'Offline Mode
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 5590108990384960773, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_Name
