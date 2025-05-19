@@ -117,12 +117,12 @@ namespace game.Services
          */
         public static RoleTemplate GetRoleWithProbability(List<RoleTemplate> randomRoleList){
 
-            int sum = randomRoleList.Select(template => template.GetChanceProperty().Chance).Sum();
+            int sum = randomRoleList.Select(template => template.ChanceProperty.Chance).Sum();
             int randNum = RandomUtils.GetRandomNumber(0,sum);
             int currentSum = 0;
 
             foreach (RoleTemplate role in randomRoleList) {
-                currentSum += role.GetChanceProperty().Chance;
+                currentSum += role.ChanceProperty.Chance;
 
                 if (currentSum >= randNum) {
                     return role.Copy();

@@ -15,6 +15,8 @@ namespace game.models.roles.Templates.FolkRoles
             RoleProperties
                 .AddAttribute(RoleAttribute.HasImmuneAbility)
                 .SetCooldown(3); // Actually 2 cooldown
+            
+            ChanceProperty = ChancePropertyFactory.Unique(25);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -35,11 +37,6 @@ namespace game.models.roles.Templates.FolkRoles
             choosenPlayer.Role.IsImmune = true;
             return AbilityResult.Success;
                 
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(25);
         }
     }
 }

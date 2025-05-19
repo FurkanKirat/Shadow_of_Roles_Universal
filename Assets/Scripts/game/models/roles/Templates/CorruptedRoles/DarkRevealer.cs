@@ -13,16 +13,13 @@ namespace game.models.roles.Templates.CorruptedRoles
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers);
+            
+            ChanceProperty = ChancePropertyFactory.Unlimited(30);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((IInvestigativeAbility) this).DetectiveAbility(roleOwner, choosenPlayer, gameService);
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(30);
         }
     }
 }

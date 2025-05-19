@@ -28,6 +28,8 @@ namespace game.models.roles.Templates.FolkRoles
                 .AddAttribute(RoleAttribute.HasHealingAbility)
                 .AddAttribute(RoleAttribute.CanKill1V1);
             _targetAbility = ChosenAbility.None;
+            
+            ChanceProperty = ChancePropertyFactory.Unique(15);
         }
         
         public ChosenAbility TargetAbility
@@ -120,12 +122,6 @@ namespace game.models.roles.Templates.FolkRoles
             bool randBool = RandomUtils.GetRandomBoolean();
             TargetAbility = randBool ? ChosenAbility.Heal : ChosenAbility.Attack;
         }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(15);
-        }
-        
         
         public class ChosenAbility
         {

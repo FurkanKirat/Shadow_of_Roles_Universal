@@ -21,6 +21,8 @@ namespace game.models.roles.Templates.NeutralRoles
                 .AddAttribute(RoleAttribute.MustSurviveUntilEnd)
                 .AddAttribute(RoleAttribute.RoleBlockImmune)
                 .AddAttribute(RoleAttribute.CanKill1V1);
+            
+            ChanceProperty = ChancePropertyFactory.Unique(40);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -32,10 +34,6 @@ namespace game.models.roles.Templates.NeutralRoles
         {
             return ((IAttackAbility)this).Attack(roleOwner, choosenPlayer, gameService, CauseOfDeath.Assassin);
         }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(40);
-        }
+        
     }
 }

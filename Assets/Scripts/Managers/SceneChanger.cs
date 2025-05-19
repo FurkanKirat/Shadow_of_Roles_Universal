@@ -11,7 +11,12 @@ namespace Managers
     public class SceneChanger : MonoBehaviour
     {
         private readonly Stack<string> _sceneStack = new ();
-        
+
+        private void Start()
+        {
+            AddSceneToStack(GetSceneName(SceneType.MainMenu));
+        }
+
         public void LoadScene(SceneType type, bool isOnline = false)
         {
             string sceneName = GetSceneName(type);
@@ -35,9 +40,14 @@ namespace Managers
 
         public void GoBack()
         {
+            Debug.Log("Go Back");
+            foreach (string sceneName in _sceneStack)
+            {
+                Debug.Log(sceneName);
+            }
             if (_sceneStack.Count > 0)
             {
-                string sceneName = _sceneStack.Pop();
+                string sceneName = _sceneStack.Peek();
                 SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
             }
         }

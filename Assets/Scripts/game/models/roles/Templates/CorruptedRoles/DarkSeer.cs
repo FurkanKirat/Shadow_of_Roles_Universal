@@ -12,6 +12,8 @@ namespace game.models.roles.Templates.CorruptedRoles
             RolePriority.None, AbilityType.Passive, WinningTeam.Corrupter)
         {
             RoleProperties.AddAttribute(RoleAttribute.KnowsTeamMembers);
+            
+            ChanceProperty = ChancePropertyFactory.Unlimited(10);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -24,9 +26,5 @@ namespace game.models.roles.Templates.CorruptedRoles
             return ((IInvestigativeAbility) this).DarkSeerAbility(roleOwner, gameService);
         }
         
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(10);
-        }
     }
 }

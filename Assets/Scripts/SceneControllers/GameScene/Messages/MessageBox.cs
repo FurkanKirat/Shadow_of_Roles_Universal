@@ -21,13 +21,13 @@ namespace SceneControllers.GameScene.Messages
             var image = gameObject.GetComponentInChildren<Image>();
             if (message.IsPublic)
             {
-                image.color = UIConstants.PublicColor;
-                _messageText.color = UIConstants.PrivateColor;
+                image.color = UIConstants.Colors.White;
+                _messageText.color = UIConstants.Colors.Red;
             }
             else
             {
-                image.color = UIConstants.PrivateColor;
-                _messageText.color = UIConstants.PublicColor;
+                image.color = UIConstants.Colors.Red;
+                _messageText.color = UIConstants.Colors.White;
             }
         }
     }

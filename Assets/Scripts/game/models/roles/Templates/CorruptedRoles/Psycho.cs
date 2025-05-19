@@ -17,16 +17,13 @@ namespace game.models.roles.Templates.CorruptedRoles
                 .AddAttribute(RoleAttribute.HasAttackAbility)
                 .AddAttribute(RoleAttribute.CanKill1V1)
                 .SetAttack(1);
+            
+            ChanceProperty = ChancePropertyFactory.Unique(100);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((IAttackAbility)this).Attack(roleOwner, choosenPlayer, gameService, CauseOfDeath.Psycho);
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(100);
         }
     }
 }

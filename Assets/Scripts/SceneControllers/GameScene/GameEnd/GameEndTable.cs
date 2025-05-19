@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using game.Constants;
 using Managers;
 using SceneControllers.GameScene.Helper;
 using TMPro;
@@ -50,7 +51,7 @@ namespace SceneControllers.GameScene.GameEnd
 
             if (!isHeader) return;
             
-            text.color = Color.yellow;
+            text.color = UIConstants.Colors.Yellow;
             var image = cell.GetComponent<UnityEngine.UI.Image>();
             if (image != null)
             {

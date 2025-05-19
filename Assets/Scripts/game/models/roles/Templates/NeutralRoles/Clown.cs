@@ -16,6 +16,8 @@ namespace game.models.roles.Templates.NeutralRoles
                 .AddAttribute(RoleAttribute.HasOtherWinCondition)
                 .AddAttribute(RoleAttribute.WinsAlone)
                 .AddAttribute(RoleAttribute.MustDieToWin);
+            
+            ChanceProperty = ChancePropertyFactory.Unique(30);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -26,11 +28,6 @@ namespace game.models.roles.Templates.NeutralRoles
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((INoAbility)this).DoNothing();
-        }
-        
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(30);
         }
     }
 }

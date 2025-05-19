@@ -48,7 +48,7 @@ namespace Networking.Server
             DontDestroyOnLoad(clientObj);
         }
         
-        public void InitGameService(List<Player> players, GameSettings gameSettings)
+        public bool InitGameService(List<Player> players, GameSettings gameSettings)
         {
             _gameService = (OnlineGameService)StartGameManager.InitializeGameService(players, gameSettings);
             var go = new GameObject("TurnTimer");
@@ -62,6 +62,7 @@ namespace Networking.Server
                 _clientIdToPlayerNumberMap[clientId] = players[i].Number;
                 i++;
             }
+            return _gameService != null;
         }
 
         public void ReceiveClientInfoFromClient(ClientInfoDto clientInfoDto, ulong senderClientId)

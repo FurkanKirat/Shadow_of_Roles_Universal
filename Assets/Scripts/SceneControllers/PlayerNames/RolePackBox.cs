@@ -31,11 +31,19 @@ namespace SceneControllers.PlayerNames
 
         private void BoxSelected()
         {
-            var builder = StrategyChooser.GetStrategy(_rolePackInfo.RolePack);
-            _rolesInfoContainer.ChangeInfo(builder.Build(new GameSettings(GameMode.Local, _rolePackInfo.RolePack, 10)));
-            
+            var rolePack = _rolePackInfo.RolePack;
+            if (rolePack == RolePack.Custom)
+            {
+                _rolesInfoContainer.gameObject.SetActive(false);
+            }
+            else
+            {
+                var builder = StrategyChooser.GetStrategy(rolePack);
+                _rolesInfoContainer.ChangeInfo(builder.Build(new GameSettings(GameMode.Local, rolePack, 10)));
+                _rolesInfoContainer.gameObject.SetActive(true);
+                _rolesScrollRect.ScrollToTop();
+            }
             _rolePackPanel.ChangeRolePackInfo(_rolePackInfo, _index);
-            _rolesScrollRect.ScrollToTop();
         }
         
     }

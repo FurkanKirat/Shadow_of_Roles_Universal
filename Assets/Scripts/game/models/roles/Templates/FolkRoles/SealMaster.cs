@@ -14,6 +14,8 @@ namespace game.models.roles.Templates.FolkRoles
             RoleProperties
                 .AddAttribute(RoleAttribute.CanRoleBlock)
                 .AddAttribute(RoleAttribute.RoleBlockImmune);
+            
+            ChanceProperty = ChancePropertyFactory.Unlimited(25);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -24,11 +26,6 @@ namespace game.models.roles.Templates.FolkRoles
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((IRoleBlockAbility) this).RoleBlock(choosenPlayer);
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(25);
         }
     }
 }

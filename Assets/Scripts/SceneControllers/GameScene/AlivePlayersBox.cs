@@ -1,4 +1,5 @@
 ﻿using game.Constants;
+using game.models.player;
 using Game.Models.Roles.Enums;
 using game.models.roles.Templates;
 using game.Services;
@@ -71,9 +72,9 @@ namespace SceneControllers.GameScene
         
         private void UpdateCircleColor()
         {
-            circleImage.color = _currentPlayer.Number == _targetPlayer.Number
-                ? UIConstants.CircleColorCurrent 
-                : UIConstants.CircleColorDefault;
+            circleImage.color = _currentPlayer.IsSamePlayer(_targetPlayer)
+                ? UIConstants.Colors.Yellow 
+                : UIConstants.Colors.Blue;
         }
         
         private void UpdateButtonVisibility()

@@ -15,10 +15,12 @@ namespace Networking.Server
         private LocalClient ConnectedClient { get; set; }
         private LocalGameService GameService { get; set; }
 
-        public void InitGameService(List<Player> players, GameSettings gameSettings)
+        public bool InitGameService(List<Player> players, GameSettings gameSettings)
         {
             GameService = (LocalGameService)StartGameManager.InitializeGameService(players, gameSettings);
+            if (GameService == null) return false;
             SendGameState();
+            return true;
         }
         
         public void SetClient(LocalClient client)
@@ -35,7 +37,6 @@ namespace Networking.Server
 
         public void SendGameState()
         {
-            Debug.Log("SendGameState");
             ConnectedClient?.ReceiveGameState(GameService.DtoProvider.GetGameInformationFor(GameService.CurrentPlayer.Number));
         }
     }

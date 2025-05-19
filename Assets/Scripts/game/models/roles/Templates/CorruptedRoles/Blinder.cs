@@ -14,6 +14,8 @@ namespace game.models.roles.Templates.CorruptedRoles
             RoleProperties
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)
                 .AddAttribute(RoleAttribute.HasBlindAbility);
+
+            ChanceProperty = ChancePropertyFactory.Unlimited(25);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -37,10 +39,6 @@ namespace game.models.roles.Templates.CorruptedRoles
 
             return AbilityResult.Success;
         }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(25);
-        }
+        
     }
 }

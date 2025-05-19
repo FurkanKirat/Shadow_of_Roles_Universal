@@ -6,6 +6,7 @@ using game.models.roles;
 using game.Services.GameServices;
 using game.Services.RoleDistributor;
 using game.Services.RoleDistributor.GameRolesStrategy;
+using UnityEngine;
 
 namespace Managers
 {
@@ -21,6 +22,11 @@ namespace Managers
             var roleDistributor = new RoleDistributor(hints.Build(gameSettings), newSettings);
             
             var roles = roleDistributor.DistributeRoles();
+            if (roles.Count != playerCount)
+            {
+                Debug.Log("Player count mismatch");
+                return null;
+            }
             for(var i=0; i < playerCount ; ++i){
                 players[i].Role = new Role(roles[i]);
             }
