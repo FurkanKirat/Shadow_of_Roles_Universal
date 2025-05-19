@@ -56,7 +56,7 @@ namespace game.Services.RoleDistributor.Hints
         public RoleTemplate SelectRole(Dictionary<RoleTemplate, int> currentRoles, RolePack rolePack)
             => DistributionHelper.GetRoleByTeamWithProbability(currentRoles,_team,rolePack);
         
-        public string Describe() => TextManager.Translate($"teams.{_team.FormatEnum()}");
+        public string Describe() => TextManager.Translate($"{_team.FormatEnum()}.name");
     }
     
     public class MultipleTeamHint : IRoleHint
@@ -71,7 +71,7 @@ namespace game.Services.RoleDistributor.Hints
         public RoleTemplate SelectRole(Dictionary<RoleTemplate, int> currentRoles, RolePack rolePack)
             => DistributionHelper.GetRoleByTeamWithProbability(currentRoles,_teams,rolePack);
         
-        public string Describe() => _teams.Join(" & ", team => TextManager.Translate($"teams.{team.FormatEnum()}"));
+        public string Describe() => _teams.Join(" & ", team => TextManager.Translate($"{team.FormatEnum()}.name"));
     }
 
     public class CategoryHint : IRoleHint

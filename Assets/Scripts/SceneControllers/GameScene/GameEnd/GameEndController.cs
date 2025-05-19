@@ -78,7 +78,7 @@ namespace SceneControllers.GameScene.GameEnd
             else
             {
                 winnerTeamText = TextManager.Translate("game_end.winner_team_text");
-                string winnerTeamStr = TextManager.Translate($"winner_team.{_winningTeam.FormatEnum()}");
+                string winnerTeamStr = TextManager.Translate($"game_end.{_winningTeam.FormatEnum()}");
                 winnerTeamText = winnerTeamText.Replace("{team}", winnerTeamStr);
             }
 

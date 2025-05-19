@@ -13,16 +13,13 @@ namespace game.models.roles.Templates.FolkRoles
         {
             RoleProperties
                 .AddAttribute(RoleAttribute.HasHealingAbility);
+            
+            ChanceProperty = ChancePropertyFactory.Unlimited(20);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((IProtectiveAbility) this).Heal(roleOwner, choosenPlayer, gameService);
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(20);
         }
     }
 }

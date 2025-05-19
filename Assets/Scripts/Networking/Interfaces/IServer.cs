@@ -10,6 +10,6 @@ namespace Networking.Interfaces
     {
         public void ReceiveClientInfo(ClientInfoDto clientInfoDto);
         public void SendGameState();
-        public void InitGameService(List<Player> players, GameSettings gameSettings);
+        public bool InitGameService(List<Player> players, GameSettings gameSettings);
     }
 }

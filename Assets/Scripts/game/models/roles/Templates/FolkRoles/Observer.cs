@@ -11,16 +11,12 @@ namespace game.models.roles.Templates.FolkRoles
         public Observer(): base(RoleId.Observer, RoleCategory.FolkAnalyst, RolePriority.None,
             AbilityType.ActiveOthers, WinningTeam.Folk)
         {
+            ChanceProperty = ChancePropertyFactory.Unlimited(20);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((IInvestigativeAbility) this).ObserverAbility(roleOwner, choosenPlayer, gameService);
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(20);
         }
     }
 }

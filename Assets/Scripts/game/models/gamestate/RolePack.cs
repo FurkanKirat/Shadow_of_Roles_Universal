@@ -6,6 +6,7 @@
         Basic,
         Classic,
         DarkChaos,
-        All
+        All,
+        Custom
     }
 }

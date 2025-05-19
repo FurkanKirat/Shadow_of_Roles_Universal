@@ -23,6 +23,8 @@ namespace game.models.roles.Templates.NeutralRoles
                 .AddAttribute(RoleAttribute.HasOtherWinCondition)
                 .AddAttribute(RoleAttribute.WinsAlone)
                 .AddAttribute(RoleAttribute.RoleBlockImmune);
+            
+            ChanceProperty = ChancePropertyFactory.Unique(30);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -51,11 +53,6 @@ namespace game.models.roles.Templates.NeutralRoles
             }
             GuessedRole = RoleId.None;
             return AbilityResult.Success;
-        }
-        
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(30);
         }
 
         public void ChooseRoleSpecificValues(List<Player> choosablePlayers)

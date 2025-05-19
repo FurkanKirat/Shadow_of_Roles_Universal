@@ -6,7 +6,6 @@ using Game.Models.Roles.Enums;
 using game.models.roles.interfaces.abilities;
 using game.models.roles.properties;
 using game.Services.GameServices;
-using game.Utils;
 using Managers;
 
 namespace game.models.roles.Templates
@@ -22,6 +21,7 @@ namespace game.models.roles.Templates
 
         public WinningTeam WinningTeam { get; set; }
         public RoleProperties RoleProperties { get; }
+        public ChanceProperty ChanceProperty { get; protected set; }
         protected RoleTemplate(RoleId roleID, RoleCategory roleCategory, RolePriority rolePriority, AbilityType abilityType, WinningTeam winningTeam)
         {
             RoleID = roleID;
@@ -72,31 +72,31 @@ namespace game.models.roles.Templates
             return ((IPerformAbility) this).DefaultPerformAbility(roleOwner,choosenPlayer,gameService);
         }
         
-        public abstract ChanceProperty GetChanceProperty();
-        
-        public string GetTeamText(){
-            return TextManager.TranslateEnum(WinningTeam.GetTeam(),"name");
-        }
         
         public string GetName() {
-            return TextManager.TranslateEnum(RoleID,"name");
+            return RoleID.GetName();
         }
 
         public string GetAttributes() {
-            return TextManager.TranslateEnum(RoleID,"attributes");
+            return RoleID.GetAttributes();
         }
 
         public string GetAbilities() {
-            return TextManager.TranslateEnum(RoleID,"abilities");
+            return RoleID.GetAbilities();
         }
         
         public string GetCategoryText()
         {
-            return TextManager.Translate($"role_categories.{RoleCategory.FormatEnum()}");
+            return RoleCategory.GetCategoryText();
         }
-
+        
+        public string GetTeamText()
+        {
+            return WinningTeam.GetTeamText();
+        }
+        
         public string GetGoal(){
-            return TextManager.TranslateEnum(WinningTeam,"goal");
+            return WinningTeam.GetGoal();
         }
         
     }

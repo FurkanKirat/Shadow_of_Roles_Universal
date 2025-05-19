@@ -9,7 +9,9 @@ namespace game.models.roles.Templates.FolkRoles
     public class Detective : RoleTemplate, IInvestigativeAbility
     {
         public Detective() : base(RoleId.Detective, RoleCategory.FolkAnalyst,
-            RolePriority.None, AbilityType.ActiveOthers, WinningTeam.Folk){
+            RolePriority.None, AbilityType.ActiveOthers, WinningTeam.Folk)
+        {
+            ChanceProperty = ChancePropertyFactory.Unlimited(25);
         }
         
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService) {
@@ -17,10 +19,6 @@ namespace game.models.roles.Templates.FolkRoles
 
         }
         
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(25);
-        }
     }
 }
 

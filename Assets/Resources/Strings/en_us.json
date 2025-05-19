@@ -300,5 +300,6 @@
   "role_pack.basic": "Basic",
   "role_pack.classic": "Classic",
   "role_pack.dark_chaos": "Dark Chaos",
+  "role_pack.custom": "Custom",
   "role_pack_texts.current_role_pack": "Role Pack: {0}"
 }

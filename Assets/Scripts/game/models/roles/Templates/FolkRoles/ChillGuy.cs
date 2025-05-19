@@ -11,7 +11,7 @@ namespace game.models.roles.Templates.FolkRoles
         public ChillGuy() : base(RoleId.ChillGuy, RoleCategory.FolkVillager, 
             RolePriority.None, AbilityType.NoAbility, WinningTeam.Folk)
         {
- 
+            ChanceProperty = ChancePropertyFactory.Unlimited(10);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -22,11 +22,6 @@ namespace game.models.roles.Templates.FolkRoles
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((INoAbility)this).DoNothing();
-        }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(10);
         }
     }
 }

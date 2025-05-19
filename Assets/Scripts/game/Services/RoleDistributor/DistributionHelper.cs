@@ -87,7 +87,7 @@ namespace game.Services.RoleDistributor
          */
         private static void RemoveMaxCount(Dictionary<RoleTemplate,int> currentRoles, List<RoleTemplate> randomRoleList){
             foreach(var entry in currentRoles){
-                if(entry.Key.GetChanceProperty().MaxNumber <= entry.Value){
+                if(entry.Key.ChanceProperty.MaxNumber <= entry.Value){
                     randomRoleList.Remove(entry.Key);
                 }
             }

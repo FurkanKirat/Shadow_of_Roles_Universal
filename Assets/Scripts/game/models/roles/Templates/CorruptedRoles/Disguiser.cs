@@ -22,6 +22,8 @@ namespace game.models.roles.Templates.CorruptedRoles
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)
                 .AddAttribute(RoleAttribute.HasDisguiseAbility)
                 .SetAttack(1);
+            
+            ChanceProperty = ChancePropertyFactory.Unlimited(15);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -49,11 +51,6 @@ namespace game.models.roles.Templates.CorruptedRoles
                 RoleProperties.RemoveAttribute(RoleAttribute.RoleBlockImmune);
             }
 
-        }
-        
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(15);
         }
         
         public void ChangePriority(RolePack rolePack)

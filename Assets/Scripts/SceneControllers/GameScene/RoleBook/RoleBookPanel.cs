@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using game.Constants;
 using game.models.gamestate;
 using Game.Models.Roles.Enums;
 using game.models.roles.Templates;
@@ -39,7 +40,7 @@ namespace SceneControllers.GameScene.RoleBook
            {
                var rolePackBox = RolePackBoxes[i];
                rolePackBox.GetComponentInChildren<Button>().GetComponent<Image>().color
-                   = i == _selectedRolePackIndex ? Color.cyan : Color.white;
+                   = i == _selectedRolePackIndex ? UIConstants.Colors.Aquamarine : UIConstants.Colors.White;
                
            }
            roleBookRolePanel.ChangeInfo(_currentRoleTemplate);

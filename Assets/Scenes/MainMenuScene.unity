@@ -471,6 +471,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Online Btn
       objectReference: {fileID: 0}
+    - target: {fileID: 5590108990384960773, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -485,7 +489,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_AnchorMin.x
@@ -493,15 +497,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 112.5
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_LocalPosition.x
@@ -533,11 +537,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -183.75
       objectReference: {fileID: 0}
     - target: {fileID: 6635947870676747986, guid: e63218f931ea85a459f48b7e02cbe1be, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -11,7 +11,8 @@ namespace game.Services
             { RolePack.Basic, new RolePackInfo(RolePack.Basic, false)},
             { RolePack.Classic, new RolePackInfo(RolePack.Classic, false)},
             { RolePack.Complex, new RolePackInfo(RolePack.Complex, false)},
-            { RolePack.DarkChaos, new RolePackInfo(RolePack.DarkChaos, false)}
+            { RolePack.DarkChaos, new RolePackInfo(RolePack.DarkChaos, false)},
+            { RolePack.Custom, new RolePackInfo(RolePack.Custom, false)},
         };
         
         

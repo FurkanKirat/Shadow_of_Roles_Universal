@@ -15,6 +15,8 @@ namespace game.models.roles.Templates.CorruptedRoles
                 .AddAttribute(RoleAttribute.KnowsTeamMembers)
                 .AddAttribute(RoleAttribute.CanRoleBlock)
                 .AddAttribute(RoleAttribute.RoleBlockImmune);
+            
+            ChanceProperty = ChancePropertyFactory.Unlimited(30);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -26,10 +28,6 @@ namespace game.models.roles.Templates.CorruptedRoles
         {
             return ((IRoleBlockAbility) this).RoleBlock(choosenPlayer);
         }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(30);
-        }
+        
     }
 }

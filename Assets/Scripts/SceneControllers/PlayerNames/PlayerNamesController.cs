@@ -3,6 +3,7 @@ using game.models.player;
 using game.models.player.properties;
 using Managers;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ namespace SceneControllers.PlayerNames
         [SerializeField] private PlayerNamesContainer playerNamesContainer;
         [SerializeField] private Button startGameButton, increasePCountButton, decreasePCountButton;
         [SerializeField] private RolePackPanel rolePackPanel;
+        [SerializeField] private BackButton backButton;
         private SceneChanger _sceneChanger;
         private void Start()
         {
@@ -23,6 +25,7 @@ namespace SceneControllers.PlayerNames
             startGameButton.onClick.AddListener(StartGameClicked);
             increasePCountButton.onClick.AddListener(AddPlayer);
             decreasePCountButton.onClick.AddListener(RemovePlayer);
+            backButton.AddListener(GoBack);
             UpdatePlayerCount();
             
         }
@@ -30,9 +33,14 @@ namespace SceneControllers.PlayerNames
         {
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
             
-            if(rolePackPanel.gameObject.activeSelf) rolePackPanel.gameObject.SetActive(false);
-            else _sceneChanger.GoBack();
+            GoBack();
             
+        }
+
+        private void GoBack()
+        {
+            if(rolePackPanel.gameObject.activeSelf) rolePackPanel.ChangeVisibility(false);
+            else _sceneChanger.GoBack();
         }
 
         private void AddPlayer()
@@ -50,6 +58,7 @@ namespace SceneControllers.PlayerNames
         private void UpdatePlayerCount()
         {
             playerCountText.text = playerNamesContainer.PlayerNames.Count.ToString();
+            
         }
 
         private void StartGameClicked()
@@ -77,7 +86,7 @@ namespace SceneControllers.PlayerNames
                 return;
             }
             
-            rolePackPanel.gameObject.SetActive(true);
+            rolePackPanel.ChangeVisibility(true);
             
         }
         

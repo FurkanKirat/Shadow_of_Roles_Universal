@@ -287,7 +287,7 @@ namespace SceneControllers.GameScene
         {
             if (_gameInformation.GameStatus == GameStatus.Ended)
             {
-                _sceneChanger.LoadScene(SceneType.GameEnd, true);
+                _sceneChanger.LoadScene(SceneType.GameEnd, _gameSettings.GameMode == GameMode.Online);
                 return;
             }
             

@@ -10,16 +10,13 @@ namespace game.models.roles.Templates.FolkRoles
     {
         public Stalker() : base(RoleId.Stalker, RoleCategory.FolkAnalyst, RolePriority.None, AbilityType.ActiveOthers, WinningTeam.Folk)
         {
+            ChanceProperty = ChancePropertyFactory.Unlimited(25);
         }
 
         public override AbilityResult ExecuteAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
         {
             return ((IInvestigativeAbility) this).StalkerAbility(roleOwner, choosenPlayer, gameService);
         }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unlimited(25);
-        }
+        
     }
 }

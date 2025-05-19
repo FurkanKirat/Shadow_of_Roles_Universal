@@ -18,6 +18,10 @@ namespace game.models.gamestate
         {
             return TextManager.Translate($"role_pack.{RolePack.FormatEnum()}");
         }
-        
+
+        public override string ToString()
+        {
+            return $"{nameof(RolePack)}: {RolePack}, {nameof(IsPremium)}: {IsPremium}";
+        }
     }
 }

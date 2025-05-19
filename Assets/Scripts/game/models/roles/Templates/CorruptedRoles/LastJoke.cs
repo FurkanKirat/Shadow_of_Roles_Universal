@@ -19,6 +19,8 @@ namespace game.models.roles.Templates.CorruptedRoles
                 .AddAttribute(RoleAttribute.HasAttackAbility)
                 .SetAbilityUsesLeft(1)
                 .SetAttack(3);
+            
+            ChanceProperty = ChancePropertyFactory.Unique(15);
         }
 
         public override AbilityResult PerformAbility(Player roleOwner, Player choosenPlayer, BaseGameService gameService)
@@ -44,10 +46,6 @@ namespace game.models.roles.Templates.CorruptedRoles
         public bool CanUseAbility() {
             return RoleProperties.AbilityUsesLeft.Current > 0;
         }
-
-        public override ChanceProperty GetChanceProperty()
-        {
-            return ChancePropertyFactory.Unique(15);
-        }
+        
     }
 }
